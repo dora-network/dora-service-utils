@@ -12,19 +12,19 @@ import (
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
 
-//counterfeiter:generate . SpannerClient
-type SpannerClient interface {
+//counterfeiter:generate . Client
+type Client interface {
 	ReadWriteTransaction(ctx context.Context, f func(context.Context, *spanner.ReadWriteTransaction) error) (commitTimestamp time.Time, err error)
 	Single() *spanner.ReadOnlyTransaction
 	UpdateDatabaseDdl(ctx context.Context, req *databasepb.UpdateDatabaseDdlRequest, opts ...gax.CallOption) (*databasev1.UpdateDatabaseDdlOperation, error)
 }
 
-type Client struct {
+type client struct {
 	client      *spanner.Client
 	adminClient *databasev1.DatabaseAdminClient
 }
 
-func NewClient(ctx context.Context, config Config) (*Client, error) {
+func NewClient(ctx context.Context, config Config) (Client, error) {
 	var opts []option.ClientOption
 	if config.CredentialsFile != "" {
 		opts = append(opts, option.WithCredentialsFile(config.CredentialsFile))
@@ -41,25 +41,25 @@ func NewClient(ctx context.Context, config Config) (*Client, error) {
 		return nil, err
 	}
 
-	return &Client{
+	return &client{
 		client:      spannerClient,
 		adminClient: spannerAdminClient,
 	}, nil
 }
 
-func (c *Client) Close() {
+func (c *client) Close() error {
 	c.client.Close()
-	c.adminClient.Close()
+	return c.adminClient.Close()
 }
 
-func (c *Client) ReadWriteTransaction(ctx context.Context, f func(context.Context, *spanner.ReadWriteTransaction) error) (commitTimestamp time.Time, err error) {
+func (c *client) ReadWriteTransaction(ctx context.Context, f func(context.Context, *spanner.ReadWriteTransaction) error) (commitTimestamp time.Time, err error) {
 	return c.client.ReadWriteTransaction(ctx, f)
 }
 
-func (c *Client) Single() *spanner.ReadOnlyTransaction {
+func (c *client) Single() *spanner.ReadOnlyTransaction {
 	return c.client.Single()
 }
 
-func (c *Client) UpdateDatabaseDdl(ctx context.Context, req *databasepb.UpdateDatabaseDdlRequest, opts ...gax.CallOption) (*databasev1.UpdateDatabaseDdlOperation, error) {
+func (c *client) UpdateDatabaseDdl(ctx context.Context, req *databasepb.UpdateDatabaseDdlRequest, opts ...gax.CallOption) (*databasev1.UpdateDatabaseDdlOperation, error) {
 	return c.adminClient.UpdateDatabaseDdl(ctx, req, opts...)
 }

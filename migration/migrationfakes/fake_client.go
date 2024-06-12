@@ -13,7 +13,7 @@ import (
 	gax "github.com/googleapis/gax-go/v2"
 )
 
-type FakeSpannerClient struct {
+type FakeClient struct {
 	ReadWriteTransactionStub        func(context.Context, func(context.Context, *spanner.ReadWriteTransaction) error) (time.Time, error)
 	readWriteTransactionMutex       sync.RWMutex
 	readWriteTransactionArgsForCall []struct {
@@ -57,7 +57,7 @@ type FakeSpannerClient struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeSpannerClient) ReadWriteTransaction(arg1 context.Context, arg2 func(context.Context, *spanner.ReadWriteTransaction) error) (time.Time, error) {
+func (fake *FakeClient) ReadWriteTransaction(arg1 context.Context, arg2 func(context.Context, *spanner.ReadWriteTransaction) error) (time.Time, error) {
 	fake.readWriteTransactionMutex.Lock()
 	ret, specificReturn := fake.readWriteTransactionReturnsOnCall[len(fake.readWriteTransactionArgsForCall)]
 	fake.readWriteTransactionArgsForCall = append(fake.readWriteTransactionArgsForCall, struct {
@@ -77,26 +77,26 @@ func (fake *FakeSpannerClient) ReadWriteTransaction(arg1 context.Context, arg2 f
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeSpannerClient) ReadWriteTransactionCallCount() int {
+func (fake *FakeClient) ReadWriteTransactionCallCount() int {
 	fake.readWriteTransactionMutex.RLock()
 	defer fake.readWriteTransactionMutex.RUnlock()
 	return len(fake.readWriteTransactionArgsForCall)
 }
 
-func (fake *FakeSpannerClient) ReadWriteTransactionCalls(stub func(context.Context, func(context.Context, *spanner.ReadWriteTransaction) error) (time.Time, error)) {
+func (fake *FakeClient) ReadWriteTransactionCalls(stub func(context.Context, func(context.Context, *spanner.ReadWriteTransaction) error) (time.Time, error)) {
 	fake.readWriteTransactionMutex.Lock()
 	defer fake.readWriteTransactionMutex.Unlock()
 	fake.ReadWriteTransactionStub = stub
 }
 
-func (fake *FakeSpannerClient) ReadWriteTransactionArgsForCall(i int) (context.Context, func(context.Context, *spanner.ReadWriteTransaction) error) {
+func (fake *FakeClient) ReadWriteTransactionArgsForCall(i int) (context.Context, func(context.Context, *spanner.ReadWriteTransaction) error) {
 	fake.readWriteTransactionMutex.RLock()
 	defer fake.readWriteTransactionMutex.RUnlock()
 	argsForCall := fake.readWriteTransactionArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeSpannerClient) ReadWriteTransactionReturns(result1 time.Time, result2 error) {
+func (fake *FakeClient) ReadWriteTransactionReturns(result1 time.Time, result2 error) {
 	fake.readWriteTransactionMutex.Lock()
 	defer fake.readWriteTransactionMutex.Unlock()
 	fake.ReadWriteTransactionStub = nil
@@ -106,7 +106,7 @@ func (fake *FakeSpannerClient) ReadWriteTransactionReturns(result1 time.Time, re
 	}{result1, result2}
 }
 
-func (fake *FakeSpannerClient) ReadWriteTransactionReturnsOnCall(i int, result1 time.Time, result2 error) {
+func (fake *FakeClient) ReadWriteTransactionReturnsOnCall(i int, result1 time.Time, result2 error) {
 	fake.readWriteTransactionMutex.Lock()
 	defer fake.readWriteTransactionMutex.Unlock()
 	fake.ReadWriteTransactionStub = nil
@@ -122,7 +122,7 @@ func (fake *FakeSpannerClient) ReadWriteTransactionReturnsOnCall(i int, result1 
 	}{result1, result2}
 }
 
-func (fake *FakeSpannerClient) Single() *spanner.ReadOnlyTransaction {
+func (fake *FakeClient) Single() *spanner.ReadOnlyTransaction {
 	fake.singleMutex.Lock()
 	ret, specificReturn := fake.singleReturnsOnCall[len(fake.singleArgsForCall)]
 	fake.singleArgsForCall = append(fake.singleArgsForCall, struct {
@@ -140,19 +140,19 @@ func (fake *FakeSpannerClient) Single() *spanner.ReadOnlyTransaction {
 	return fakeReturns.result1
 }
 
-func (fake *FakeSpannerClient) SingleCallCount() int {
+func (fake *FakeClient) SingleCallCount() int {
 	fake.singleMutex.RLock()
 	defer fake.singleMutex.RUnlock()
 	return len(fake.singleArgsForCall)
 }
 
-func (fake *FakeSpannerClient) SingleCalls(stub func() *spanner.ReadOnlyTransaction) {
+func (fake *FakeClient) SingleCalls(stub func() *spanner.ReadOnlyTransaction) {
 	fake.singleMutex.Lock()
 	defer fake.singleMutex.Unlock()
 	fake.SingleStub = stub
 }
 
-func (fake *FakeSpannerClient) SingleReturns(result1 *spanner.ReadOnlyTransaction) {
+func (fake *FakeClient) SingleReturns(result1 *spanner.ReadOnlyTransaction) {
 	fake.singleMutex.Lock()
 	defer fake.singleMutex.Unlock()
 	fake.SingleStub = nil
@@ -161,7 +161,7 @@ func (fake *FakeSpannerClient) SingleReturns(result1 *spanner.ReadOnlyTransactio
 	}{result1}
 }
 
-func (fake *FakeSpannerClient) SingleReturnsOnCall(i int, result1 *spanner.ReadOnlyTransaction) {
+func (fake *FakeClient) SingleReturnsOnCall(i int, result1 *spanner.ReadOnlyTransaction) {
 	fake.singleMutex.Lock()
 	defer fake.singleMutex.Unlock()
 	fake.SingleStub = nil
@@ -175,7 +175,7 @@ func (fake *FakeSpannerClient) SingleReturnsOnCall(i int, result1 *spanner.ReadO
 	}{result1}
 }
 
-func (fake *FakeSpannerClient) UpdateDatabaseDdl(arg1 context.Context, arg2 *databasepb.UpdateDatabaseDdlRequest, arg3 ...gax.CallOption) (*database.UpdateDatabaseDdlOperation, error) {
+func (fake *FakeClient) UpdateDatabaseDdl(arg1 context.Context, arg2 *databasepb.UpdateDatabaseDdlRequest, arg3 ...gax.CallOption) (*database.UpdateDatabaseDdlOperation, error) {
 	fake.updateDatabaseDdlMutex.Lock()
 	ret, specificReturn := fake.updateDatabaseDdlReturnsOnCall[len(fake.updateDatabaseDdlArgsForCall)]
 	fake.updateDatabaseDdlArgsForCall = append(fake.updateDatabaseDdlArgsForCall, struct {
@@ -196,26 +196,26 @@ func (fake *FakeSpannerClient) UpdateDatabaseDdl(arg1 context.Context, arg2 *dat
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeSpannerClient) UpdateDatabaseDdlCallCount() int {
+func (fake *FakeClient) UpdateDatabaseDdlCallCount() int {
 	fake.updateDatabaseDdlMutex.RLock()
 	defer fake.updateDatabaseDdlMutex.RUnlock()
 	return len(fake.updateDatabaseDdlArgsForCall)
 }
 
-func (fake *FakeSpannerClient) UpdateDatabaseDdlCalls(stub func(context.Context, *databasepb.UpdateDatabaseDdlRequest, ...gax.CallOption) (*database.UpdateDatabaseDdlOperation, error)) {
+func (fake *FakeClient) UpdateDatabaseDdlCalls(stub func(context.Context, *databasepb.UpdateDatabaseDdlRequest, ...gax.CallOption) (*database.UpdateDatabaseDdlOperation, error)) {
 	fake.updateDatabaseDdlMutex.Lock()
 	defer fake.updateDatabaseDdlMutex.Unlock()
 	fake.UpdateDatabaseDdlStub = stub
 }
 
-func (fake *FakeSpannerClient) UpdateDatabaseDdlArgsForCall(i int) (context.Context, *databasepb.UpdateDatabaseDdlRequest, []gax.CallOption) {
+func (fake *FakeClient) UpdateDatabaseDdlArgsForCall(i int) (context.Context, *databasepb.UpdateDatabaseDdlRequest, []gax.CallOption) {
 	fake.updateDatabaseDdlMutex.RLock()
 	defer fake.updateDatabaseDdlMutex.RUnlock()
 	argsForCall := fake.updateDatabaseDdlArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeSpannerClient) UpdateDatabaseDdlReturns(result1 *database.UpdateDatabaseDdlOperation, result2 error) {
+func (fake *FakeClient) UpdateDatabaseDdlReturns(result1 *database.UpdateDatabaseDdlOperation, result2 error) {
 	fake.updateDatabaseDdlMutex.Lock()
 	defer fake.updateDatabaseDdlMutex.Unlock()
 	fake.UpdateDatabaseDdlStub = nil
@@ -225,7 +225,7 @@ func (fake *FakeSpannerClient) UpdateDatabaseDdlReturns(result1 *database.Update
 	}{result1, result2}
 }
 
-func (fake *FakeSpannerClient) UpdateDatabaseDdlReturnsOnCall(i int, result1 *database.UpdateDatabaseDdlOperation, result2 error) {
+func (fake *FakeClient) UpdateDatabaseDdlReturnsOnCall(i int, result1 *database.UpdateDatabaseDdlOperation, result2 error) {
 	fake.updateDatabaseDdlMutex.Lock()
 	defer fake.updateDatabaseDdlMutex.Unlock()
 	fake.UpdateDatabaseDdlStub = nil
@@ -241,7 +241,7 @@ func (fake *FakeSpannerClient) UpdateDatabaseDdlReturnsOnCall(i int, result1 *da
 	}{result1, result2}
 }
 
-func (fake *FakeSpannerClient) Invocations() map[string][][]interface{} {
+func (fake *FakeClient) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.readWriteTransactionMutex.RLock()
@@ -257,7 +257,7 @@ func (fake *FakeSpannerClient) Invocations() map[string][][]interface{} {
 	return copiedInvocations
 }
 
-func (fake *FakeSpannerClient) recordInvocation(key string, args []interface{}) {
+func (fake *FakeClient) recordInvocation(key string, args []interface{}) {
 	fake.invocationsMutex.Lock()
 	defer fake.invocationsMutex.Unlock()
 	if fake.invocations == nil {
@@ -269,4 +269,4 @@ func (fake *FakeSpannerClient) recordInvocation(key string, args []interface{}) 
 	fake.invocations[key] = append(fake.invocations[key], args)
 }
 
-var _ migration.SpannerClient = new(FakeSpannerClient)
+var _ migration.Client = new(FakeClient)

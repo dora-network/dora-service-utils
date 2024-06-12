@@ -14,7 +14,7 @@ const (
 )
 
 // Migrate applies each migration in the migrations directory to the Cloud Spanner database.
-func Migrate(ctx context.Context, migrationsFS fs.FS, cfg Config, client SpannerClient) error {
+func Migrate(ctx context.Context, migrationsFS fs.FS, cfg Config, client Client) error {
 	if err := EnsureMigrationTable(ctx, cfg, client, SchemaVersionTable); err != nil {
 		return err
 	}
@@ -75,7 +75,7 @@ func Migrate(ctx context.Context, migrationsFS fs.FS, cfg Config, client Spanner
 	})
 }
 
-func EnsureMigrationTable(ctx context.Context, config Config, client SpannerClient, tableName string) error {
+func EnsureMigrationTable(ctx context.Context, config Config, client Client, tableName string) error {
 	rows := client.Single().Read(ctx, tableName, spanner.AllKeys(), []string{"version"})
 	if err := rows.Do(func(row *spanner.Row) error {
 		return nil
@@ -107,7 +107,7 @@ func EnsureMigrationTable(ctx context.Context, config Config, client SpannerClie
 	return nil
 }
 
-func GetCurrentVersion(ctx context.Context, client SpannerClient, tableName string) (int64, error) {
+func GetCurrentVersion(ctx context.Context, client Client, tableName string) (int64, error) {
 	stmt := spanner.NewStatement(fmt.Sprintf("SELECT version FROM %s ORDER BY version DESC LIMIT 1", tableName))
 	iter := client.Single().Query(ctx, stmt)
 	defer iter.Stop()
@@ -121,7 +121,7 @@ func GetCurrentVersion(ctx context.Context, client SpannerClient, tableName stri
 	return version, nil
 }
 
-func SetCurrentVersion(ctx context.Context, client SpannerClient, tableName string, version int64) error {
+func SetCurrentVersion(ctx context.Context, client Client, tableName string, version int64) error {
 	_, err := client.ReadWriteTransaction(ctx, func(ctx context.Context, txn *spanner.ReadWriteTransaction) error {
 		stmt := spanner.Statement{
 			SQL: fmt.Sprintf(`INSERT INTO %s (version) VALUES
