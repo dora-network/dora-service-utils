@@ -17,6 +17,7 @@ type Client interface {
 	ReadWriteTransaction(ctx context.Context, f func(context.Context, *spanner.ReadWriteTransaction) error) (commitTimestamp time.Time, err error)
 	Single() *spanner.ReadOnlyTransaction
 	UpdateDatabaseDdl(ctx context.Context, req *databasepb.UpdateDatabaseDdlRequest, opts ...gax.CallOption) (*databasev1.UpdateDatabaseDdlOperation, error)
+	Close() error
 }
 
 type client struct {
