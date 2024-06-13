@@ -10,9 +10,9 @@ import (
 )
 
 func TestLogger(t *testing.T) {
-	l1, err := logger.New("debug", "test.log")
+	l1, err := logger.New("debug", "test.log", false)
 	require.NoError(t, err)
-	l2, err := logger.NewThreadSafeLogger("debug", "test.log")
+	l2, err := logger.NewThreadSafeLogger("debug", "test.log", false)
 	require.NoError(t, err)
 	wg := sync.WaitGroup{}
 	wg.Add(2)
