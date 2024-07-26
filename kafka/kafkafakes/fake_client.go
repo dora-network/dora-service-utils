@@ -37,6 +37,13 @@ type FakeClient struct {
 	pollRecordsReturnsOnCall map[int]struct {
 		result1 kgo.Fetches
 	}
+	ProduceStub        func(context.Context, *kgo.Record, func(*kgo.Record, error))
+	produceMutex       sync.RWMutex
+	produceArgsForCall []struct {
+		arg1 context.Context
+		arg2 *kgo.Record
+		arg3 func(*kgo.Record, error)
+	}
 	ProduceSyncStub        func(context.Context, ...*kgo.Record) kgo.ProduceResults
 	produceSyncMutex       sync.RWMutex
 	produceSyncArgsForCall []struct {
@@ -200,6 +207,40 @@ func (fake *FakeClient) PollRecordsReturnsOnCall(i int, result1 kgo.Fetches) {
 	}{result1}
 }
 
+func (fake *FakeClient) Produce(arg1 context.Context, arg2 *kgo.Record, arg3 func(*kgo.Record, error)) {
+	fake.produceMutex.Lock()
+	fake.produceArgsForCall = append(fake.produceArgsForCall, struct {
+		arg1 context.Context
+		arg2 *kgo.Record
+		arg3 func(*kgo.Record, error)
+	}{arg1, arg2, arg3})
+	stub := fake.ProduceStub
+	fake.recordInvocation("Produce", []interface{}{arg1, arg2, arg3})
+	fake.produceMutex.Unlock()
+	if stub != nil {
+		fake.ProduceStub(arg1, arg2, arg3)
+	}
+}
+
+func (fake *FakeClient) ProduceCallCount() int {
+	fake.produceMutex.RLock()
+	defer fake.produceMutex.RUnlock()
+	return len(fake.produceArgsForCall)
+}
+
+func (fake *FakeClient) ProduceCalls(stub func(context.Context, *kgo.Record, func(*kgo.Record, error))) {
+	fake.produceMutex.Lock()
+	defer fake.produceMutex.Unlock()
+	fake.ProduceStub = stub
+}
+
+func (fake *FakeClient) ProduceArgsForCall(i int) (context.Context, *kgo.Record, func(*kgo.Record, error)) {
+	fake.produceMutex.RLock()
+	defer fake.produceMutex.RUnlock()
+	argsForCall := fake.produceArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
 func (fake *FakeClient) ProduceSync(arg1 context.Context, arg2 ...*kgo.Record) kgo.ProduceResults {
 	fake.produceSyncMutex.Lock()
 	ret, specificReturn := fake.produceSyncReturnsOnCall[len(fake.produceSyncArgsForCall)]
@@ -271,6 +312,8 @@ func (fake *FakeClient) Invocations() map[string][][]interface{} {
 	defer fake.pingMutex.RUnlock()
 	fake.pollRecordsMutex.RLock()
 	defer fake.pollRecordsMutex.RUnlock()
+	fake.produceMutex.RLock()
+	defer fake.produceMutex.RUnlock()
 	fake.produceSyncMutex.RLock()
 	defer fake.produceSyncMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

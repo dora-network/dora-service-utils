@@ -46,6 +46,18 @@ type FakeClient struct {
 	hSetReturnsOnCall map[int]struct {
 		result1 *redisa.IntCmd
 	}
+	IncrStub        func(context.Context, string) *redisa.IntCmd
+	incrMutex       sync.RWMutex
+	incrArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+	}
+	incrReturns struct {
+		result1 *redisa.IntCmd
+	}
+	incrReturnsOnCall map[int]struct {
+		result1 *redisa.IntCmd
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -229,6 +241,68 @@ func (fake *FakeClient) HSetReturnsOnCall(i int, result1 *redisa.IntCmd) {
 	}{result1}
 }
 
+func (fake *FakeClient) Incr(arg1 context.Context, arg2 string) *redisa.IntCmd {
+	fake.incrMutex.Lock()
+	ret, specificReturn := fake.incrReturnsOnCall[len(fake.incrArgsForCall)]
+	fake.incrArgsForCall = append(fake.incrArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.IncrStub
+	fakeReturns := fake.incrReturns
+	fake.recordInvocation("Incr", []interface{}{arg1, arg2})
+	fake.incrMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) IncrCallCount() int {
+	fake.incrMutex.RLock()
+	defer fake.incrMutex.RUnlock()
+	return len(fake.incrArgsForCall)
+}
+
+func (fake *FakeClient) IncrCalls(stub func(context.Context, string) *redisa.IntCmd) {
+	fake.incrMutex.Lock()
+	defer fake.incrMutex.Unlock()
+	fake.IncrStub = stub
+}
+
+func (fake *FakeClient) IncrArgsForCall(i int) (context.Context, string) {
+	fake.incrMutex.RLock()
+	defer fake.incrMutex.RUnlock()
+	argsForCall := fake.incrArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeClient) IncrReturns(result1 *redisa.IntCmd) {
+	fake.incrMutex.Lock()
+	defer fake.incrMutex.Unlock()
+	fake.IncrStub = nil
+	fake.incrReturns = struct {
+		result1 *redisa.IntCmd
+	}{result1}
+}
+
+func (fake *FakeClient) IncrReturnsOnCall(i int, result1 *redisa.IntCmd) {
+	fake.incrMutex.Lock()
+	defer fake.incrMutex.Unlock()
+	fake.IncrStub = nil
+	if fake.incrReturnsOnCall == nil {
+		fake.incrReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntCmd
+		})
+	}
+	fake.incrReturnsOnCall[i] = struct {
+		result1 *redisa.IntCmd
+	}{result1}
+}
+
 func (fake *FakeClient) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -238,6 +312,8 @@ func (fake *FakeClient) Invocations() map[string][][]interface{} {
 	defer fake.hGetMutex.RUnlock()
 	fake.hSetMutex.RLock()
 	defer fake.hSetMutex.RUnlock()
+	fake.incrMutex.RLock()
+	defer fake.incrMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value
