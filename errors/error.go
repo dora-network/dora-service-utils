@@ -86,7 +86,7 @@ var (
 	ErrAssetIDMustNotContainHyphen   = New(InvalidInputError, "assetID must not contain hyphen")
 	ErrValueMustBeExpressedAsInteger = Data("value must be expressed as an integer")
 
-	ErrCannotChangeOrderType = Data("order type cannot be changed, cancel and submit a new order")
+	ErrCannotChangeOrderType = Data("order type cannot be changed")
 
 	ErrInvalidInAssetSell       = Data("Sell orders must have assetIn = Base")
 	ErrInvalidOutAssetSell      = Data("Sell order must have assetOut = Quote")
