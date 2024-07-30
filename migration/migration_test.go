@@ -1,12 +1,13 @@
 package migration_test
 
 import (
-	"cloud.google.com/go/spanner"
+	gs "cloud.google.com/go/spanner"
 	"cloud.google.com/go/spanner/admin/instance/apiv1/instancepb"
 	"context"
 	"embed"
 	"fmt"
 	"github.com/dora-network/dora-service-utils/migration"
+	"github.com/dora-network/dora-service-utils/spanner"
 	"github.com/dora-network/dora-service-utils/testing/emulators"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -56,12 +57,12 @@ func Test_Migrate(t *testing.T) {
 	hostAndPort := resource.GetHostPort("9010/tcp")
 	require.NoError(t, os.Setenv("SPANNER_EMULATOR_HOST", hostAndPort), "setting spanner emulator host")
 
-	config := migration.Config{
+	config := spanner.Config{
 		ProjectID:  projectName,
 		InstanceID: instanceID,
 		DatabaseID: databaseName,
 	}
-	client, err := migration.NewClient(ctx, config)
+	client, err := spanner.NewClient(ctx, config)
 	require.NoError(t, err, "could not create migration spanner client")
 	err = emulator.Wait(ctx, client)
 	require.NoError(t, err, "could not connect to spanner emulator")
@@ -74,7 +75,7 @@ func Test_Migrate(t *testing.T) {
 	var want int64 = 2
 	assert.Equal(t, want, got)
 
-	iter := client.Single().Query(ctx, spanner.Statement{
+	iter := client.Single().Query(ctx, gs.Statement{
 		SQL:    "select * from information_schema.tables where  table_schema = 'public' and table_type = 'BASE TABLE';",
 		Params: map[string]interface{}{"p1": migration.SchemaVersionTable},
 	})
@@ -82,7 +83,7 @@ func Test_Migrate(t *testing.T) {
 	defer iter.Stop()
 
 	gotTables := make([]string, 0)
-	err = iter.Do(func(r *spanner.Row) error {
+	err = iter.Do(func(r *gs.Row) error {
 		var tableName string
 		if err := r.ColumnByName("table_name", &tableName); err != nil {
 			return err
@@ -112,12 +113,12 @@ func TestEnsureMigrationTable(t *testing.T) {
 	hostAndPort := resource.GetHostPort("9010/tcp")
 	require.NoError(t, os.Setenv("SPANNER_EMULATOR_HOST", hostAndPort), "setting spanner emulator host")
 
-	config := migration.Config{
+	config := spanner.Config{
 		ProjectID:  projectName,
 		InstanceID: instanceID,
 		DatabaseID: databaseName,
 	}
-	client, err := migration.NewClient(ctx, config)
+	client, err := spanner.NewClient(ctx, config)
 	require.NoError(t, err, "could not create migration spanner client")
 	err = emulator.Wait(ctx, client)
 	require.NoError(t, err, "could not connect to spanner emulator")
@@ -126,13 +127,13 @@ func TestEnsureMigrationTable(t *testing.T) {
 
 	require.NoError(t, migration.EnsureMigrationTable(ctx, config, client, migration.SchemaVersionTable))
 
-	iter := client.Single().Query(ctx, spanner.Statement{
+	iter := client.Single().Query(ctx, gs.Statement{
 		SQL:    "select * from information_schema.tables where table_name = $1;",
 		Params: map[string]interface{}{"p1": migration.SchemaVersionTable},
 	})
 	defer iter.Stop()
 	tableFound := false
-	err = iter.Do(func(row *spanner.Row) error {
+	err = iter.Do(func(row *gs.Row) error {
 		var tableName string
 		if err := row.ColumnByName("table_name", &tableName); err != nil {
 			return err
@@ -164,12 +165,12 @@ func TestGetCurrentVersion(t *testing.T) {
 	hostAndPort := resource.GetHostPort("9010/tcp")
 	require.NoError(t, os.Setenv("SPANNER_EMULATOR_HOST", hostAndPort), "setting spanner emulator host")
 
-	config := migration.Config{
+	config := spanner.Config{
 		ProjectID:  projectName,
 		InstanceID: instanceID,
 		DatabaseID: databaseName,
 	}
-	client, err := migration.NewClient(ctx, config)
+	client, err := spanner.NewClient(ctx, config)
 	require.NoError(t, err, "could not create migration spanner client")
 	err = emulator.Wait(ctx, client)
 	require.NoError(t, err, "could not connect to spanner emulator")
@@ -179,8 +180,8 @@ func TestGetCurrentVersion(t *testing.T) {
 	err = migration.EnsureMigrationTable(ctx, config, client, migration.SchemaVersionTable)
 	require.NoError(t, err, "could not create schema migrations table")
 	var want int64 = 20
-	_, err = client.ReadWriteTransaction(ctx, func(ctx context.Context, txn *spanner.ReadWriteTransaction) error {
-		stmt := spanner.Statement{
+	_, err = client.ReadWriteTransaction(ctx, func(ctx context.Context, txn *gs.ReadWriteTransaction) error {
+		stmt := gs.Statement{
 			SQL: fmt.Sprintf(`INSERT INTO %s (version) VALUES
 								(18),
 								(19),
@@ -218,12 +219,12 @@ func TestSetCurrentVersion(t *testing.T) {
 	hostAndPort := resource.GetHostPort("9010/tcp")
 	require.NoError(t, os.Setenv("SPANNER_EMULATOR_HOST", hostAndPort), "setting spanner emulator host")
 
-	config := migration.Config{
+	config := spanner.Config{
 		ProjectID:  projectName,
 		InstanceID: instanceID,
 		DatabaseID: databaseName,
 	}
-	client, err := migration.NewClient(ctx, config)
+	client, err := spanner.NewClient(ctx, config)
 	require.NoError(t, err, "could not create migration spanner client")
 	err = emulator.Wait(ctx, client)
 	require.NoError(t, err, "could not connect to spanner emulator")
@@ -233,8 +234,8 @@ func TestSetCurrentVersion(t *testing.T) {
 	err = migration.EnsureMigrationTable(ctx, config, client, migration.SchemaVersionTable)
 	require.NoError(t, err, "could not create schema migrations table")
 	var want int64 = 21
-	_, err = client.ReadWriteTransaction(ctx, func(ctx context.Context, txn *spanner.ReadWriteTransaction) error {
-		stmt := spanner.Statement{
+	_, err = client.ReadWriteTransaction(ctx, func(ctx context.Context, txn *gs.ReadWriteTransaction) error {
+		stmt := gs.Statement{
 			SQL: fmt.Sprintf(`INSERT INTO %s (version) VALUES
 								(18),
 								(19),
@@ -251,12 +252,12 @@ func TestSetCurrentVersion(t *testing.T) {
 	err = migration.SetCurrentVersion(ctx, client, migration.SchemaVersionTable, want)
 	require.NoError(t, err)
 
-	iter := client.Single().Query(ctx, spanner.Statement{
+	iter := client.Single().Query(ctx, gs.Statement{
 		SQL: "select version from public.schema_migrations order by version desc;",
 	})
 
 	versions := make([]int64, 0)
-	err = iter.Do(func(r *spanner.Row) error {
+	err = iter.Do(func(r *gs.Row) error {
 		var version int64
 		if err := r.ColumnByName("version", &version); err != nil {
 			return err

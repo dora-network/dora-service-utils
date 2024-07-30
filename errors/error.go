@@ -82,6 +82,23 @@ var (
 
 	ErrReadNotAllowed  = New(InternalError, "txctx has reads disabled")
 	ErrWriteNotAllowed = New(InternalError, "txctx has writes disabled")
+
+	ErrAssetIDMustNotContainHyphen   = New(InvalidInputError, "assetID must not contain hyphen")
+	ErrValueMustBeExpressedAsInteger = Data("value must be expressed as an integer")
+
+	ErrCannotChangeOrderType = Data("order type cannot be changed")
+
+	ErrInvalidInAssetSell       = Data("Sell orders must have assetIn = Base")
+	ErrInvalidOutAssetSell      = Data("Sell order must have assetOut = Quote")
+	ErrOrderBookIDAssetMismatch = Data("orderbook ID did not match assets")
+	ErrInvalidInAssetBuy        = Data("Buy orders must have assetIn = Quote")
+	ErrInvalidOutAssetBuy       = Data("Buy orders must have assetOut = Base")
+
+	ErrOrderMissingUserID             = Data("order request missing user id")
+	ErrOrderRequestValidationFailed   = Data("order request validation failed")
+	ErrOrderAmendCannotChangeAssets   = Data("order amend cannot change assets")
+	ErrOrderNotFound                  = Data("order not found")
+	ErrOrderAmendCannotChangeLeverage = Data("order amend cannot change leverage")
 )
 
 // TypedError represents an error with a specific type.

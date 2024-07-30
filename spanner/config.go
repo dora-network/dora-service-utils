@@ -1,4 +1,4 @@
-package migration
+package spanner
 
 import "fmt"
 
