@@ -4,7 +4,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/dora-network/bond-api-golang/math"
+	"github.com/dora-network/dora-service-utils/math"
 
 	"github.com/stretchr/testify/require"
 )

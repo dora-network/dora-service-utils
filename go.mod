@@ -4,8 +4,8 @@ go 1.22.3
 
 require (
 	cloud.google.com/go/spanner v1.63.0
+	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/docker/docker v27.0.3+incompatible
-	github.com/dora-network/bond-api-golang v0.0.0-20240710204146-eb0320e03fa8
 	github.com/googleapis/gax-go/v2 v2.12.4
 	github.com/govalues/decimal v0.1.29
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.8.1
@@ -31,7 +31,6 @@ require (
 	github.com/GoogleCloudPlatform/grpc-gcp-go/grpcgcp v1.5.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
-	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.4.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cncf/xds/go v0.0.0-20240423153145-555b57ec207b // indirect

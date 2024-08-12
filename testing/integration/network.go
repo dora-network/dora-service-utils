@@ -2,6 +2,10 @@ package integration
 
 import (
 	gspanner "cloud.google.com/go/spanner"
+	database "cloud.google.com/go/spanner/admin/database/apiv1"
+	"cloud.google.com/go/spanner/admin/database/apiv1/databasepb"
+	instance "cloud.google.com/go/spanner/admin/instance/apiv1"
+	"cloud.google.com/go/spanner/admin/instance/apiv1/instancepb"
 	"context"
 	"fmt"
 	"github.com/dora-network/dora-service-utils/spanner"
@@ -243,4 +247,52 @@ func (dora *DoraNetwork) GetRedisClient() (*redisv9.Client, error) {
 	return redisv9.NewClient(&redisv9.Options{
 		Addr: dora.RedisResource.GetHostPort("6379/tcp"),
 	}), nil
+}
+
+func (dora *DoraNetwork) GetSpannerClient(ctx context.Context, config spanner.Config) (spanner.Client, error) {
+	return spanner.NewClient(ctx, config)
+}
+
+func (dora *DoraNetwork) SetupInstance(ctx context.Context, config spanner.Config) error {
+	admin, err := instance.NewInstanceAdminClient(ctx)
+	if err != nil {
+		return err
+	}
+	defer admin.Close()
+
+	op, err := admin.CreateInstance(ctx, &instancepb.CreateInstanceRequest{
+		Parent:     fmt.Sprintf("projects/%s", config.ProjectID),
+		InstanceId: config.InstanceID,
+		Instance: &instancepb.Instance{
+			Config:      fmt.Sprintf("project/%s/instanceConfigs/emulator-config", config.ProjectID),
+			DisplayName: "test",
+			NodeCount:   1,
+		},
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = op.Wait(ctx)
+	return err
+}
+
+func (dora *DoraNetwork) SetupDatabase(ctx context.Context, config spanner.Config) error {
+	admin, err := database.NewDatabaseAdminClient(ctx)
+	if err != nil {
+		return err
+	}
+	defer admin.Close()
+
+	op, err := admin.CreateDatabase(ctx, &databasepb.CreateDatabaseRequest{
+		Parent:          fmt.Sprintf("projects/%s/instances/%s", config.ProjectID, config.InstanceID),
+		CreateStatement: fmt.Sprintf("CREATE DATABASE %s", config.DatabaseID),
+		DatabaseDialect: databasepb.DatabaseDialect_POSTGRESQL,
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = op.Wait(ctx)
+	return err
 }
