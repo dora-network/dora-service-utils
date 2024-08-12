@@ -5,11 +5,11 @@ go 1.22.3
 require (
 	cloud.google.com/go/spanner v1.63.0
 	github.com/cenkalti/backoff/v4 v4.3.0
-	github.com/docker/docker v27.0.3+incompatible
+	github.com/docker/docker v27.1.1+incompatible
 	github.com/googleapis/gax-go/v2 v2.12.4
 	github.com/govalues/decimal v0.1.29
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.8.1
-	github.com/ory/dockertest/v3 v3.10.0
+	github.com/ory/dockertest/v3 v3.11.0
 	github.com/redis/go-redis/v9 v9.5.3
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
@@ -39,7 +39,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/distribution/reference v0.6.0 // indirect
-	github.com/docker/cli v26.1.4+incompatible // indirect
+	github.com/docker/cli v27.1.1+incompatible // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/envoyproxy/go-control-plane v0.12.0 // indirect
@@ -47,6 +47,7 @@ require (
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/go-viper/mapstructure/v2 v2.1.0 // indirect
 	github.com/gogo/protobuf v1.3.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
@@ -62,7 +63,7 @@ require (
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
-	github.com/opencontainers/runc v1.1.12 // indirect
+	github.com/opencontainers/runc v1.1.13 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -84,7 +85,7 @@ require (
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/oauth2 v0.20.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.22.0 // indirect
