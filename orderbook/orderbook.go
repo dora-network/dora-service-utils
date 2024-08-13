@@ -9,7 +9,6 @@ func ID(baseID, quoteID string) string {
 type Side string
 
 const (
-	Unspecified Side = "unspecified"
-	Buy         Side = "buy"
-	Sell        Side = "sell"
+	Buy  Side = "buy"
+	Sell Side = "sell"
 )
