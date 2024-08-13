@@ -64,11 +64,12 @@ var (
 	ErrNoValidSwapPath                    = New(InternalError, "no swap path found")
 	ErrSwapInputInNil                     = New(InternalError, "AssetIn and MinAmtOut cannot be nil")
 
-	ErrVolumeNotFound  = New(NotFoundError, "volume not found")
-	ErrIsInNotFound    = New(NotFoundError, "bond isin not found")
-	ErrInvalidInput    = New(InvalidInputError, "invalid input")
-	ErrBorrowLimit     = New(InvalidInputError, "user would be above their borrow limit")
-	ErrInvalidPoolType = New(InvalidInputError, "invalid pool type")
+	ErrVolumeNotFound    = New(NotFoundError, "volume not found")
+	ErrIsInNotFound      = New(NotFoundError, "bond isin not found")
+	ErrInvalidInput      = New(InvalidInputError, "invalid input")
+	ErrBorrowLimit       = New(InvalidInputError, "user would be above their borrow limit")
+	ErrInvalidPoolType   = New(InvalidInputError, "invalid pool type")
+	ErrInvalidLimitPrice = New(InvalidInputError, "invalid limit price")
 
 	ErrLiquidationIneligible = New(InvalidInputError, "user not eligible for liquidation")
 	ErrLiquidationLenZero    = New(InvalidInputError, "liquidation-eligible user has zero collateral (or zero borrows)")
@@ -99,6 +100,7 @@ var (
 	ErrOrderAmendCannotChangeAssets   = Data("order amend cannot change assets")
 	ErrOrderNotFound                  = Data("order not found")
 	ErrOrderAmendCannotChangeLeverage = Data("order amend cannot change leverage")
+	ErrOrderContainsInvalidOrderType  = Data("order contains invalid order type")
 )
 
 // TypedError represents an error with a specific type.

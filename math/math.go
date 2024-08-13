@@ -6,7 +6,7 @@ import (
 	"math/big"
 	"strconv"
 
-	"github.com/dora-network/bond-api-golang/errors"
+	"github.com/dora-network/dora-service-utils/errors"
 )
 
 var (
