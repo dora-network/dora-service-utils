@@ -2,7 +2,6 @@ package balance
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -13,20 +12,21 @@ import (
 	"github.com/goccy/go-json"
 
 	"github.com/dora-network/dora-service-utils/redis"
-	"github.com/govalues/decimal"
 )
 
-type Amount struct {
-	Amount    decimal.Decimal `json:"amount"`
-	Timestamp time.Time       `json:"timestamp"`
+type Balance struct {
+	Amount    uint64    `json:"amount"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 type Balances struct {
-	User       Amount `json:"user"`
-	Borrowed   Amount `json:"borrowed"`
-	Collateral Amount `json:"collateral"`
-	Supplied   Amount `json:"supplied"`
-	Virtual    Amount `json:"virtual"`
+	UserID     string  `json:"user_id" redis:"user_id"`
+	AssetID    string  `json:"asset_id" redis:"asset_id"`
+	Balance    Balance `json:"balances" redis:"balances"`
+	Borrowed   Balance `json:"borrowed" redis:"borrowed"`
+	Collateral Balance `json:"collateral" redis:"collateral"`
+	Supplied   Balance `json:"supplied" redis:"supplied"`
+	Virtual    Balance `json:"virtual" redis:"virtual"`
 }
 
 func (b *Balances) MarshalBinary() ([]byte, error) {
@@ -38,32 +38,65 @@ func (b *Balances) UnmarshalBinary(data []byte) error {
 }
 
 func UserBalanceKey(userID string) string {
-	return fmt.Sprintf("balances:%s", userID)
+	return fmt.Sprintf("balances:users:%s", userID)
 }
 
-func GetUserBalances(ctx context.Context, rdb redis.Client, timeout time.Duration, userID, assetID string) (*Balances, error) {
-	watch := UserBalanceKey(userID)
+func ModuleBalanceKey() string {
+	return fmt.Sprintf("balances:modules")
+}
 
-	balances := new(Balances)
+func GetUserBalances(ctx context.Context, rdb redis.Client, timeout time.Duration, userIDs []string, assets ...string) ([]Balances, error) {
+	watch := make([]string, len(userIDs))
+	for i, userID := range userIDs {
+		watch[i] = UserBalanceKey(userID)
+	}
+	return getBalance(ctx, rdb, timeout, watch, assets...)
+}
+
+func GetModuleBalances(ctx context.Context, rdb redis.Client, timeout time.Duration, assetIDs ...string) ([]Balances, error) {
+	watch := []string{ModuleBalanceKey()}
+	return getBalance(ctx, rdb, timeout, watch, assetIDs...)
+}
+
+func getBalance(ctx context.Context, rdb redis.Client, timeout time.Duration, keys []string, ids ...string) ([]Balances, error) {
+	var balances []Balances
 
 	f := func(tx *redisv9.Tx) error {
 		// This is just a simple read from Redis, but we're going to read it in a transaction to ensure
 		// that if some other process is changing the data while we are attempting to read it, we're not
 		// reading it with stale data.
-		bs, err := tx.HGet(ctx, UserBalanceKey(userID), assetID).Bytes()
-		if err != nil {
-			if errors.Is(err, redisv9.Nil) {
-				return nil
+
+		// we use the TxPipelined method to execute multiple commands in a single transaction
+		// and collect the results, if any of the keys we are watching have been modified
+		// since we started the transaction, the transaction will fail and we will retry
+		cmd, err := tx.TxPipelined(ctx, func(pipe redisv9.Pipeliner) error {
+			for _, key := range keys {
+				pipe.HMGet(ctx, key, ids...)
+			}
+			return nil
+		})
+
+		for _, c := range cmd {
+			res, err := c.(*redisv9.SliceCmd).Result()
+			if err != nil {
+				return err
 			}
 
-			return err
+			for _, v := range res {
+				if v == nil {
+					balances = append(balances, Balances{})
+					continue
+				}
+
+				b := new(Balances)
+				if err := b.UnmarshalBinary([]byte(v.(string))); err != nil {
+					return err
+				}
+				balances = append(balances, *b)
+			}
 		}
 
-		if err := balances.UnmarshalBinary(bs); err != nil {
-			return err
-		}
-
-		return nil
+		return err
 	}
 
 	if err := redis.TryTransaction(
@@ -71,7 +104,7 @@ func GetUserBalances(ctx context.Context, rdb redis.Client, timeout time.Duratio
 		rdb,
 		f,
 		backoff.NewExponentialBackOff(backoff.WithMaxElapsedTime(timeout)),
-		watch,
+		keys...,
 	); err != nil {
 		return nil, err
 	}

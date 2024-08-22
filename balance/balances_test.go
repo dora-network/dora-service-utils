@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	redisv9 "github.com/redis/go-redis/v9"
+	"github.com/dora-network/dora-service-utils/ptr"
 
-	"github.com/govalues/decimal"
+	redisv9 "github.com/redis/go-redis/v9"
 
 	"github.com/dora-network/dora-service-utils/balance"
 	"github.com/stretchr/testify/assert"
@@ -32,66 +32,157 @@ func TestBalances(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Should return empty balances if the user record doesn't exist", func(tt *testing.T) {
-		balances, err := balance.GetUserBalances(ctx, rdb, time.Second, "user1", "asset1")
+		balances, err := balance.GetUserBalances(ctx, rdb, time.Second, []string{"user1"}, "asset1")
 		require.NoError(tt, err)
 		require.NotNil(tt, balances)
-		emptyBalance := &balance.Balances{}
+		emptyBalance := []balance.Balances{
+			{},
+		}
 		assert.Equal(tt, emptyBalance, balances)
 	})
 
 	t.Run("Should retrieve the users balances if it exists", func(tt *testing.T) {
 		// first set up the user balances
-
-		want := &balance.Balances{
-			User: balance.Amount{
-				Amount:    newDecimal(t, 100),
-				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
-			},
-			Borrowed: balance.Amount{
-				Amount:    newDecimal(t, 150),
-				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
-			},
-			Collateral: balance.Amount{
-				Amount:    newDecimal(t, 200),
-				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
-			},
-			Supplied: balance.Amount{
-				Amount:    newDecimal(t, 500),
-				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
-			},
-			Virtual: balance.Amount{
-				Amount:    newDecimal(t, 1000),
-				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+		want := []balance.Balances{
+			{
+				UserID:  "user1",
+				AssetID: "asset1",
+				Balance: balance.Balance{
+					Amount:    100,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Borrowed: balance.Balance{
+					Amount:    150,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Collateral: balance.Balance{
+					Amount:    200,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Supplied: balance.Balance{
+					Amount:    500,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Virtual: balance.Balance{
+					Amount:    1000,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
 			},
 		}
 
-		rdb.HSet(ctx, balance.UserBalanceKey("user1"), "asset1", want)
-		balances, err := balance.GetUserBalances(ctx, rdb, time.Second, "user1", "asset1")
+		require.NoError(t, rdb.HSet(ctx, balance.UserBalanceKey("user1"), "asset1", ptr.From(want[0])).Err())
+		balances, err := balance.GetUserBalances(ctx, rdb, time.Second, []string{"user1"}, "asset1")
 		require.NoError(tt, err)
 		require.NotNil(tt, balances)
 		assert.Equal(tt, want, balances)
 	})
 
+	t.Run("Should retrieve the balances for multiple users", func(tt *testing.T) {
+		user2Balances := &balance.Balances{
+			UserID:  "user2",
+			AssetID: "asset1",
+			Balance: balance.Balance{
+				Amount:    1000,
+				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+			},
+			Borrowed: balance.Balance{
+				Amount:    1500,
+				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+			},
+			Collateral: balance.Balance{
+				Amount:    2000,
+				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+			},
+			Supplied: balance.Balance{
+				Amount:    5000,
+				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+			},
+			Virtual: balance.Balance{
+				Amount:    10000,
+				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+			},
+		}
+
+		require.NoError(t, rdb.HSet(ctx, balance.UserBalanceKey("user2"), "asset1", user2Balances).Err())
+		balances, err := balance.GetUserBalances(ctx, rdb, time.Second, []string{"user1", "user2"}, "asset1")
+		require.NoError(tt, err)
+		require.NotNil(tt, balances)
+		want := []balance.Balances{
+			{
+				UserID:  "user1",
+				AssetID: "asset1",
+				Balance: balance.Balance{
+					Amount:    100,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Borrowed: balance.Balance{
+					Amount:    150,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Collateral: balance.Balance{
+					Amount:    200,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Supplied: balance.Balance{
+					Amount:    500,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Virtual: balance.Balance{
+					Amount:    1000,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+			},
+			{
+				UserID:  "user2",
+				AssetID: "asset1",
+				Balance: balance.Balance{
+					Amount:    1000,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Borrowed: balance.Balance{
+					Amount:    1500,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Collateral: balance.Balance{
+					Amount:    2000,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Supplied: balance.Balance{
+					Amount:    5000,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+				Virtual: balance.Balance{
+					Amount:    10000,
+					Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
+				},
+			},
+		}
+
+		assert.Equal(tt, want, balances)
+	})
+
 	t.Run("Should update the user balances", func(tt *testing.T) {
 		asset2Balances := &balance.Balances{
-			User: balance.Amount{
-				Amount:    newDecimal(t, 90),
+			UserID:  "user1",
+			AssetID: "asset2",
+			Balance: balance.Balance{
+				Amount:    90,
 				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
 			},
-			Borrowed: balance.Amount{
-				Amount:    newDecimal(t, 250),
+			Borrowed: balance.Balance{
+				Amount:    250,
 				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
 			},
-			Collateral: balance.Amount{
-				Amount:    newDecimal(t, 300),
+			Collateral: balance.Balance{
+				Amount:    300,
 				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
 			},
-			Supplied: balance.Amount{
-				Amount:    newDecimal(t, 600),
+			Supplied: balance.Balance{
+				Amount:    600,
 				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
 			},
-			Virtual: balance.Amount{
-				Amount:    newDecimal(t, 2000),
+			Virtual: balance.Balance{
+				Amount:    2000,
 				Timestamp: time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC),
 			},
 		}
@@ -124,8 +215,8 @@ func TestBalances(t *testing.T) {
 			asset2 := balances[1]
 
 			// update the balances
-			asset1.User.Amount = newDecimal(t, 200)
-			asset2.User.Amount = newDecimal(t, 50)
+			asset1.Balance.Amount = 200
+			asset2.Balance.Amount = 50
 
 			// write the balances back to redis
 			err = tx.HSet(ctx, balance.UserBalanceKey("user1"), "asset1", asset1, "asset2", asset2).Err()
@@ -142,15 +233,9 @@ func TestBalances(t *testing.T) {
 		updated2 := new(balance.Balances)
 		require.NoError(tt, rdb.HGet(ctx, balance.UserBalanceKey("user1"), "asset1").Scan(updated1))
 		require.NoError(tt, rdb.HGet(ctx, balance.UserBalanceKey("user1"), "asset2").Scan(updated2))
-		assert.Equal(tt, newDecimal(t, 200), updated1.User.Amount)
-		assert.Equal(tt, newDecimal(t, 50), updated2.User.Amount)
-		assert.Equal(tt, newDecimal(t, 150), updated1.Borrowed.Amount)
-		assert.Equal(tt, newDecimal(t, 250), updated2.Borrowed.Amount)
+		assert.Equal(tt, uint64(200), updated1.Balance.Amount)
+		assert.Equal(tt, uint64(50), updated2.Balance.Amount)
+		assert.Equal(tt, uint64(150), updated1.Borrowed.Amount)
+		assert.Equal(tt, uint64(250), updated2.Borrowed.Amount)
 	})
-}
-
-func newDecimal(t *testing.T, value float64) decimal.Decimal {
-	d, err := decimal.NewFromFloat64(value)
-	require.NoError(t, err)
-	return d
 }
