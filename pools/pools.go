@@ -14,6 +14,18 @@ import (
 	redisv9 "github.com/redis/go-redis/v9"
 )
 
+var poolKeys = []string{
+	"base_asset",
+	"quote_asset",
+	"is_product_pool",
+	"amount_shares",
+	"amount_base",
+	"amount_quote",
+	"fee_factor",
+	"created_at",
+	"maturity_at",
+}
+
 // Pool represents a liquidity pool in the DORA network.
 // This struct is for serialization purposes only.
 type Pool struct {
@@ -35,10 +47,10 @@ func PoolBalanceKey(poolID string) string {
 func GetPoolBalances(ctx context.Context, rdb redis.Client, timeout time.Duration, poolID string) (*Pool, error) {
 	watch := PoolBalanceKey(poolID)
 
-	var pool *Pool
+	pool := new(Pool)
 
 	f := func(tx *redisv9.Tx) error {
-		err := tx.Get(ctx, watch).Scan(pool)
+		err := tx.HMGet(ctx, watch, poolKeys...).Scan(pool)
 		if err != nil {
 			if errors.Is(err, redisv9.Nil) {
 				return nil
@@ -66,7 +78,22 @@ func UpdatePool(ctx context.Context, rdb redis.Client, pool *Pool, timeout time.
 	poolID := orderbook.ID(pool.BaseAsset, pool.QuoteAsset)
 
 	txFunc := func(tx *redisv9.Tx) error {
-		return tx.Set(ctx, PoolBalanceKey(poolID), pool, 0).Err()
+		return tx.HSet(ctx, PoolBalanceKey(poolID),
+			// We have to set each field individually rather than just passing the struct
+			// which would be easier, because when serializing the struct, go-redis uses the
+			// MarshalBinary method for the decimal.Decimal type (fee factor), but when
+			// deserializing, it uses UnmarshalText which is expecting a number expressed
+			// as a string. This causes the deserialization to fail
+			"base_asset", pool.BaseAsset,
+			"quote_asset", pool.QuoteAsset,
+			"is_product_pool", pool.IsProductPool,
+			"amount_shares", pool.AmountShares,
+			"amount_base", pool.AmountBase,
+			"amount_quote", pool.AmountQuote,
+			"fee_factor", pool.FeeFactor.String(),
+			"created_at", pool.CreatedAt,
+			"maturity_at", pool.MaturityAt,
+		).Err()
 	}
 
 	return redis.TryTransaction(
@@ -76,4 +103,9 @@ func UpdatePool(ctx context.Context, rdb redis.Client, pool *Pool, timeout time.
 		backoff.NewExponentialBackOff(backoff.WithMaxElapsedTime(timeout)),
 		watch...,
 	)
+}
+
+func CreatePool(ctx context.Context, rdb redis.Client, pool *Pool, timeout time.Duration) error {
+	poolID := orderbook.ID(pool.BaseAsset, pool.QuoteAsset)
+	return UpdatePool(ctx, rdb, pool, timeout, poolID)
 }

@@ -14,19 +14,20 @@ import (
 	"github.com/dora-network/dora-service-utils/redis"
 )
 
-type Balance struct {
-	Amount    uint64    `json:"amount"`
-	Timestamp time.Time `json:"timestamp"`
+type Amount struct {
+	AssetID string `json:"asset_id"`
+	Amount  uint64 `json:"amount"`
 }
 
 type Balances struct {
-	UserID     string  `json:"user_id" redis:"user_id"`
-	AssetID    string  `json:"asset_id" redis:"asset_id"`
-	Balance    Balance `json:"balances" redis:"balances"`
-	Borrowed   Balance `json:"borrowed" redis:"borrowed"`
-	Collateral Balance `json:"collateral" redis:"collateral"`
-	Supplied   Balance `json:"supplied" redis:"supplied"`
-	Virtual    Balance `json:"virtual" redis:"virtual"`
+	UserID     string `json:"user_id" redis:"user_id"`
+	AssetID    string `json:"asset_id" redis:"asset_id"`
+	Balance    Amount `json:"balance" redis:"balance"`
+	Borrowed   Amount `json:"borrowed" redis:"borrowed"`
+	Collateral Amount `json:"collateral" redis:"collateral"`
+	Supplied   Amount `json:"supplied" redis:"supplied"`
+	Virtual    Amount `json:"virtual" redis:"virtual"`
+	Locked     Amount `json:"locked" redis:"locked"`
 }
 
 func (b *Balances) MarshalBinary() ([]byte, error) {
