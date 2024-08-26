@@ -101,6 +101,10 @@ var (
 	ErrOrderNotFound                  = Data("order not found")
 	ErrOrderAmendCannotChangeLeverage = Data("order amend cannot change leverage")
 	ErrOrderContainsInvalidOrderType  = Data("order contains invalid order type")
+
+	ErrPoolAssetsMismatch = Data("pools asset mismatch")
+
+	ErrInvalidOrderType = Data("invalid order type")
 )
 
 // TypedError represents an error with a specific type.

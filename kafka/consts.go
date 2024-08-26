@@ -14,4 +14,5 @@ const (
 	DefaultBalanceRequestsTopic   = "dora.network.balances.requests"
 	DefaultBalanceSnapshotTopic   = "dora.network.balances.snapshots"
 	DefaultBalanceUpdateTopic     = "dora.network.balances.updates"
+	DefaultTransactionsTopic      = "dora.network.transactions"
 )
