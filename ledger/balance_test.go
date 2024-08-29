@@ -8,8 +8,6 @@ import (
 
 	"github.com/dora-network/dora-service-utils/ptr"
 
-	redisv9 "github.com/redis/go-redis/v9"
-
 	"github.com/stretchr/testify/assert"
 
 	"github.com/dora-network/dora-service-utils/testing/integration"
@@ -127,44 +125,21 @@ func TestBalances(t *testing.T) {
 			// first we want to set up the balances for asset 2
 			require.NoError(tt, rdb.HSet(ctx, ledger.UserBalanceKey(UserIDOne), BondID, asset2Balances).Err())
 
-			txFunc := func(tx *redisv9.Tx) error {
-				// the operation should retrieve the balances for asset 1 and asset 2,
-				// update the balances for both and then write them back to redis
-				res, err := tx.HMGet(ctx, ledger.UserBalanceKey(UserIDOne), StableID, BondID).Result()
-				if err != nil {
-					return err
-				}
+			balances, err := ledger.GetUserBalances(ctx, rdb, time.Second, []string{UserIDOne}, StableID, BondID)
+			require.NoError(tt, err)
 
-				balances := make([]*ledger.Balance, 0, len(res))
-				for _, v := range res {
-					if v == nil {
-						balances = append(balances, &ledger.Balance{})
-						continue
-					}
-					b := new(ledger.Balance)
-					if err := b.UnmarshalBinary([]byte(v.(string))); err != nil {
-						return err
-					}
-					balances = append(balances, b)
-				}
+			asset1 := balances[0]
+			asset2 := balances[1]
 
-				asset1 := balances[0]
-				asset2 := balances[1]
+			// update the balances
+			asset1.Balance.Amount = 200
+			asset2.Balance.Amount = 50
 
-				// update the balances
-				asset1.Balance.Amount = 200
-				asset2.Balance.Amount = 50
+			require.NoError(
+				t,
+				ledger.SetUserBalances(ctx, rdb, time.Second, map[string][]ledger.Balance{UserIDOne: {asset1, asset2}}),
+			)
 
-				// write the balances back to redis
-				err = tx.HSet(ctx, ledger.UserBalanceKey(UserIDOne), StableID, asset1, BondID, asset2).Err()
-				if err != nil {
-					return err
-				}
-
-				return nil
-			}
-
-			require.NoError(t, ledger.UpdateBalances(ctx, rdb, txFunc, time.Second, ledger.UserBalanceKey(UserIDOne)))
 			// check if the balances were updated
 			updated1 := new(ledger.Balance)
 			updated2 := new(ledger.Balance)
@@ -174,6 +149,41 @@ func TestBalances(t *testing.T) {
 			assert.Equal(tt, uint64(50), updated2.Balance.Amount)
 			assert.Equal(tt, uint64(150), updated1.Borrowed.Amount)
 			assert.Equal(tt, uint64(250), updated2.Borrowed.Amount)
+		},
+	)
+
+	t.Run(
+		"Should update module balances", func(tt *testing.T) {
+			bondBalance := ledger.Balance{
+				AssetID:    BondID,
+				Balance:    ledger.NewAmount(BondID, 90),
+				Borrowed:   ledger.NewAmount(BondID, 250),
+				Collateral: ledger.NewAmount(BondID, 300),
+				Supplied:   ledger.NewAmount(BondID, 600),
+				Virtual:    ledger.NewAmount(BondID, 2000),
+				Locked:     ledger.NewAmount(BondID, 3300),
+			}
+
+			stableBalance := ledger.Balance{
+				AssetID:    StableID,
+				Balance:    ledger.NewAmount(StableID, 990),
+				Borrowed:   ledger.NewAmount(StableID, 200),
+				Collateral: ledger.NewAmount(StableID, 700),
+				Supplied:   ledger.NewAmount(StableID, 700),
+				Virtual:    ledger.NewAmount(StableID, 30),
+				Locked:     ledger.NewAmount(StableID, 66),
+			}
+
+			require.NoError(
+				t,
+				ledger.SetModuleBalances(ctx, rdb, time.Second, []ledger.Balance{stableBalance, bondBalance}),
+			)
+
+			balances, err := ledger.GetModuleBalances(ctx, rdb, time.Second, BondID, StableID)
+			require.NoError(tt, err)
+			require.Len(tt, balances, 2)
+			require.True(tt, balances[0].Equal(&bondBalance))
+			require.True(tt, balances[1].Equal(&stableBalance))
 		},
 	)
 }

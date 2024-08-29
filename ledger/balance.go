@@ -3,7 +3,6 @@ package ledger
 import (
 	"context"
 	"fmt"
-	"github.com/dora-network/dora-service-utils/errors"
 	"time"
 
 	redisv9 "github.com/redis/go-redis/v9"
@@ -16,8 +15,9 @@ import (
 )
 
 type Balance struct {
-	UserID     string `json:"user_id" redis:"user_id"`
-	AssetID    string `json:"asset_id" redis:"asset_id"`
+	UserID  string `json:"user_id" redis:"user_id"`
+	AssetID string `json:"asset_id" redis:"asset_id"`
+	// Available Balance
 	Balance    Amount `json:"balance" redis:"balance"`
 	Borrowed   Amount `json:"borrowed" redis:"borrowed"`
 	Collateral Amount `json:"collateral" redis:"collateral"`
@@ -138,24 +138,31 @@ func (b *Balance) Sub(amount Amount) error {
 // Lock adds an Amount to Balance.Locked. Returns an error if the result Balance.Locked
 // is greater than the whole Balance.Balance
 func (b *Balance) Lock(amount Amount) error {
-	result, err := b.Locked.Add(amount)
+	balance, err := b.Balance.Sub(amount)
 	if err != nil {
 		return err
 	}
-	if result.GT(b.Balance) {
-		return errors.ErrInsufficientBalance
+	locked, err := b.Locked.Add(amount)
+	if err != nil {
+		return err
 	}
-	b.Locked = result
+	b.Balance = balance
+	b.Locked = locked
 	return nil
 }
 
 // Unlock subs an Amount from Balance.Locked until reach zero.
 func (b *Balance) Unlock(amount Amount) error {
-	result, err := b.Locked.SubToZero(amount)
+	locked, subbed, err := b.Locked.SubToZero(amount)
 	if err != nil {
 		return err
 	}
-	b.Locked = result
+	balance, err := b.Balance.Add(subbed)
+	if err != nil {
+		return err
+	}
+	b.Balance = balance
+	b.Locked = locked
 	return nil
 }
 
@@ -166,7 +173,6 @@ func (b *Balance) Supply(amount Amount) error {
 	if err != nil {
 		return err
 	}
-
 	supplied, err := b.Supplied.Add(amount)
 	if err != nil {
 		return err
@@ -183,7 +189,6 @@ func (b *Balance) Withdraw(amount Amount) error {
 	if err != nil {
 		return err
 	}
-
 	balance, err := b.Balance.Add(amount)
 	if err != nil {
 		return err
@@ -194,18 +199,28 @@ func (b *Balance) Withdraw(amount Amount) error {
 }
 
 // Borrow an Amount from Leverage module and adds it to Balance.Balance and Balance.Borrowed.
-func (b *Balance) Borrow(amount Amount) error {
+func (b *Balance) Borrow(amount Amount, isVirtual bool) error {
 	balance, err := b.Balance.Add(amount)
 	if err != nil {
 		return err
 	}
 
-	borrowed, err := b.Borrowed.Add(amount)
-	if err != nil {
-		return err
+	if isVirtual {
+		virtual, err := b.Virtual.Add(amount)
+		if err != nil {
+			return err
+		}
+		b.Virtual = virtual
+	} else {
+		borrowed, err := b.Borrowed.Add(amount)
+		if err != nil {
+			return err
+		}
+		b.Borrowed = borrowed
 	}
+
 	b.Balance = balance
-	b.Borrowed = borrowed
+
 	return nil
 }
 
@@ -315,7 +330,62 @@ func getBalances(ctx context.Context, rdb redis.Client, timeout time.Duration, k
 	return balances, nil
 }
 
-func UpdateBalances(
+func SetUserBalances(
+	ctx context.Context,
+	rdb redis.Client,
+	timeout time.Duration,
+	reqs map[string][]Balance,
+) error {
+	watch := make([]string, len(reqs))
+	txFunc := func(tx *redisv9.Tx) error {
+		for userID, bals := range reqs {
+			key := UserBalanceKey(userID)
+			watch = append(watch, key)
+			values := make(map[string]any)
+			for _, bal := range bals {
+				values[bal.AssetID] = bal
+			}
+
+			// write the balances to redis
+			err := tx.HSet(ctx, key, values).Err()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
+
+	return SetBalances(ctx, rdb, txFunc, timeout, watch...)
+}
+
+func SetModuleBalances(
+	ctx context.Context,
+	rdb redis.Client,
+	timeout time.Duration,
+	bals []Balance,
+) error {
+	watch := []string{ModuleBalanceKey()}
+	txFunc := func(tx *redisv9.Tx) error {
+		key := ModuleBalanceKey()
+		values := make(map[string]any)
+		for _, bal := range bals {
+			values[bal.AssetID] = bal
+		}
+
+		// write the balances to redis
+		err := tx.HSet(ctx, key, values).Err()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	return SetBalances(ctx, rdb, txFunc, timeout, watch...)
+}
+
+func SetBalances(
 	ctx context.Context,
 	rdb redis.Client,
 	txFunc func(tx *redisv9.Tx) error,

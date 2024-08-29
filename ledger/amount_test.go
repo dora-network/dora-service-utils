@@ -150,7 +150,7 @@ func TestAmount_SubToZero(t *testing.T) {
 	for _, tc := range tcs {
 		t.Run(
 			tc.title, func(t *testing.T) {
-				result, err := tc.init.SubToZero(tc.sub)
+				result, _, err := tc.init.SubToZero(tc.sub)
 				if len(tc.errMsg) > 0 {
 					require.Error(t, err)
 					require.Contains(t, err.Error(), tc.errMsg)
@@ -166,6 +166,7 @@ func TestAmount_SubToZero(t *testing.T) {
 
 func TestAmount_Misc(t *testing.T) {
 	t.Parallel()
+
 	zero := ledger.ZeroAmount(StableID)
 	one := ledger.NewAmount(BondID, 1)
 	require.True(t, zero.IsZero())

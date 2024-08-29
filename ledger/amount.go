@@ -68,23 +68,20 @@ func (a Amount) Sub(amt Amount) (Amount, error) {
 	}, nil
 }
 
-// SubToZero an Amount from this one, returning the result and an error if asset IDs do not match.
-// If the final amount would be negative returns zero.
-func (a Amount) SubToZero(amt Amount) (Amount, error) {
+// SubToZero an Amount from this one, returning the result, the subbed amount and an error if asset IDs do not match.
+// If the final amount would be negative returns zero and the real subbed amount.
+// If not the subbed amount is equal to amt.
+func (a Amount) SubToZero(amt Amount) (Amount, Amount, error) {
 	if !a.Match(amt) {
-		return Amount{}, errors.New(errors.InternalError, "Amount.Sub: AssetIDs did not match")
+		return Amount{}, Amount{}, errors.New(errors.InternalError, "Amount.Sub: AssetIDs did not match")
 	}
-	result, err := math.CheckedSubU64(a.Amount, amt.Amount)
-	if err != nil {
-		return Amount{
-			AssetID: a.AssetID,
-			Amount:  0,
-		}, nil
+	if a.LT(amt) {
+		amt = a.Copy()
 	}
-	return Amount{
-		AssetID: a.AssetID,
-		Amount:  result,
-	}, nil
+	result, _ := math.CheckedSubU64(a.Amount, amt.Amount)
+	return Amount{AssetID: a.AssetID, Amount: result},
+		amt,
+		nil
 }
 
 // LT returns true if an Amount is less than another.
