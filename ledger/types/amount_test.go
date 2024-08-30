@@ -1,17 +1,13 @@
-package ledger_test
+package types_test
 
 import (
-	"github.com/dora-network/dora-service-utils/ledger"
-	"github.com/stretchr/testify/require"
 	"math"
 	"testing"
-)
 
-const (
-	BondID    = "bond1"
-	StableID  = "stable1"
-	UserIDOne = "user1"
-	UserIDTwo = "user2"
+	"github.com/stretchr/testify/require"
+
+	"github.com/dora-network/dora-service-utils/ledger/types"
+	"github.com/dora-network/dora-service-utils/testing/consts"
 )
 
 func TestAmount_Add(t *testing.T) {
@@ -19,31 +15,31 @@ func TestAmount_Add(t *testing.T) {
 
 	tcs := []struct {
 		title  string
-		init   ledger.Amount
-		add    ledger.Amount
+		init   types.Amount
+		add    types.Amount
 		errMsg string
-		result ledger.Amount
+		result types.Amount
 	}{
 		{
 			title:  "diff assetID",
-			init:   ledger.ZeroAmount(BondID),
-			add:    ledger.NewAmount(StableID, 1),
+			init:   types.ZeroAmount(consts.BondID),
+			add:    types.NewAmount(consts.StableID, 1),
 			errMsg: "AssetIDs did not match",
-			result: ledger.Amount{},
+			result: types.Amount{},
 		},
 		{
 			title:  "overflow",
-			init:   ledger.NewAmount(StableID, math.MaxUint64),
-			add:    ledger.NewAmount(StableID, 1),
+			init:   types.NewAmount(consts.StableID, math.MaxUint64),
+			add:    types.NewAmount(consts.StableID, 1),
 			errMsg: "overflow in addition",
-			result: ledger.Amount{},
+			result: types.Amount{},
 		},
 		{
 			title:  "correct",
-			init:   ledger.NewAmount(StableID, math.MaxUint64-1),
-			add:    ledger.NewAmount(StableID, 1),
+			init:   types.NewAmount(consts.StableID, math.MaxUint64-1),
+			add:    types.NewAmount(consts.StableID, 1),
 			errMsg: "",
-			result: ledger.NewAmount(StableID, math.MaxUint64),
+			result: types.NewAmount(consts.StableID, math.MaxUint64),
 		},
 	}
 
@@ -69,31 +65,31 @@ func TestAmount_Sub(t *testing.T) {
 
 	tcs := []struct {
 		title  string
-		init   ledger.Amount
-		sub    ledger.Amount
+		init   types.Amount
+		sub    types.Amount
 		errMsg string
-		result ledger.Amount
+		result types.Amount
 	}{
 		{
 			title:  "diff assetID",
-			init:   ledger.ZeroAmount(BondID),
-			sub:    ledger.NewAmount(StableID, 1),
+			init:   types.ZeroAmount(consts.BondID),
+			sub:    types.NewAmount(consts.StableID, 1),
 			errMsg: "AssetIDs did not match",
-			result: ledger.Amount{},
+			result: types.Amount{},
 		},
 		{
 			title:  "negative overflow",
-			init:   ledger.NewAmount(StableID, 133),
-			sub:    ledger.NewAmount(StableID, 134),
+			init:   types.NewAmount(consts.StableID, 133),
+			sub:    types.NewAmount(consts.StableID, 134),
 			errMsg: "overflow in subtraction",
-			result: ledger.Amount{},
+			result: types.Amount{},
 		},
 		{
 			title:  "correct",
-			init:   ledger.NewAmount(StableID, 2),
-			sub:    ledger.NewAmount(StableID, 1),
+			init:   types.NewAmount(consts.StableID, 2),
+			sub:    types.NewAmount(consts.StableID, 1),
 			errMsg: "",
-			result: ledger.NewAmount(StableID, 1),
+			result: types.NewAmount(consts.StableID, 1),
 		},
 	}
 
@@ -119,31 +115,31 @@ func TestAmount_SubToZero(t *testing.T) {
 
 	tcs := []struct {
 		title  string
-		init   ledger.Amount
-		sub    ledger.Amount
+		init   types.Amount
+		sub    types.Amount
 		errMsg string
-		result ledger.Amount
+		result types.Amount
 	}{
 		{
 			title:  "diff assetID",
-			init:   ledger.ZeroAmount(BondID),
-			sub:    ledger.NewAmount(StableID, 1),
+			init:   types.ZeroAmount(consts.BondID),
+			sub:    types.NewAmount(consts.StableID, 1),
 			errMsg: "AssetIDs did not match",
-			result: ledger.Amount{},
+			result: types.Amount{},
 		},
 		{
 			title:  "no negative overflow",
-			init:   ledger.NewAmount(StableID, 133),
-			sub:    ledger.NewAmount(StableID, 134),
+			init:   types.NewAmount(consts.StableID, 133),
+			sub:    types.NewAmount(consts.StableID, 134),
 			errMsg: "",
-			result: ledger.ZeroAmount(StableID),
+			result: types.ZeroAmount(consts.StableID),
 		},
 		{
 			title:  "correct",
-			init:   ledger.NewAmount(StableID, 2),
-			sub:    ledger.NewAmount(StableID, 1),
+			init:   types.NewAmount(consts.StableID, 2),
+			sub:    types.NewAmount(consts.StableID, 1),
 			errMsg: "",
-			result: ledger.NewAmount(StableID, 1),
+			result: types.NewAmount(consts.StableID, 1),
 		},
 	}
 
@@ -167,15 +163,15 @@ func TestAmount_SubToZero(t *testing.T) {
 func TestAmount_Misc(t *testing.T) {
 	t.Parallel()
 
-	zero := ledger.ZeroAmount(StableID)
-	one := ledger.NewAmount(BondID, 1)
+	zero := types.ZeroAmount(consts.StableID)
+	one := types.NewAmount(consts.BondID, 1)
 	require.True(t, zero.IsZero())
 	require.False(t, one.IsZero())
-	require.True(t, zero.LT(one))
-	require.True(t, one.GT(zero))
-	require.True(t, zero.LTE(one))
-	require.True(t, zero.LTE(zero))
-	require.True(t, one.GTE(zero))
-	require.True(t, one.GTE(one))
-	require.Error(t, ledger.Amount{}.Validate())
+	require.True(t, zero.LTUint64(one.Amount))
+	require.True(t, one.GTUint64(zero.Amount))
+	require.True(t, zero.LTEUint64(one.Amount))
+	require.True(t, zero.LTEUint64(zero.Amount))
+	require.True(t, one.GTEUint64(zero.Amount))
+	require.True(t, one.GTEUint64(one.Amount))
+	require.Error(t, types.Amount{}.Validate())
 }

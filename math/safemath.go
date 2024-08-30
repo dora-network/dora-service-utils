@@ -41,6 +41,15 @@ func CheckedSubU64(a, b uint64) (uint64, error) {
 	return result, nil
 }
 
+// CheckedSubU64ToZero computes `a - b` for two uint64's, returning zero as result if b > a.
+// The second returning parameter is the real subtracted amount.
+func CheckedSubU64ToZero(a, b uint64) (uint64, uint64) {
+	if a < b {
+		return 0, a
+	}
+	return a - b, b
+}
+
 // CheckedDivU64 computes `a / b` for two uint64's, returning an error in the event
 // that b is 0
 func CheckedDivU64(a, b uint64) (uint64, error) {

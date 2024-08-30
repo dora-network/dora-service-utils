@@ -1,14 +1,12 @@
-package ledger
+package types
 
 import (
-	"context"
 	"fmt"
-	"github.com/cenkalti/backoff/v4"
-	"github.com/dora-network/dora-service-utils/errors"
-	"github.com/dora-network/dora-service-utils/redis"
-	redisv9 "github.com/redis/go-redis/v9"
 	"sort"
-	"time"
+
+	"github.com/goccy/go-json"
+
+	"github.com/dora-network/dora-service-utils/errors"
 )
 
 type UserLedger struct {
@@ -18,14 +16,22 @@ type UserLedger struct {
 
 type Balances []*Balance
 
-func NewUserLedger(userID string, x ...Balance) UserLedger {
+func (b *Balances) MarshalBinary() ([]byte, error) {
+	return json.Marshal(b)
+}
+
+func (b *Balances) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, b)
+}
+
+func NewUserLedger(userID string, x ...*Balance) UserLedger {
 	ul := UserLedger{
 		userID:   userID,
 		balances: Balances{},
 	}
 	for _, v := range x {
 		if !v.IsZero() && v.UserID == ul.userID {
-			ul.balances = append(ul.balances, &v)
+			ul.balances = append(ul.balances, v)
 		}
 	}
 	ul.balances.Sort()
@@ -175,7 +181,7 @@ func (ul UserLedger) EnoughBalance(req ...Amount) bool {
 		if !ok {
 			bal = ZeroBalance(ul.userID, r.AssetID)
 		}
-		if r.GT(bal.Balance) {
+		if r.GTUint64(bal.Balance) {
 			// returns false if any balance r in req is greater than bMap[r.AssetID] Balance.Balance
 			return false
 		}
@@ -191,7 +197,7 @@ func (ul UserLedger) EnoughSupplied(req ...Amount) bool {
 		if !ok {
 			bal = ZeroBalance(ul.userID, r.AssetID)
 		}
-		if r.GT(bal.Supplied) {
+		if r.GTUint64(bal.Supplied) {
 			// returns false if any balance r in req is greater than bMap[r.AssetID] Balance.Supplied
 			return false
 		}
@@ -207,7 +213,7 @@ func (ul UserLedger) EnoughBorrowed(req ...Amount) bool {
 		if !ok {
 			bal = ZeroBalance(ul.userID, r.AssetID)
 		}
-		if r.GT(bal.Borrowed) {
+		if r.GTUint64(bal.Borrowed) {
 			// returns false if any balance r in req is greater than bMap[r.AssetID] Balance.Supplied
 			return false
 		}
@@ -378,78 +384,4 @@ func (ul UserLedger) Repay(repays ...Amount) (UserLedger, error) {
 	}
 
 	return NewUserLedgerFromMap(ul.userID, bMap), nil
-}
-
-func GetUserLedger(
-	ctx context.Context,
-	rdb redis.Client,
-	timeout time.Duration,
-	userIDs ...string,
-) ([]UserLedger, error) {
-	watch := make([]string, len(userIDs))
-	for i, userID := range userIDs {
-		watch[i] = UserBalanceKey(userID)
-	}
-	return getUserLedger(ctx, rdb, timeout, watch)
-}
-
-func getUserLedger(ctx context.Context, rdb redis.Client, timeout time.Duration, keys []string) (
-	[]UserLedger,
-	error,
-) {
-	var ledgers []UserLedger
-
-	f := func(tx *redisv9.Tx) error {
-		// This is just a simple read from Redis, but we're going to read it in a transaction to ensure
-		// that if some other process is changing the data while we are attempting to read it, we're not
-		// reading it with stale data.
-
-		// we use the TxPipelined method to execute multiple commands in a single transaction
-		// and collect the results, if any of the keys we are watching have been modified
-		// since we started the transaction, the transaction will fail and we will retry
-		cmd, err := tx.TxPipelined(
-			ctx, func(pipe redisv9.Pipeliner) error {
-				for _, key := range keys {
-					pipe.HGetAll(ctx, key)
-				}
-				return nil
-			},
-		)
-
-		for _, c := range cmd {
-			res, err := c.(*redisv9.SliceCmd).Result()
-			if err != nil {
-				return err
-			}
-
-			var balances []Balance
-			for _, v := range res {
-				b := new(Balance)
-				if err := b.UnmarshalBinary([]byte(v.(string))); err != nil {
-					return err
-				}
-				balances = append(balances, *b)
-			}
-			if len(balances) > 0 {
-				ledgers = append(ledgers, NewUserLedger(balances[0].UserID, balances...))
-			} else {
-				ledgers = append(ledgers, UserLedger{})
-			}
-
-		}
-
-		return err
-	}
-
-	if err := redis.TryTransaction(
-		ctx,
-		rdb,
-		f,
-		backoff.NewExponentialBackOff(backoff.WithMaxElapsedTime(timeout)),
-		keys...,
-	); err != nil {
-		return nil, err
-	}
-
-	return ledgers, nil
 }
