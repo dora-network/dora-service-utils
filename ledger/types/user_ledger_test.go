@@ -34,8 +34,7 @@ func TestUserLedger_Misc(t *testing.T) {
 func TestUserLedger_Operations(t *testing.T) {
 	t.Parallel()
 
-	bondBalance := types.NewBalance(consts.UserIDOne, consts.BondID, 22, 12, 30, 30, 0, 0)
-	l := types.NewUserLedger(consts.UserIDOne, bondBalance)
+	l := types.NewUserLedger(consts.UserIDOne, types.NewBalance(consts.UserIDOne, consts.BondID, 22, 12, 30, 30, 0, 0))
 
 	// Add
 	l, err := l.Add(
@@ -45,10 +44,14 @@ func TestUserLedger_Operations(t *testing.T) {
 	)
 	require.NoError(t, err)
 	require.Len(t, l.AssetIDs(), 2)
-	require.NoError(t, bondBalance.Add(types.NewAmount(consts.BondID, 11)))
-	require.True(t, l.Select(consts.BondID).Equal(bondBalance))
-	stableBalance := types.NewBalance(consts.UserIDOne, consts.StableID, 1000, 0, 0, 0, 0, 0)
-	require.True(t, l.Select(consts.StableID).Equal(stableBalance))
+	require.True(
+		t,
+		l.Select(consts.BondID).Equal(types.NewBalance(consts.UserIDOne, consts.BondID, 33, 12, 30, 30, 0, 0)),
+	)
+	require.True(
+		t,
+		l.Select(consts.StableID).Equal(types.NewBalance(consts.UserIDOne, consts.StableID, 1000, 0, 0, 0, 0, 0)),
+	)
 
 	// Sub
 	_, err = l.Sub(types.NewAmount(consts.BondID, 11), types.NewAmount(consts.StableID, 2000))
