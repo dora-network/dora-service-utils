@@ -1,20 +1,19 @@
-package pools
+package redis
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
-
-	"github.com/dora-network/dora-service-utils/orderbook"
-
 	"github.com/cenkalti/backoff/v4"
+	"github.com/dora-network/dora-service-utils/orderbook"
+	"github.com/dora-network/dora-service-utils/pools/types"
 	"github.com/dora-network/dora-service-utils/redis"
-	"github.com/govalues/decimal"
 	redisv9 "github.com/redis/go-redis/v9"
+	"time"
 )
 
 var poolKeys = []string{
+	"pool_id",
 	"base_asset",
 	"quote_asset",
 	"is_product_pool",
@@ -26,28 +25,14 @@ var poolKeys = []string{
 	"maturity_at",
 }
 
-// Pool represents a liquidity pool in the DORA network.
-// This struct is for serialization purposes only.
-type Pool struct {
-	BaseAsset     string          `json:"base_asset" redis:"base_asset"`
-	QuoteAsset    string          `json:"quote_asset" redis:"quote_asset"`
-	IsProductPool bool            `json:"is_product_pool" redis:"is_product_pool"`
-	AmountShares  uint64          `json:"amount_shares" redis:"amount_shares"`
-	AmountBase    uint64          `json:"amount_base" redis:"amount_base"`
-	AmountQuote   uint64          `json:"amount_quote" redis:"amount_quote"`
-	FeeFactor     decimal.Decimal `json:"fee_factor" redis:"fee_factor"`
-	CreatedAt     int64           `json:"created_at" redis:"created_at"`
-	MaturityAt    int64           `json:"maturity_at" redis:"maturity_at"`
-}
-
-func PoolBalanceKey(poolID string) string {
+func PoolKey(poolID string) string {
 	return fmt.Sprintf("pools:%s", poolID)
 }
 
-func GetPoolBalances(ctx context.Context, rdb redis.Client, timeout time.Duration, poolID string) (*Pool, error) {
-	watch := PoolBalanceKey(poolID)
+func GetPool(ctx context.Context, rdb redis.Client, timeout time.Duration, poolID string) (*types.Pool, error) {
+	watch := PoolKey(poolID)
 
-	pool := new(Pool)
+	pool := new(types.Pool)
 
 	f := func(tx *redisv9.Tx) error {
 		err := tx.HMGet(ctx, watch, poolKeys...).Scan(pool)
@@ -74,16 +59,18 @@ func GetPoolBalances(ctx context.Context, rdb redis.Client, timeout time.Duratio
 	return pool, nil
 }
 
-func UpdatePool(ctx context.Context, rdb redis.Client, pool *Pool, timeout time.Duration, watch ...string) error {
+func UpdatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout time.Duration, watch ...string) error {
 	poolID := orderbook.ID(pool.BaseAsset, pool.QuoteAsset)
 
 	txFunc := func(tx *redisv9.Tx) error {
-		return tx.HSet(ctx, PoolBalanceKey(poolID),
+		return tx.HSet(
+			ctx, PoolKey(poolID),
 			// We have to set each field individually rather than just passing the struct
 			// which would be easier, because when serializing the struct, go-redis uses the
 			// MarshalBinary method for the decimal.Decimal type (fee factor), but when
 			// deserializing, it uses UnmarshalText which is expecting a number expressed
 			// as a string. This causes the deserialization to fail
+			"pool_id", pool.PoolID,
 			"base_asset", pool.BaseAsset,
 			"quote_asset", pool.QuoteAsset,
 			"is_product_pool", pool.IsProductPool,
@@ -105,7 +92,8 @@ func UpdatePool(ctx context.Context, rdb redis.Client, pool *Pool, timeout time.
 	)
 }
 
-func CreatePool(ctx context.Context, rdb redis.Client, pool *Pool, timeout time.Duration) error {
+func CreatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout time.Duration) error {
 	poolID := orderbook.ID(pool.BaseAsset, pool.QuoteAsset)
+	pool.PoolID = poolID
 	return UpdatePool(ctx, rdb, pool, timeout, poolID)
 }
