@@ -13,9 +13,6 @@ type Config struct {
 	AssetsRequestTopic        string   `mapstructure:"assets_request_topic" json:"assets_request_topic"`
 	AssetSnapshotTopic        string   `mapstructure:"assets_snapshot_topic" json:"assets_snapshot_topic"`
 	AssetUpdateTopic          string   `mapstructure:"assets_update_topic" json:"assets_update_topic"`
-	BalancesRequestTopic      string   `mapstructure:"balances_request_topic" json:"balances_request_topic"`
-	BalanceSnapshotTopic      string   `mapstructure:"balances_snapshot_topic" json:"balances_snapshot_topic"`
-	BalanceUpdateTopic        string   `mapstructure:"balances_update_topic" json:"balances_update_topic"`
 	UserLedgerRequestsTopic   string   `mapstructure:"user_ledger_requests_topic" json:"user_ledger_requests_topic"`
 	UserLedgerSnapshotsTopic  string   `mapstructure:"user_ledger_snapshots_topic" json:"user_ledger_snapshots_topic"`
 	UserLedgerUpdatesTopic    string   `mapstructure:"user_ledger_updates_topic" json:"user_ledger_updates_topic"`
@@ -37,9 +34,6 @@ func DefaultConfig() Config {
 		AssetsRequestTopic:        DefaultAssetRequestsTopic,
 		AssetSnapshotTopic:        DefaultAssetSnapshotTopic,
 		AssetUpdateTopic:          DefaultAssetUpdatesTopic,
-		BalancesRequestTopic:      DefaultBalanceRequestsTopic,
-		BalanceSnapshotTopic:      DefaultBalanceSnapshotTopic,
-		BalanceUpdateTopic:        DefaultBalanceUpdateTopic,
 		UserLedgerRequestsTopic:   DefaultUserLedgerRequestsTopic,
 		UserLedgerSnapshotsTopic:  DefaultUserLedgerSnapshotsTopic,
 		UserLedgerUpdatesTopic:    DefaultUserLedgerUpdatesTopic,
