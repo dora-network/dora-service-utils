@@ -105,6 +105,9 @@ var (
 	ErrPoolAssetsMismatch = Data("pools asset mismatch")
 
 	ErrInvalidOrderType = Data("invalid order type")
+
+	ErrAmountCannotBeZero = New(InvalidInputError, "amount cannot be zero")
+	ErrBaseAssetMismatch  = New(InvalidInputError, "AddLiquidity: base asset id mismatch")
 )
 
 // TypedError represents an error with a specific type.
