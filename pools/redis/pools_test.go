@@ -118,4 +118,68 @@ func TestPools(t *testing.T) {
 			assert.Equal(tt, updated, *got)
 		},
 	)
+
+	t.Run(
+		"Should update a pool balance in Redis", func(tt *testing.T) {
+			initial := types.Pool{
+				PoolID:        "base-quote",
+				BaseAsset:     "base",
+				QuoteAsset:    "quote",
+				IsProductPool: true,
+				AmountShares:  1000000,
+				AmountBase:    1000000,
+				AmountQuote:   1000000,
+				FeeFactor:     decimal.MustNew(1, 2),
+				CreatedAt:     time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+				MaturityAt:    time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+			}
+
+			require.NoError(
+				t,
+				redis.UpdatePool(
+					ctx,
+					rdb,
+					&initial,
+					time.Second,
+					redis.PoolKey(orderbook.ID(initial.BaseAsset, initial.QuoteAsset)),
+				),
+			)
+
+			updated := types.Pool{
+				BaseAsset:    "base",
+				QuoteAsset:   "quote",
+				AmountShares: 10000002,
+				AmountBase:   10000001,
+				AmountQuote:  10000001,
+			}
+
+			require.NoError(
+				t,
+				redis.UpdatePoolBalance(
+					ctx,
+					rdb,
+					&updated,
+					time.Second,
+					redis.PoolKey(orderbook.ID(updated.BaseAsset, updated.QuoteAsset)),
+				),
+			)
+			got, err := redis.GetPool(
+				ctx,
+				rdb,
+				time.Second,
+				orderbook.ID(updated.BaseAsset, updated.QuoteAsset),
+			)
+			require.NoError(tt, err)
+			assert.Equal(tt, updated.AmountQuote, got.AmountQuote)
+			assert.Equal(tt, updated.AmountBase, got.AmountBase)
+			assert.Equal(tt, updated.AmountShares, got.AmountShares)
+			assert.Equal(tt, initial.PoolID, got.PoolID)
+			assert.Equal(tt, initial.BaseAsset, got.BaseAsset)
+			assert.Equal(tt, initial.QuoteAsset, got.QuoteAsset)
+			assert.Equal(tt, initial.IsProductPool, got.IsProductPool)
+			assert.Equal(tt, initial.FeeFactor, got.FeeFactor)
+			assert.Equal(tt, initial.CreatedAt, got.CreatedAt)
+			assert.Equal(tt, initial.MaturityAt, got.MaturityAt)
+		},
+	)
 }
