@@ -2056,6 +2056,77 @@ type FakeClient struct {
 	hExistsReturnsOnCall map[int]struct {
 		result1 *redisa.BoolCmd
 	}
+	HExpireStub        func(context.Context, string, time.Duration, ...string) *redisa.IntSliceCmd
+	hExpireMutex       sync.RWMutex
+	hExpireArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Duration
+		arg4 []string
+	}
+	hExpireReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hExpireReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
+	HExpireAtStub        func(context.Context, string, time.Time, ...string) *redisa.IntSliceCmd
+	hExpireAtMutex       sync.RWMutex
+	hExpireAtArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Time
+		arg4 []string
+	}
+	hExpireAtReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hExpireAtReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
+	HExpireAtWithArgsStub        func(context.Context, string, time.Time, redisa.HExpireArgs, ...string) *redisa.IntSliceCmd
+	hExpireAtWithArgsMutex       sync.RWMutex
+	hExpireAtWithArgsArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Time
+		arg4 redisa.HExpireArgs
+		arg5 []string
+	}
+	hExpireAtWithArgsReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hExpireAtWithArgsReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
+	HExpireTimeStub        func(context.Context, string, ...string) *redisa.IntSliceCmd
+	hExpireTimeMutex       sync.RWMutex
+	hExpireTimeArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []string
+	}
+	hExpireTimeReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hExpireTimeReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
+	HExpireWithArgsStub        func(context.Context, string, time.Duration, redisa.HExpireArgs, ...string) *redisa.IntSliceCmd
+	hExpireWithArgsMutex       sync.RWMutex
+	hExpireWithArgsArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Duration
+		arg4 redisa.HExpireArgs
+		arg5 []string
+	}
+	hExpireWithArgsReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hExpireWithArgsReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
 	HGetStub        func(context.Context, string, string) *redisa.StringCmd
 	hGetMutex       sync.RWMutex
 	hGetArgsForCall []struct {
@@ -2159,6 +2230,103 @@ type FakeClient struct {
 	hMSetReturnsOnCall map[int]struct {
 		result1 *redisa.BoolCmd
 	}
+	HPExpireStub        func(context.Context, string, time.Duration, ...string) *redisa.IntSliceCmd
+	hPExpireMutex       sync.RWMutex
+	hPExpireArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Duration
+		arg4 []string
+	}
+	hPExpireReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hPExpireReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
+	HPExpireAtStub        func(context.Context, string, time.Time, ...string) *redisa.IntSliceCmd
+	hPExpireAtMutex       sync.RWMutex
+	hPExpireAtArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Time
+		arg4 []string
+	}
+	hPExpireAtReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hPExpireAtReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
+	HPExpireAtWithArgsStub        func(context.Context, string, time.Time, redisa.HExpireArgs, ...string) *redisa.IntSliceCmd
+	hPExpireAtWithArgsMutex       sync.RWMutex
+	hPExpireAtWithArgsArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Time
+		arg4 redisa.HExpireArgs
+		arg5 []string
+	}
+	hPExpireAtWithArgsReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hPExpireAtWithArgsReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
+	HPExpireTimeStub        func(context.Context, string, ...string) *redisa.IntSliceCmd
+	hPExpireTimeMutex       sync.RWMutex
+	hPExpireTimeArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []string
+	}
+	hPExpireTimeReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hPExpireTimeReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
+	HPExpireWithArgsStub        func(context.Context, string, time.Duration, redisa.HExpireArgs, ...string) *redisa.IntSliceCmd
+	hPExpireWithArgsMutex       sync.RWMutex
+	hPExpireWithArgsArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Duration
+		arg4 redisa.HExpireArgs
+		arg5 []string
+	}
+	hPExpireWithArgsReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hPExpireWithArgsReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
+	HPTTLStub        func(context.Context, string, ...string) *redisa.IntSliceCmd
+	hPTTLMutex       sync.RWMutex
+	hPTTLArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []string
+	}
+	hPTTLReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hPTTLReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
+	HPersistStub        func(context.Context, string, ...string) *redisa.IntSliceCmd
+	hPersistMutex       sync.RWMutex
+	hPersistArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []string
+	}
+	hPersistReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hPersistReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
+	}
 	HRandFieldStub        func(context.Context, string, int) *redisa.StringSliceCmd
 	hRandFieldMutex       sync.RWMutex
 	hRandFieldArgsForCall []struct {
@@ -2200,6 +2368,21 @@ type FakeClient struct {
 	hScanReturnsOnCall map[int]struct {
 		result1 *redisa.ScanCmd
 	}
+	HScanNoValuesStub        func(context.Context, string, uint64, string, int64) *redisa.ScanCmd
+	hScanNoValuesMutex       sync.RWMutex
+	hScanNoValuesArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 uint64
+		arg4 string
+		arg5 int64
+	}
+	hScanNoValuesReturns struct {
+		result1 *redisa.ScanCmd
+	}
+	hScanNoValuesReturnsOnCall map[int]struct {
+		result1 *redisa.ScanCmd
+	}
 	HSetStub        func(context.Context, string, ...interface{}) *redisa.IntCmd
 	hSetMutex       sync.RWMutex
 	hSetArgsForCall []struct {
@@ -2226,6 +2409,19 @@ type FakeClient struct {
 	}
 	hSetNXReturnsOnCall map[int]struct {
 		result1 *redisa.BoolCmd
+	}
+	HTTLStub        func(context.Context, string, ...string) *redisa.IntSliceCmd
+	hTTLMutex       sync.RWMutex
+	hTTLArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []string
+	}
+	hTTLReturns struct {
+		result1 *redisa.IntSliceCmd
+	}
+	hTTLReturnsOnCall map[int]struct {
+		result1 *redisa.IntSliceCmd
 	}
 	HValsStub        func(context.Context, string) *redisa.StringSliceCmd
 	hValsMutex       sync.RWMutex
@@ -16156,6 +16352,327 @@ func (fake *FakeClient) HExistsReturnsOnCall(i int, result1 *redisa.BoolCmd) {
 	}{result1}
 }
 
+func (fake *FakeClient) HExpire(arg1 context.Context, arg2 string, arg3 time.Duration, arg4 ...string) *redisa.IntSliceCmd {
+	fake.hExpireMutex.Lock()
+	ret, specificReturn := fake.hExpireReturnsOnCall[len(fake.hExpireArgsForCall)]
+	fake.hExpireArgsForCall = append(fake.hExpireArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Duration
+		arg4 []string
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.HExpireStub
+	fakeReturns := fake.hExpireReturns
+	fake.recordInvocation("HExpire", []interface{}{arg1, arg2, arg3, arg4})
+	fake.hExpireMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HExpireCallCount() int {
+	fake.hExpireMutex.RLock()
+	defer fake.hExpireMutex.RUnlock()
+	return len(fake.hExpireArgsForCall)
+}
+
+func (fake *FakeClient) HExpireCalls(stub func(context.Context, string, time.Duration, ...string) *redisa.IntSliceCmd) {
+	fake.hExpireMutex.Lock()
+	defer fake.hExpireMutex.Unlock()
+	fake.HExpireStub = stub
+}
+
+func (fake *FakeClient) HExpireArgsForCall(i int) (context.Context, string, time.Duration, []string) {
+	fake.hExpireMutex.RLock()
+	defer fake.hExpireMutex.RUnlock()
+	argsForCall := fake.hExpireArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) HExpireReturns(result1 *redisa.IntSliceCmd) {
+	fake.hExpireMutex.Lock()
+	defer fake.hExpireMutex.Unlock()
+	fake.HExpireStub = nil
+	fake.hExpireReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HExpireReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hExpireMutex.Lock()
+	defer fake.hExpireMutex.Unlock()
+	fake.HExpireStub = nil
+	if fake.hExpireReturnsOnCall == nil {
+		fake.hExpireReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hExpireReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HExpireAt(arg1 context.Context, arg2 string, arg3 time.Time, arg4 ...string) *redisa.IntSliceCmd {
+	fake.hExpireAtMutex.Lock()
+	ret, specificReturn := fake.hExpireAtReturnsOnCall[len(fake.hExpireAtArgsForCall)]
+	fake.hExpireAtArgsForCall = append(fake.hExpireAtArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Time
+		arg4 []string
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.HExpireAtStub
+	fakeReturns := fake.hExpireAtReturns
+	fake.recordInvocation("HExpireAt", []interface{}{arg1, arg2, arg3, arg4})
+	fake.hExpireAtMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HExpireAtCallCount() int {
+	fake.hExpireAtMutex.RLock()
+	defer fake.hExpireAtMutex.RUnlock()
+	return len(fake.hExpireAtArgsForCall)
+}
+
+func (fake *FakeClient) HExpireAtCalls(stub func(context.Context, string, time.Time, ...string) *redisa.IntSliceCmd) {
+	fake.hExpireAtMutex.Lock()
+	defer fake.hExpireAtMutex.Unlock()
+	fake.HExpireAtStub = stub
+}
+
+func (fake *FakeClient) HExpireAtArgsForCall(i int) (context.Context, string, time.Time, []string) {
+	fake.hExpireAtMutex.RLock()
+	defer fake.hExpireAtMutex.RUnlock()
+	argsForCall := fake.hExpireAtArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) HExpireAtReturns(result1 *redisa.IntSliceCmd) {
+	fake.hExpireAtMutex.Lock()
+	defer fake.hExpireAtMutex.Unlock()
+	fake.HExpireAtStub = nil
+	fake.hExpireAtReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HExpireAtReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hExpireAtMutex.Lock()
+	defer fake.hExpireAtMutex.Unlock()
+	fake.HExpireAtStub = nil
+	if fake.hExpireAtReturnsOnCall == nil {
+		fake.hExpireAtReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hExpireAtReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HExpireAtWithArgs(arg1 context.Context, arg2 string, arg3 time.Time, arg4 redisa.HExpireArgs, arg5 ...string) *redisa.IntSliceCmd {
+	fake.hExpireAtWithArgsMutex.Lock()
+	ret, specificReturn := fake.hExpireAtWithArgsReturnsOnCall[len(fake.hExpireAtWithArgsArgsForCall)]
+	fake.hExpireAtWithArgsArgsForCall = append(fake.hExpireAtWithArgsArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Time
+		arg4 redisa.HExpireArgs
+		arg5 []string
+	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.HExpireAtWithArgsStub
+	fakeReturns := fake.hExpireAtWithArgsReturns
+	fake.recordInvocation("HExpireAtWithArgs", []interface{}{arg1, arg2, arg3, arg4, arg5})
+	fake.hExpireAtWithArgsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HExpireAtWithArgsCallCount() int {
+	fake.hExpireAtWithArgsMutex.RLock()
+	defer fake.hExpireAtWithArgsMutex.RUnlock()
+	return len(fake.hExpireAtWithArgsArgsForCall)
+}
+
+func (fake *FakeClient) HExpireAtWithArgsCalls(stub func(context.Context, string, time.Time, redisa.HExpireArgs, ...string) *redisa.IntSliceCmd) {
+	fake.hExpireAtWithArgsMutex.Lock()
+	defer fake.hExpireAtWithArgsMutex.Unlock()
+	fake.HExpireAtWithArgsStub = stub
+}
+
+func (fake *FakeClient) HExpireAtWithArgsArgsForCall(i int) (context.Context, string, time.Time, redisa.HExpireArgs, []string) {
+	fake.hExpireAtWithArgsMutex.RLock()
+	defer fake.hExpireAtWithArgsMutex.RUnlock()
+	argsForCall := fake.hExpireAtWithArgsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
+}
+
+func (fake *FakeClient) HExpireAtWithArgsReturns(result1 *redisa.IntSliceCmd) {
+	fake.hExpireAtWithArgsMutex.Lock()
+	defer fake.hExpireAtWithArgsMutex.Unlock()
+	fake.HExpireAtWithArgsStub = nil
+	fake.hExpireAtWithArgsReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HExpireAtWithArgsReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hExpireAtWithArgsMutex.Lock()
+	defer fake.hExpireAtWithArgsMutex.Unlock()
+	fake.HExpireAtWithArgsStub = nil
+	if fake.hExpireAtWithArgsReturnsOnCall == nil {
+		fake.hExpireAtWithArgsReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hExpireAtWithArgsReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HExpireTime(arg1 context.Context, arg2 string, arg3 ...string) *redisa.IntSliceCmd {
+	fake.hExpireTimeMutex.Lock()
+	ret, specificReturn := fake.hExpireTimeReturnsOnCall[len(fake.hExpireTimeArgsForCall)]
+	fake.hExpireTimeArgsForCall = append(fake.hExpireTimeArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []string
+	}{arg1, arg2, arg3})
+	stub := fake.HExpireTimeStub
+	fakeReturns := fake.hExpireTimeReturns
+	fake.recordInvocation("HExpireTime", []interface{}{arg1, arg2, arg3})
+	fake.hExpireTimeMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HExpireTimeCallCount() int {
+	fake.hExpireTimeMutex.RLock()
+	defer fake.hExpireTimeMutex.RUnlock()
+	return len(fake.hExpireTimeArgsForCall)
+}
+
+func (fake *FakeClient) HExpireTimeCalls(stub func(context.Context, string, ...string) *redisa.IntSliceCmd) {
+	fake.hExpireTimeMutex.Lock()
+	defer fake.hExpireTimeMutex.Unlock()
+	fake.HExpireTimeStub = stub
+}
+
+func (fake *FakeClient) HExpireTimeArgsForCall(i int) (context.Context, string, []string) {
+	fake.hExpireTimeMutex.RLock()
+	defer fake.hExpireTimeMutex.RUnlock()
+	argsForCall := fake.hExpireTimeArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) HExpireTimeReturns(result1 *redisa.IntSliceCmd) {
+	fake.hExpireTimeMutex.Lock()
+	defer fake.hExpireTimeMutex.Unlock()
+	fake.HExpireTimeStub = nil
+	fake.hExpireTimeReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HExpireTimeReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hExpireTimeMutex.Lock()
+	defer fake.hExpireTimeMutex.Unlock()
+	fake.HExpireTimeStub = nil
+	if fake.hExpireTimeReturnsOnCall == nil {
+		fake.hExpireTimeReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hExpireTimeReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HExpireWithArgs(arg1 context.Context, arg2 string, arg3 time.Duration, arg4 redisa.HExpireArgs, arg5 ...string) *redisa.IntSliceCmd {
+	fake.hExpireWithArgsMutex.Lock()
+	ret, specificReturn := fake.hExpireWithArgsReturnsOnCall[len(fake.hExpireWithArgsArgsForCall)]
+	fake.hExpireWithArgsArgsForCall = append(fake.hExpireWithArgsArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Duration
+		arg4 redisa.HExpireArgs
+		arg5 []string
+	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.HExpireWithArgsStub
+	fakeReturns := fake.hExpireWithArgsReturns
+	fake.recordInvocation("HExpireWithArgs", []interface{}{arg1, arg2, arg3, arg4, arg5})
+	fake.hExpireWithArgsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HExpireWithArgsCallCount() int {
+	fake.hExpireWithArgsMutex.RLock()
+	defer fake.hExpireWithArgsMutex.RUnlock()
+	return len(fake.hExpireWithArgsArgsForCall)
+}
+
+func (fake *FakeClient) HExpireWithArgsCalls(stub func(context.Context, string, time.Duration, redisa.HExpireArgs, ...string) *redisa.IntSliceCmd) {
+	fake.hExpireWithArgsMutex.Lock()
+	defer fake.hExpireWithArgsMutex.Unlock()
+	fake.HExpireWithArgsStub = stub
+}
+
+func (fake *FakeClient) HExpireWithArgsArgsForCall(i int) (context.Context, string, time.Duration, redisa.HExpireArgs, []string) {
+	fake.hExpireWithArgsMutex.RLock()
+	defer fake.hExpireWithArgsMutex.RUnlock()
+	argsForCall := fake.hExpireWithArgsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
+}
+
+func (fake *FakeClient) HExpireWithArgsReturns(result1 *redisa.IntSliceCmd) {
+	fake.hExpireWithArgsMutex.Lock()
+	defer fake.hExpireWithArgsMutex.Unlock()
+	fake.HExpireWithArgsStub = nil
+	fake.hExpireWithArgsReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HExpireWithArgsReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hExpireWithArgsMutex.Lock()
+	defer fake.hExpireWithArgsMutex.Unlock()
+	fake.HExpireWithArgsStub = nil
+	if fake.hExpireWithArgsReturnsOnCall == nil {
+		fake.hExpireWithArgsReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hExpireWithArgsReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
 func (fake *FakeClient) HGet(arg1 context.Context, arg2 string, arg3 string) *redisa.StringCmd {
 	fake.hGetMutex.Lock()
 	ret, specificReturn := fake.hGetReturnsOnCall[len(fake.hGetArgsForCall)]
@@ -16659,6 +17176,453 @@ func (fake *FakeClient) HMSetReturnsOnCall(i int, result1 *redisa.BoolCmd) {
 	}{result1}
 }
 
+func (fake *FakeClient) HPExpire(arg1 context.Context, arg2 string, arg3 time.Duration, arg4 ...string) *redisa.IntSliceCmd {
+	fake.hPExpireMutex.Lock()
+	ret, specificReturn := fake.hPExpireReturnsOnCall[len(fake.hPExpireArgsForCall)]
+	fake.hPExpireArgsForCall = append(fake.hPExpireArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Duration
+		arg4 []string
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.HPExpireStub
+	fakeReturns := fake.hPExpireReturns
+	fake.recordInvocation("HPExpire", []interface{}{arg1, arg2, arg3, arg4})
+	fake.hPExpireMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HPExpireCallCount() int {
+	fake.hPExpireMutex.RLock()
+	defer fake.hPExpireMutex.RUnlock()
+	return len(fake.hPExpireArgsForCall)
+}
+
+func (fake *FakeClient) HPExpireCalls(stub func(context.Context, string, time.Duration, ...string) *redisa.IntSliceCmd) {
+	fake.hPExpireMutex.Lock()
+	defer fake.hPExpireMutex.Unlock()
+	fake.HPExpireStub = stub
+}
+
+func (fake *FakeClient) HPExpireArgsForCall(i int) (context.Context, string, time.Duration, []string) {
+	fake.hPExpireMutex.RLock()
+	defer fake.hPExpireMutex.RUnlock()
+	argsForCall := fake.hPExpireArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) HPExpireReturns(result1 *redisa.IntSliceCmd) {
+	fake.hPExpireMutex.Lock()
+	defer fake.hPExpireMutex.Unlock()
+	fake.HPExpireStub = nil
+	fake.hPExpireReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPExpireReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hPExpireMutex.Lock()
+	defer fake.hPExpireMutex.Unlock()
+	fake.HPExpireStub = nil
+	if fake.hPExpireReturnsOnCall == nil {
+		fake.hPExpireReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hPExpireReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPExpireAt(arg1 context.Context, arg2 string, arg3 time.Time, arg4 ...string) *redisa.IntSliceCmd {
+	fake.hPExpireAtMutex.Lock()
+	ret, specificReturn := fake.hPExpireAtReturnsOnCall[len(fake.hPExpireAtArgsForCall)]
+	fake.hPExpireAtArgsForCall = append(fake.hPExpireAtArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Time
+		arg4 []string
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.HPExpireAtStub
+	fakeReturns := fake.hPExpireAtReturns
+	fake.recordInvocation("HPExpireAt", []interface{}{arg1, arg2, arg3, arg4})
+	fake.hPExpireAtMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HPExpireAtCallCount() int {
+	fake.hPExpireAtMutex.RLock()
+	defer fake.hPExpireAtMutex.RUnlock()
+	return len(fake.hPExpireAtArgsForCall)
+}
+
+func (fake *FakeClient) HPExpireAtCalls(stub func(context.Context, string, time.Time, ...string) *redisa.IntSliceCmd) {
+	fake.hPExpireAtMutex.Lock()
+	defer fake.hPExpireAtMutex.Unlock()
+	fake.HPExpireAtStub = stub
+}
+
+func (fake *FakeClient) HPExpireAtArgsForCall(i int) (context.Context, string, time.Time, []string) {
+	fake.hPExpireAtMutex.RLock()
+	defer fake.hPExpireAtMutex.RUnlock()
+	argsForCall := fake.hPExpireAtArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) HPExpireAtReturns(result1 *redisa.IntSliceCmd) {
+	fake.hPExpireAtMutex.Lock()
+	defer fake.hPExpireAtMutex.Unlock()
+	fake.HPExpireAtStub = nil
+	fake.hPExpireAtReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPExpireAtReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hPExpireAtMutex.Lock()
+	defer fake.hPExpireAtMutex.Unlock()
+	fake.HPExpireAtStub = nil
+	if fake.hPExpireAtReturnsOnCall == nil {
+		fake.hPExpireAtReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hPExpireAtReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPExpireAtWithArgs(arg1 context.Context, arg2 string, arg3 time.Time, arg4 redisa.HExpireArgs, arg5 ...string) *redisa.IntSliceCmd {
+	fake.hPExpireAtWithArgsMutex.Lock()
+	ret, specificReturn := fake.hPExpireAtWithArgsReturnsOnCall[len(fake.hPExpireAtWithArgsArgsForCall)]
+	fake.hPExpireAtWithArgsArgsForCall = append(fake.hPExpireAtWithArgsArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Time
+		arg4 redisa.HExpireArgs
+		arg5 []string
+	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.HPExpireAtWithArgsStub
+	fakeReturns := fake.hPExpireAtWithArgsReturns
+	fake.recordInvocation("HPExpireAtWithArgs", []interface{}{arg1, arg2, arg3, arg4, arg5})
+	fake.hPExpireAtWithArgsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HPExpireAtWithArgsCallCount() int {
+	fake.hPExpireAtWithArgsMutex.RLock()
+	defer fake.hPExpireAtWithArgsMutex.RUnlock()
+	return len(fake.hPExpireAtWithArgsArgsForCall)
+}
+
+func (fake *FakeClient) HPExpireAtWithArgsCalls(stub func(context.Context, string, time.Time, redisa.HExpireArgs, ...string) *redisa.IntSliceCmd) {
+	fake.hPExpireAtWithArgsMutex.Lock()
+	defer fake.hPExpireAtWithArgsMutex.Unlock()
+	fake.HPExpireAtWithArgsStub = stub
+}
+
+func (fake *FakeClient) HPExpireAtWithArgsArgsForCall(i int) (context.Context, string, time.Time, redisa.HExpireArgs, []string) {
+	fake.hPExpireAtWithArgsMutex.RLock()
+	defer fake.hPExpireAtWithArgsMutex.RUnlock()
+	argsForCall := fake.hPExpireAtWithArgsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
+}
+
+func (fake *FakeClient) HPExpireAtWithArgsReturns(result1 *redisa.IntSliceCmd) {
+	fake.hPExpireAtWithArgsMutex.Lock()
+	defer fake.hPExpireAtWithArgsMutex.Unlock()
+	fake.HPExpireAtWithArgsStub = nil
+	fake.hPExpireAtWithArgsReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPExpireAtWithArgsReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hPExpireAtWithArgsMutex.Lock()
+	defer fake.hPExpireAtWithArgsMutex.Unlock()
+	fake.HPExpireAtWithArgsStub = nil
+	if fake.hPExpireAtWithArgsReturnsOnCall == nil {
+		fake.hPExpireAtWithArgsReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hPExpireAtWithArgsReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPExpireTime(arg1 context.Context, arg2 string, arg3 ...string) *redisa.IntSliceCmd {
+	fake.hPExpireTimeMutex.Lock()
+	ret, specificReturn := fake.hPExpireTimeReturnsOnCall[len(fake.hPExpireTimeArgsForCall)]
+	fake.hPExpireTimeArgsForCall = append(fake.hPExpireTimeArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []string
+	}{arg1, arg2, arg3})
+	stub := fake.HPExpireTimeStub
+	fakeReturns := fake.hPExpireTimeReturns
+	fake.recordInvocation("HPExpireTime", []interface{}{arg1, arg2, arg3})
+	fake.hPExpireTimeMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HPExpireTimeCallCount() int {
+	fake.hPExpireTimeMutex.RLock()
+	defer fake.hPExpireTimeMutex.RUnlock()
+	return len(fake.hPExpireTimeArgsForCall)
+}
+
+func (fake *FakeClient) HPExpireTimeCalls(stub func(context.Context, string, ...string) *redisa.IntSliceCmd) {
+	fake.hPExpireTimeMutex.Lock()
+	defer fake.hPExpireTimeMutex.Unlock()
+	fake.HPExpireTimeStub = stub
+}
+
+func (fake *FakeClient) HPExpireTimeArgsForCall(i int) (context.Context, string, []string) {
+	fake.hPExpireTimeMutex.RLock()
+	defer fake.hPExpireTimeMutex.RUnlock()
+	argsForCall := fake.hPExpireTimeArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) HPExpireTimeReturns(result1 *redisa.IntSliceCmd) {
+	fake.hPExpireTimeMutex.Lock()
+	defer fake.hPExpireTimeMutex.Unlock()
+	fake.HPExpireTimeStub = nil
+	fake.hPExpireTimeReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPExpireTimeReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hPExpireTimeMutex.Lock()
+	defer fake.hPExpireTimeMutex.Unlock()
+	fake.HPExpireTimeStub = nil
+	if fake.hPExpireTimeReturnsOnCall == nil {
+		fake.hPExpireTimeReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hPExpireTimeReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPExpireWithArgs(arg1 context.Context, arg2 string, arg3 time.Duration, arg4 redisa.HExpireArgs, arg5 ...string) *redisa.IntSliceCmd {
+	fake.hPExpireWithArgsMutex.Lock()
+	ret, specificReturn := fake.hPExpireWithArgsReturnsOnCall[len(fake.hPExpireWithArgsArgsForCall)]
+	fake.hPExpireWithArgsArgsForCall = append(fake.hPExpireWithArgsArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 time.Duration
+		arg4 redisa.HExpireArgs
+		arg5 []string
+	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.HPExpireWithArgsStub
+	fakeReturns := fake.hPExpireWithArgsReturns
+	fake.recordInvocation("HPExpireWithArgs", []interface{}{arg1, arg2, arg3, arg4, arg5})
+	fake.hPExpireWithArgsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HPExpireWithArgsCallCount() int {
+	fake.hPExpireWithArgsMutex.RLock()
+	defer fake.hPExpireWithArgsMutex.RUnlock()
+	return len(fake.hPExpireWithArgsArgsForCall)
+}
+
+func (fake *FakeClient) HPExpireWithArgsCalls(stub func(context.Context, string, time.Duration, redisa.HExpireArgs, ...string) *redisa.IntSliceCmd) {
+	fake.hPExpireWithArgsMutex.Lock()
+	defer fake.hPExpireWithArgsMutex.Unlock()
+	fake.HPExpireWithArgsStub = stub
+}
+
+func (fake *FakeClient) HPExpireWithArgsArgsForCall(i int) (context.Context, string, time.Duration, redisa.HExpireArgs, []string) {
+	fake.hPExpireWithArgsMutex.RLock()
+	defer fake.hPExpireWithArgsMutex.RUnlock()
+	argsForCall := fake.hPExpireWithArgsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
+}
+
+func (fake *FakeClient) HPExpireWithArgsReturns(result1 *redisa.IntSliceCmd) {
+	fake.hPExpireWithArgsMutex.Lock()
+	defer fake.hPExpireWithArgsMutex.Unlock()
+	fake.HPExpireWithArgsStub = nil
+	fake.hPExpireWithArgsReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPExpireWithArgsReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hPExpireWithArgsMutex.Lock()
+	defer fake.hPExpireWithArgsMutex.Unlock()
+	fake.HPExpireWithArgsStub = nil
+	if fake.hPExpireWithArgsReturnsOnCall == nil {
+		fake.hPExpireWithArgsReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hPExpireWithArgsReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPTTL(arg1 context.Context, arg2 string, arg3 ...string) *redisa.IntSliceCmd {
+	fake.hPTTLMutex.Lock()
+	ret, specificReturn := fake.hPTTLReturnsOnCall[len(fake.hPTTLArgsForCall)]
+	fake.hPTTLArgsForCall = append(fake.hPTTLArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []string
+	}{arg1, arg2, arg3})
+	stub := fake.HPTTLStub
+	fakeReturns := fake.hPTTLReturns
+	fake.recordInvocation("HPTTL", []interface{}{arg1, arg2, arg3})
+	fake.hPTTLMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HPTTLCallCount() int {
+	fake.hPTTLMutex.RLock()
+	defer fake.hPTTLMutex.RUnlock()
+	return len(fake.hPTTLArgsForCall)
+}
+
+func (fake *FakeClient) HPTTLCalls(stub func(context.Context, string, ...string) *redisa.IntSliceCmd) {
+	fake.hPTTLMutex.Lock()
+	defer fake.hPTTLMutex.Unlock()
+	fake.HPTTLStub = stub
+}
+
+func (fake *FakeClient) HPTTLArgsForCall(i int) (context.Context, string, []string) {
+	fake.hPTTLMutex.RLock()
+	defer fake.hPTTLMutex.RUnlock()
+	argsForCall := fake.hPTTLArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) HPTTLReturns(result1 *redisa.IntSliceCmd) {
+	fake.hPTTLMutex.Lock()
+	defer fake.hPTTLMutex.Unlock()
+	fake.HPTTLStub = nil
+	fake.hPTTLReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPTTLReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hPTTLMutex.Lock()
+	defer fake.hPTTLMutex.Unlock()
+	fake.HPTTLStub = nil
+	if fake.hPTTLReturnsOnCall == nil {
+		fake.hPTTLReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hPTTLReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPersist(arg1 context.Context, arg2 string, arg3 ...string) *redisa.IntSliceCmd {
+	fake.hPersistMutex.Lock()
+	ret, specificReturn := fake.hPersistReturnsOnCall[len(fake.hPersistArgsForCall)]
+	fake.hPersistArgsForCall = append(fake.hPersistArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []string
+	}{arg1, arg2, arg3})
+	stub := fake.HPersistStub
+	fakeReturns := fake.hPersistReturns
+	fake.recordInvocation("HPersist", []interface{}{arg1, arg2, arg3})
+	fake.hPersistMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HPersistCallCount() int {
+	fake.hPersistMutex.RLock()
+	defer fake.hPersistMutex.RUnlock()
+	return len(fake.hPersistArgsForCall)
+}
+
+func (fake *FakeClient) HPersistCalls(stub func(context.Context, string, ...string) *redisa.IntSliceCmd) {
+	fake.hPersistMutex.Lock()
+	defer fake.hPersistMutex.Unlock()
+	fake.HPersistStub = stub
+}
+
+func (fake *FakeClient) HPersistArgsForCall(i int) (context.Context, string, []string) {
+	fake.hPersistMutex.RLock()
+	defer fake.hPersistMutex.RUnlock()
+	argsForCall := fake.hPersistArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) HPersistReturns(result1 *redisa.IntSliceCmd) {
+	fake.hPersistMutex.Lock()
+	defer fake.hPersistMutex.Unlock()
+	fake.HPersistStub = nil
+	fake.hPersistReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HPersistReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hPersistMutex.Lock()
+	defer fake.hPersistMutex.Unlock()
+	fake.HPersistStub = nil
+	if fake.hPersistReturnsOnCall == nil {
+		fake.hPersistReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hPersistReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
 func (fake *FakeClient) HRandField(arg1 context.Context, arg2 string, arg3 int) *redisa.StringSliceCmd {
 	fake.hRandFieldMutex.Lock()
 	ret, specificReturn := fake.hRandFieldReturnsOnCall[len(fake.hRandFieldArgsForCall)]
@@ -16850,6 +17814,71 @@ func (fake *FakeClient) HScanReturnsOnCall(i int, result1 *redisa.ScanCmd) {
 	}{result1}
 }
 
+func (fake *FakeClient) HScanNoValues(arg1 context.Context, arg2 string, arg3 uint64, arg4 string, arg5 int64) *redisa.ScanCmd {
+	fake.hScanNoValuesMutex.Lock()
+	ret, specificReturn := fake.hScanNoValuesReturnsOnCall[len(fake.hScanNoValuesArgsForCall)]
+	fake.hScanNoValuesArgsForCall = append(fake.hScanNoValuesArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 uint64
+		arg4 string
+		arg5 int64
+	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.HScanNoValuesStub
+	fakeReturns := fake.hScanNoValuesReturns
+	fake.recordInvocation("HScanNoValues", []interface{}{arg1, arg2, arg3, arg4, arg5})
+	fake.hScanNoValuesMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HScanNoValuesCallCount() int {
+	fake.hScanNoValuesMutex.RLock()
+	defer fake.hScanNoValuesMutex.RUnlock()
+	return len(fake.hScanNoValuesArgsForCall)
+}
+
+func (fake *FakeClient) HScanNoValuesCalls(stub func(context.Context, string, uint64, string, int64) *redisa.ScanCmd) {
+	fake.hScanNoValuesMutex.Lock()
+	defer fake.hScanNoValuesMutex.Unlock()
+	fake.HScanNoValuesStub = stub
+}
+
+func (fake *FakeClient) HScanNoValuesArgsForCall(i int) (context.Context, string, uint64, string, int64) {
+	fake.hScanNoValuesMutex.RLock()
+	defer fake.hScanNoValuesMutex.RUnlock()
+	argsForCall := fake.hScanNoValuesArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
+}
+
+func (fake *FakeClient) HScanNoValuesReturns(result1 *redisa.ScanCmd) {
+	fake.hScanNoValuesMutex.Lock()
+	defer fake.hScanNoValuesMutex.Unlock()
+	fake.HScanNoValuesStub = nil
+	fake.hScanNoValuesReturns = struct {
+		result1 *redisa.ScanCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HScanNoValuesReturnsOnCall(i int, result1 *redisa.ScanCmd) {
+	fake.hScanNoValuesMutex.Lock()
+	defer fake.hScanNoValuesMutex.Unlock()
+	fake.HScanNoValuesStub = nil
+	if fake.hScanNoValuesReturnsOnCall == nil {
+		fake.hScanNoValuesReturnsOnCall = make(map[int]struct {
+			result1 *redisa.ScanCmd
+		})
+	}
+	fake.hScanNoValuesReturnsOnCall[i] = struct {
+		result1 *redisa.ScanCmd
+	}{result1}
+}
+
 func (fake *FakeClient) HSet(arg1 context.Context, arg2 string, arg3 ...interface{}) *redisa.IntCmd {
 	fake.hSetMutex.Lock()
 	ret, specificReturn := fake.hSetReturnsOnCall[len(fake.hSetArgsForCall)]
@@ -16974,6 +18003,69 @@ func (fake *FakeClient) HSetNXReturnsOnCall(i int, result1 *redisa.BoolCmd) {
 	}
 	fake.hSetNXReturnsOnCall[i] = struct {
 		result1 *redisa.BoolCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HTTL(arg1 context.Context, arg2 string, arg3 ...string) *redisa.IntSliceCmd {
+	fake.hTTLMutex.Lock()
+	ret, specificReturn := fake.hTTLReturnsOnCall[len(fake.hTTLArgsForCall)]
+	fake.hTTLArgsForCall = append(fake.hTTLArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []string
+	}{arg1, arg2, arg3})
+	stub := fake.HTTLStub
+	fakeReturns := fake.hTTLReturns
+	fake.recordInvocation("HTTL", []interface{}{arg1, arg2, arg3})
+	fake.hTTLMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) HTTLCallCount() int {
+	fake.hTTLMutex.RLock()
+	defer fake.hTTLMutex.RUnlock()
+	return len(fake.hTTLArgsForCall)
+}
+
+func (fake *FakeClient) HTTLCalls(stub func(context.Context, string, ...string) *redisa.IntSliceCmd) {
+	fake.hTTLMutex.Lock()
+	defer fake.hTTLMutex.Unlock()
+	fake.HTTLStub = stub
+}
+
+func (fake *FakeClient) HTTLArgsForCall(i int) (context.Context, string, []string) {
+	fake.hTTLMutex.RLock()
+	defer fake.hTTLMutex.RUnlock()
+	argsForCall := fake.hTTLArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) HTTLReturns(result1 *redisa.IntSliceCmd) {
+	fake.hTTLMutex.Lock()
+	defer fake.hTTLMutex.Unlock()
+	fake.HTTLStub = nil
+	fake.hTTLReturns = struct {
+		result1 *redisa.IntSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) HTTLReturnsOnCall(i int, result1 *redisa.IntSliceCmd) {
+	fake.hTTLMutex.Lock()
+	defer fake.hTTLMutex.Unlock()
+	fake.HTTLStub = nil
+	if fake.hTTLReturnsOnCall == nil {
+		fake.hTTLReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntSliceCmd
+		})
+	}
+	fake.hTTLReturnsOnCall[i] = struct {
+		result1 *redisa.IntSliceCmd
 	}{result1}
 }
 
@@ -35539,6 +36631,16 @@ func (fake *FakeClient) Invocations() map[string][][]interface{} {
 	defer fake.hDelMutex.RUnlock()
 	fake.hExistsMutex.RLock()
 	defer fake.hExistsMutex.RUnlock()
+	fake.hExpireMutex.RLock()
+	defer fake.hExpireMutex.RUnlock()
+	fake.hExpireAtMutex.RLock()
+	defer fake.hExpireAtMutex.RUnlock()
+	fake.hExpireAtWithArgsMutex.RLock()
+	defer fake.hExpireAtWithArgsMutex.RUnlock()
+	fake.hExpireTimeMutex.RLock()
+	defer fake.hExpireTimeMutex.RUnlock()
+	fake.hExpireWithArgsMutex.RLock()
+	defer fake.hExpireWithArgsMutex.RUnlock()
 	fake.hGetMutex.RLock()
 	defer fake.hGetMutex.RUnlock()
 	fake.hGetAllMutex.RLock()
@@ -35555,16 +36657,34 @@ func (fake *FakeClient) Invocations() map[string][][]interface{} {
 	defer fake.hMGetMutex.RUnlock()
 	fake.hMSetMutex.RLock()
 	defer fake.hMSetMutex.RUnlock()
+	fake.hPExpireMutex.RLock()
+	defer fake.hPExpireMutex.RUnlock()
+	fake.hPExpireAtMutex.RLock()
+	defer fake.hPExpireAtMutex.RUnlock()
+	fake.hPExpireAtWithArgsMutex.RLock()
+	defer fake.hPExpireAtWithArgsMutex.RUnlock()
+	fake.hPExpireTimeMutex.RLock()
+	defer fake.hPExpireTimeMutex.RUnlock()
+	fake.hPExpireWithArgsMutex.RLock()
+	defer fake.hPExpireWithArgsMutex.RUnlock()
+	fake.hPTTLMutex.RLock()
+	defer fake.hPTTLMutex.RUnlock()
+	fake.hPersistMutex.RLock()
+	defer fake.hPersistMutex.RUnlock()
 	fake.hRandFieldMutex.RLock()
 	defer fake.hRandFieldMutex.RUnlock()
 	fake.hRandFieldWithValuesMutex.RLock()
 	defer fake.hRandFieldWithValuesMutex.RUnlock()
 	fake.hScanMutex.RLock()
 	defer fake.hScanMutex.RUnlock()
+	fake.hScanNoValuesMutex.RLock()
+	defer fake.hScanNoValuesMutex.RUnlock()
 	fake.hSetMutex.RLock()
 	defer fake.hSetMutex.RUnlock()
 	fake.hSetNXMutex.RLock()
 	defer fake.hSetNXMutex.RUnlock()
+	fake.hTTLMutex.RLock()
+	defer fake.hTTLMutex.RUnlock()
 	fake.hValsMutex.RLock()
 	defer fake.hValsMutex.RUnlock()
 	fake.incrMutex.RLock()
