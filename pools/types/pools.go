@@ -5,6 +5,7 @@ import (
 	"github.com/dora-network/dora-service-utils/errors"
 	"github.com/dora-network/dora-service-utils/ledger/types"
 	"github.com/dora-network/dora-service-utils/math"
+	"github.com/goccy/go-json"
 	"github.com/govalues/decimal"
 	"math/big"
 	"sort"
@@ -24,6 +25,14 @@ type Pool struct {
 	FeeFactor     decimal.Decimal `json:"fee_factor" redis:"fee_factor"`
 	CreatedAt     int64           `json:"created_at" redis:"created_at"`
 	MaturityAt    int64           `json:"maturity_at" redis:"maturity_at"`
+}
+
+func (p *Pool) MarshalBinary() ([]byte, error) {
+	return json.Marshal(p)
+}
+
+func (p *Pool) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, p)
 }
 
 // Amount retrieves a specific asset from pool.
