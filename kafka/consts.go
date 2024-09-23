@@ -8,6 +8,7 @@ const (
 	DefaultOrderBookStatusTopic        = "dora.network.orderbook.status"
 	DefaultOrderBookUpdatesTopic       = "dora.network.orderbook.updates"
 	DefaultOrderBookSnapshotTopic      = "dora.network.orderbook.snapshots"
+	DefaultOrderBookRequestsTopic      = "dora.network.orderbook.requests"
 	DefaultAssetRequestsTopic          = "dora.network.assets.requests"
 	DefaultAssetSnapshotTopic          = "dora.network.assets.snapshots"
 	DefaultAssetUpdatesTopic           = "dora.network.assets.updates"

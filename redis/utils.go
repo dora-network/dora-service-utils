@@ -2,6 +2,8 @@ package redis
 
 import (
 	"context"
+	"errors"
+
 	"github.com/cenkalti/backoff/v4"
 	"github.com/dora-network/dora-service-utils/orderbook"
 	"github.com/redis/go-redis/v9"
@@ -38,6 +40,11 @@ func BalancesKey(entityID string) string {
 	return Key(BalancesPrefix, entityID)
 }
 
+// SeqNumOffsetKey returns the key for the sequence number, Kafka offset of a user and topic.
+func SeqNumOffsetKey(userID, topic string) string {
+	return Key(SequenceNumberOffsetPrefix, userID, topic)
+}
+
 // Key constructs a redis key from the given elements. The elements should be provided in the
 // order they should appear in the key. A key's format should follow the following pattern:
 // - data type
@@ -55,4 +62,28 @@ func TryTransaction(ctx context.Context, rdb Client, f func(tx *redis.Tx) error,
 	}
 
 	return backoff.Retry(retryFn, backoffStrategy)
+}
+
+func NewClient(config Config) (Client, error) {
+	if len(config.Address) == 0 {
+		return nil, errors.New("redis address must be provided")
+	}
+
+	if config.UseCluster {
+		return redis.NewClusterClient(&redis.ClusterOptions{
+			Addrs:            config.Address,
+			Protocol:         config.Protocol,
+			Username:         config.Username,
+			Password:         config.Password,
+			DisableIndentity: config.DisableIdentity,
+		}), nil
+	}
+
+	return redis.NewClient(&redis.Options{
+		Addr:             config.Address[0],
+		Username:         config.Username,
+		Password:         config.Password,
+		DB:               config.DB,
+		DisableIndentity: config.DisableIdentity,
+	}), nil
 }

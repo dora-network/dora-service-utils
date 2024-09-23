@@ -20,12 +20,7 @@ type Cache[K comparable, V any] struct {
 
 // New creates a new cache with the provided options.
 func New[K comparable, V any](options ...Option[K, V]) *Cache[K, V] {
-	opts := defaultOptions[K, V]()
-
-	for _, apply := range options {
-		opts = apply(opts)
-	}
-
+	opts := applyOptions[K, V](options...)
 	return &Cache[K, V]{
 		options: opts,
 		records: make(map[K]V),
@@ -102,7 +97,7 @@ func (c *Cache[K, V]) start(ctx context.Context) {
 			cancel()
 			// process records
 			c.mu.Lock()
-			if err := c.options.processFunc(fetches, &c.records); err != nil {
+			if err := c.options.processFunc(ctx, c.options.processTimeout, fetches, &c.records); err != nil {
 				c.options.logger.Error().Err(err).Msg("failed to process records")
 			}
 			c.mu.Unlock()
