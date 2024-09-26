@@ -10,6 +10,7 @@ type Config struct {
 	OrderBookStatusTopic        string   `mapstructure:"order_book_status_topic" json:"order_book_status_topic"`
 	OrderBookUpdatesTopic       string   `mapstructure:"order_book_updates_topic" json:"order_book_updates_topic"`
 	OrderBookSnapshotTopic      string   `mapstructure:"order_book_snapshots_topic" json:"order_book_snapshots_topic"`
+	OrderBookRequestsTopic      string   `mapstructure:"order_book_requests_topic" json:"order_book_requests_topic"`
 	AssetsRequestTopic          string   `mapstructure:"assets_request_topic" json:"assets_request_topic"`
 	AssetSnapshotTopic          string   `mapstructure:"assets_snapshot_topic" json:"assets_snapshot_topic"`
 	AssetUpdateTopic            string   `mapstructure:"assets_update_topic" json:"assets_update_topic"`
@@ -22,6 +23,8 @@ type Config struct {
 	PoolLiquidityRequestsTopic  string   `mapstructure:"pool_liquidity_requests_topic" json:"pool_liquidity_requests_topic"`
 	PoolLiquiditySnapshotsTopic string   `mapstructure:"pool_liquidity_snapshots_topic" json:"pool_liquidity_snapshots_topic"`
 	PoolLiquidityUpdatesTopic   string   `mapstructure:"pool_liquidity_updates_topic" json:"pool_liquidity_updates_topic"`
+	TransactionsTopic           string   `mapstructure:"transactions_topic" json:"transactions_topic"`
+	Authentication              Auth     `mapstructure:"authentication" json:"authentication"`
 }
 
 func DefaultConfig() Config {
@@ -34,6 +37,7 @@ func DefaultConfig() Config {
 		OrderBookStatusTopic:        DefaultOrderBookStatusTopic,
 		OrderBookUpdatesTopic:       DefaultOrderBookUpdatesTopic,
 		OrderBookSnapshotTopic:      DefaultOrderBookSnapshotTopic,
+		OrderBookRequestsTopic:      DefaultOrderBookRequestsTopic,
 		AssetsRequestTopic:          DefaultAssetRequestsTopic,
 		AssetSnapshotTopic:          DefaultAssetSnapshotTopic,
 		AssetUpdateTopic:            DefaultAssetUpdatesTopic,
@@ -46,5 +50,6 @@ func DefaultConfig() Config {
 		PoolLiquidityRequestsTopic:  DefaultPoolLiquidityRequestsTopic,
 		PoolLiquiditySnapshotsTopic: DefaultPoolLiquiditySnapshotsTopic,
 		PoolLiquidityUpdatesTopic:   DefaultPoolLiquidityUpdatesTopic,
+		TransactionsTopic:           DefaultTransactionsTopic,
 	}
 }

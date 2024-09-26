@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"context"
 	"github.com/dora-network/dora-service-utils/kafka"
 	"github.com/rs/zerolog"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -19,11 +20,12 @@ type options[K comparable, V any] struct {
 	processFunc    ProcessRecordsFunc[K, V]
 	logger         zerolog.Logger
 	client         kafka.Client
+	processTimeout time.Duration
 }
 
 type Option[K comparable, V any] func(options[K, V]) options[K, V]
 
-type ProcessRecordsFunc[K comparable, V any] func(fetches kgo.Fetches, cache *map[K]V) error
+type ProcessRecordsFunc[K comparable, V any] func(ctx context.Context, timeout time.Duration, fetches kgo.Fetches, cache *map[K]V) error
 
 // WithKafkaConfig sets the Kafka configuration for the cache.
 func WithKafkaConfig[K comparable, V any](config kafka.Config) Option[K, V] {
@@ -114,6 +116,13 @@ func WithClient[K comparable, V any](client kafka.Client) Option[K, V] {
 	}
 }
 
+func WithProcessTimeout[K comparable, V any](timeout time.Duration) Option[K, V] {
+	return func(o options[K, V]) options[K, V] {
+		o.processTimeout = timeout
+		return o
+	}
+}
+
 func defaultOptions[K comparable, V any]() options[K, V] {
 	opts := options[K, V]{
 		config:      kafka.DefaultConfig(),
@@ -121,14 +130,23 @@ func defaultOptions[K comparable, V any]() options[K, V] {
 		// This should be overridden by the development team with an appropriate handler function
 		processFunc: processRecordsFunc[K, V],
 		// Default logger writes to Stderr
-		logger: zerolog.New(os.Stderr),
+		logger:         zerolog.New(os.Stderr),
+		processTimeout: time.Second,
+	}
+	return opts
+}
+
+func applyOptions[K comparable, V any](options ...Option[K, V]) options[K, V] {
+	opts := defaultOptions[K, V]()
+	for _, apply := range options {
+		opts = apply(opts)
 	}
 	return opts
 }
 
 // The very most basic function possible in case we forget to provide a process function
 // we simply log out the record we're processing to Stderr
-func processRecordsFunc[K comparable, V any](fetches kgo.Fetches, _ *map[K]V) error {
+func processRecordsFunc[K comparable, V any](_ context.Context, _ time.Duration, fetches kgo.Fetches, _ *map[K]V) error {
 	logger := zerolog.New(os.Stderr)
 	for _, fetch := range fetches {
 		for _, topic := range fetch.Topics {

@@ -88,7 +88,7 @@ func EnsureMigrationTable(ctx context.Context, config spanner.Config, client spa
 	req := databasepb.UpdateDatabaseDdlRequest{
 		Database: config.URL(),
 		Statements: []string{
-			fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s  (
+			fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (
 				version BIGINT NOT NULL PRIMARY KEY,
 				created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 			);`, tableName),

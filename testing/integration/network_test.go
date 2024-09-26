@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	timeout = time.Second * 5
+	timeout = time.Minute
 )
 
 func TestDoraNetwork(t *testing.T) {

@@ -6,7 +6,6 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/dora-network/dora-service-utils/cache"
 	"github.com/dora-network/dora-service-utils/kafka/kafkafakes"
-	"github.com/dora-network/dora-service-utils/testing/integration"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -45,7 +44,7 @@ func TestCache(t *testing.T) {
 	// Create a new cache
 	testCache := cache.New[string, string](
 		cache.WithClient[string, string](client),
-		cache.WithProcessFunc[string, string](func(fetches kgo.Fetches, cache *map[string]string) error {
+		cache.WithProcessFunc[string, string](func(ctx context.Context, timeout time.Duration, fetches kgo.Fetches, cache *map[string]string) error {
 			assert.Len(t, fetches, 1)
 			assert.Len(t, fetches[0].Topics, 1)
 			assert.Len(t, fetches[0].Topics[0].Partitions, 1)
@@ -109,11 +108,4 @@ func TestCache(t *testing.T) {
 		testCache.Stop()
 		assert.Equal(t, cache.StatusStopped, testCache.Status())
 	})
-}
-
-func setupNetwork(t *testing.T, ctx context.Context) *integration.DoraNetwork {
-	dn, err := integration.NewDoraNetwork(t)
-	require.NoError(t, err)
-	require.NoError(t, dn.CreateKafkaResource(t, ctx))
-	return dn
 }

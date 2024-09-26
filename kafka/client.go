@@ -3,6 +3,7 @@ package kafka
 import (
 	"context"
 	"github.com/twmb/franz-go/pkg/kgo"
+	"github.com/twmb/franz-go/pkg/sasl/plain"
 )
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
@@ -19,4 +20,39 @@ type Client interface {
 	ProduceSync(ctx context.Context, record ...*kgo.Record) kgo.ProduceResults
 	// PollRecords fetches records from Kafka.
 	PollRecords(ctx context.Context, maxPollRecords int) kgo.Fetches
+}
+
+type NewClientFunc func(config Config, produceTopic, consumerGroup string, consumeTopics ...string) (Client, error)
+
+func NewClient(config Config, produceTopic, consumerGroup string, consumeTopics ...string) (Client, error) {
+	opts := make([]kgo.Opt, 0)
+	opts = append(opts, kgo.SeedBrokers(config.Brokers...))
+
+	if produceTopic != "" {
+		opts = append(opts, kgo.DefaultProduceTopic(produceTopic))
+	}
+
+	if consumerGroup != "" {
+		opts = append(opts, kgo.ConsumerGroup(consumerGroup))
+	}
+
+	if len(consumeTopics) > 0 {
+		opts = append(opts, kgo.ConsumeTopics(consumeTopics...))
+	}
+
+	if config.Authentication.Username != "" && config.Authentication.Password != "" {
+		opts = append(opts, kgo.SASL(plain.Auth{
+			User: config.Authentication.Username,
+			Pass: config.Authentication.Password,
+		}.AsMechanism()))
+	}
+
+	client, err := kgo.NewClient(
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return client, nil
 }

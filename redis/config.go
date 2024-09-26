@@ -2,6 +2,7 @@ package redis
 
 type Config struct {
 	Address         []string `mapstructure:"address"  json:"address,omitempty"`
+	Username        string   `mapstructure:"username" json:"username,omitempty"`
 	Password        string   `mapstructure:"password" json:"password,omitempty"`
 	DB              int      `mapstructure:"db" json:"db,omitempty"`
 	Protocol        int      `mapstructure:"protocol" json:"protocol,omitempty"`
