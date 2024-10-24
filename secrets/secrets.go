@@ -40,3 +40,47 @@ func GetSecret(ctx context.Context, projectID, secretID string) ([]byte, error) 
 
 	return result.GetPayload().GetData(), nil
 }
+
+func CreateSecret(ctx context.Context, projectID, secretID string, payload []byte) (string, error) {
+	if os.Getenv(GoogleApplicationCredentialsEnv) == "" {
+		return "", fmt.Errorf("%s not set", GoogleApplicationCredentialsEnv)
+	}
+
+	client, err := sm.NewClient(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to create secrets client: %w", err)
+	}
+
+	defer client.Close()
+
+	createSecretReq := &smpb.CreateSecretRequest{
+		Parent:   fmt.Sprintf("projects/%s", projectID),
+		SecretId: secretID,
+		Secret: &smpb.Secret{
+			Replication: &smpb.Replication{
+				Replication: &smpb.Replication_Automatic_{
+					Automatic: &smpb.Replication_Automatic{},
+				},
+			},
+		},
+	}
+
+	secret, err := client.CreateSecret(ctx, createSecretReq)
+	if err != nil {
+		return "", fmt.Errorf("failed to create secret: %s", err.Error())
+	}
+
+	addSecretVersionReq := &smpb.AddSecretVersionRequest{
+		Parent: secret.Name,
+		Payload: &smpb.SecretPayload{
+			Data: payload,
+		},
+	}
+
+	version, err := client.AddSecretVersion(ctx, addSecretVersionReq)
+	if err != nil {
+		return "", fmt.Errorf("failed to add secret version: %s", err.Error())
+	}
+
+	return version.Name, nil
+}

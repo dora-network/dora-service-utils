@@ -52,4 +52,14 @@ func TestSecrets(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, secret)
 	assert.Equal(t, "doratesting", string(secret))
+
+	secretID := "test-id"
+	payload := "test-payload"
+	_, err = secrets.CreateSecret(context.Background(), projectID, secretID, []byte(payload))
+	require.NoError(t, err)
+
+	secret, err = secrets.GetSecret(ctx, projectID, secretID)
+	require.NoError(t, err)
+	require.NotNil(t, secret)
+	assert.Equal(t, payload, string(secret))
 }
