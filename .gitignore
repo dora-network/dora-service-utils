@@ -1,4 +1,4 @@
 .idea
 .env
-service-account.json
+secrets/service-account.json
 
