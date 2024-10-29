@@ -41,7 +41,7 @@ func Migrate(ctx context.Context, migrationsFS fs.FS, cfg spanner.Config, client
 			return err
 		}
 
-		if version < currentVersion {
+		if version <= currentVersion {
 			log.Printf("Skipping migration %d, current version: %d\n", version, currentVersion)
 			return nil
 		}
