@@ -7,6 +7,7 @@ import (
 	"context"
 	"github.com/googleapis/gax-go/v2"
 	"google.golang.org/api/option"
+	"os"
 	"time"
 )
 
@@ -27,7 +28,7 @@ type client struct {
 
 func NewClient(ctx context.Context, config Config) (Client, error) {
 	var opts []option.ClientOption
-	if config.CredentialsFile != "" {
+	if config.CredentialsFile != "" && os.Getenv("SPANNER_EMULATOR_HOST") == "" {
 		opts = append(opts, option.WithCredentialsFile(config.CredentialsFile))
 	}
 
