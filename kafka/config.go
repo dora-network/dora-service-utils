@@ -24,6 +24,8 @@ type Config struct {
 	PoolLiquiditySnapshotsTopic string   `mapstructure:"pool_liquidity_snapshots_topic" json:"pool_liquidity_snapshots_topic"`
 	PoolLiquidityUpdatesTopic   string   `mapstructure:"pool_liquidity_updates_topic" json:"pool_liquidity_updates_topic"`
 	TransactionsTopic           string   `mapstructure:"transactions_topic" json:"transactions_topic"`
+	AddTransactionRequestTopic  string   `mapstructure:"add_transactions_request_topic" json:"add_transactions_request_topic"`
+	AddTransactionResponseTopic string   `mapstructure:"add_transactions_response_topic" json:"add_transactions_response_topic"`
 	Authentication              Auth     `mapstructure:"authentication" json:"authentication"`
 }
 
@@ -51,5 +53,7 @@ func DefaultConfig() Config {
 		PoolLiquiditySnapshotsTopic: DefaultPoolLiquiditySnapshotsTopic,
 		PoolLiquidityUpdatesTopic:   DefaultPoolLiquidityUpdatesTopic,
 		TransactionsTopic:           DefaultTransactionsTopic,
+		AddTransactionRequestTopic:  DefaultAddTransactionsRequestTopic,
+		AddTransactionResponseTopic: DefaultAddTransactionsResponseTopic,
 	}
 }
