@@ -26,6 +26,8 @@ type Config struct {
 	TransactionsTopic           string   `mapstructure:"transactions_topic" json:"transactions_topic"`
 	AddTransactionRequestTopic  string   `mapstructure:"add_transactions_request_topic" json:"add_transactions_request_topic"`
 	AddTransactionResponseTopic string   `mapstructure:"add_transactions_response_topic" json:"add_transactions_response_topic"`
+	TradesRequestTopic          string   `mapstructure:"trades_request_topic" json:"trades_request_topic"`
+	TradesUpdateTopic           string   `mapstructure:"trades_update_topic" json:"trades_update_topic"`
 	Authentication              Auth     `mapstructure:"authentication" json:"authentication"`
 }
 
@@ -55,5 +57,7 @@ func DefaultConfig() Config {
 		TransactionsTopic:           DefaultTransactionsTopic,
 		AddTransactionRequestTopic:  DefaultAddTransactionsRequestTopic,
 		AddTransactionResponseTopic: DefaultAddTransactionsResponseTopic,
+		TradesRequestTopic:          DefaultTradesRequestTopic,
+		TradesUpdateTopic:           DefaultTradesUpdateTopic,
 	}
 }

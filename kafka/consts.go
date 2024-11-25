@@ -24,4 +24,6 @@ const (
 	DefaultTransactionsTopic            = "dora.network.transactions"
 	DefaultAddTransactionsRequestTopic  = "dora.network.add.transactions.request"
 	DefaultAddTransactionsResponseTopic = "dora.network.add.transactions.response"
+	DefaultTradesRequestTopic           = "dora.network.trades.request"
+	DefaultTradesUpdateTopic            = "dora.network.trades.updates"
 )
