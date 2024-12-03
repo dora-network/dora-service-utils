@@ -27,4 +27,5 @@ const (
 	DefaultTradesRequestTopic           = "dora.network.trades.request"
 	DefaultTradesResponseTopic          = "dora.network.trades.response"
 	DefaultTradesUpdateTopic            = "dora.network.trades.updates"
+	DefaultLastTradedPriceTopic         = "dora.network.last.traded.price"
 )

@@ -12,7 +12,7 @@ require (
 	github.com/govalues/decimal v0.1.29
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.8.1
 	github.com/ory/dockertest/v3 v3.11.0
-	github.com/redis/go-redis/v9 v9.6.1
+	github.com/redis/go-redis/v9 v9.7.0
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
 	github.com/twmb/franz-go v1.17.0
