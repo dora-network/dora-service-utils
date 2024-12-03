@@ -1642,6 +1642,372 @@ type FakeClient struct {
 	fCallRoReturnsOnCall map[int]struct {
 		result1 *redisa.Cmd
 	}
+	FTAggregateStub        func(context.Context, string, string) *redisa.MapStringInterfaceCmd
+	fTAggregateMutex       sync.RWMutex
+	fTAggregateArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}
+	fTAggregateReturns struct {
+		result1 *redisa.MapStringInterfaceCmd
+	}
+	fTAggregateReturnsOnCall map[int]struct {
+		result1 *redisa.MapStringInterfaceCmd
+	}
+	FTAggregateWithArgsStub        func(context.Context, string, string, *redisa.FTAggregateOptions) *redisa.AggregateCmd
+	fTAggregateWithArgsMutex       sync.RWMutex
+	fTAggregateWithArgsArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+		arg4 *redisa.FTAggregateOptions
+	}
+	fTAggregateWithArgsReturns struct {
+		result1 *redisa.AggregateCmd
+	}
+	fTAggregateWithArgsReturnsOnCall map[int]struct {
+		result1 *redisa.AggregateCmd
+	}
+	FTAliasAddStub        func(context.Context, string, string) *redisa.StatusCmd
+	fTAliasAddMutex       sync.RWMutex
+	fTAliasAddArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}
+	fTAliasAddReturns struct {
+		result1 *redisa.StatusCmd
+	}
+	fTAliasAddReturnsOnCall map[int]struct {
+		result1 *redisa.StatusCmd
+	}
+	FTAliasDelStub        func(context.Context, string) *redisa.StatusCmd
+	fTAliasDelMutex       sync.RWMutex
+	fTAliasDelArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+	}
+	fTAliasDelReturns struct {
+		result1 *redisa.StatusCmd
+	}
+	fTAliasDelReturnsOnCall map[int]struct {
+		result1 *redisa.StatusCmd
+	}
+	FTAliasUpdateStub        func(context.Context, string, string) *redisa.StatusCmd
+	fTAliasUpdateMutex       sync.RWMutex
+	fTAliasUpdateArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}
+	fTAliasUpdateReturns struct {
+		result1 *redisa.StatusCmd
+	}
+	fTAliasUpdateReturnsOnCall map[int]struct {
+		result1 *redisa.StatusCmd
+	}
+	FTAlterStub        func(context.Context, string, bool, []interface{}) *redisa.StatusCmd
+	fTAlterMutex       sync.RWMutex
+	fTAlterArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 bool
+		arg4 []interface{}
+	}
+	fTAlterReturns struct {
+		result1 *redisa.StatusCmd
+	}
+	fTAlterReturnsOnCall map[int]struct {
+		result1 *redisa.StatusCmd
+	}
+	FTConfigGetStub        func(context.Context, string) *redisa.MapMapStringInterfaceCmd
+	fTConfigGetMutex       sync.RWMutex
+	fTConfigGetArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+	}
+	fTConfigGetReturns struct {
+		result1 *redisa.MapMapStringInterfaceCmd
+	}
+	fTConfigGetReturnsOnCall map[int]struct {
+		result1 *redisa.MapMapStringInterfaceCmd
+	}
+	FTConfigSetStub        func(context.Context, string, interface{}) *redisa.StatusCmd
+	fTConfigSetMutex       sync.RWMutex
+	fTConfigSetArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 interface{}
+	}
+	fTConfigSetReturns struct {
+		result1 *redisa.StatusCmd
+	}
+	fTConfigSetReturnsOnCall map[int]struct {
+		result1 *redisa.StatusCmd
+	}
+	FTCreateStub        func(context.Context, string, *redisa.FTCreateOptions, ...*redisa.FieldSchema) *redisa.StatusCmd
+	fTCreateMutex       sync.RWMutex
+	fTCreateArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 *redisa.FTCreateOptions
+		arg4 []*redisa.FieldSchema
+	}
+	fTCreateReturns struct {
+		result1 *redisa.StatusCmd
+	}
+	fTCreateReturnsOnCall map[int]struct {
+		result1 *redisa.StatusCmd
+	}
+	FTCursorDelStub        func(context.Context, string, int) *redisa.StatusCmd
+	fTCursorDelMutex       sync.RWMutex
+	fTCursorDelArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 int
+	}
+	fTCursorDelReturns struct {
+		result1 *redisa.StatusCmd
+	}
+	fTCursorDelReturnsOnCall map[int]struct {
+		result1 *redisa.StatusCmd
+	}
+	FTCursorReadStub        func(context.Context, string, int, int) *redisa.MapStringInterfaceCmd
+	fTCursorReadMutex       sync.RWMutex
+	fTCursorReadArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 int
+		arg4 int
+	}
+	fTCursorReadReturns struct {
+		result1 *redisa.MapStringInterfaceCmd
+	}
+	fTCursorReadReturnsOnCall map[int]struct {
+		result1 *redisa.MapStringInterfaceCmd
+	}
+	FTDictAddStub        func(context.Context, string, ...interface{}) *redisa.IntCmd
+	fTDictAddMutex       sync.RWMutex
+	fTDictAddArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []interface{}
+	}
+	fTDictAddReturns struct {
+		result1 *redisa.IntCmd
+	}
+	fTDictAddReturnsOnCall map[int]struct {
+		result1 *redisa.IntCmd
+	}
+	FTDictDelStub        func(context.Context, string, ...interface{}) *redisa.IntCmd
+	fTDictDelMutex       sync.RWMutex
+	fTDictDelArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []interface{}
+	}
+	fTDictDelReturns struct {
+		result1 *redisa.IntCmd
+	}
+	fTDictDelReturnsOnCall map[int]struct {
+		result1 *redisa.IntCmd
+	}
+	FTDictDumpStub        func(context.Context, string) *redisa.StringSliceCmd
+	fTDictDumpMutex       sync.RWMutex
+	fTDictDumpArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+	}
+	fTDictDumpReturns struct {
+		result1 *redisa.StringSliceCmd
+	}
+	fTDictDumpReturnsOnCall map[int]struct {
+		result1 *redisa.StringSliceCmd
+	}
+	FTDropIndexStub        func(context.Context, string) *redisa.StatusCmd
+	fTDropIndexMutex       sync.RWMutex
+	fTDropIndexArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+	}
+	fTDropIndexReturns struct {
+		result1 *redisa.StatusCmd
+	}
+	fTDropIndexReturnsOnCall map[int]struct {
+		result1 *redisa.StatusCmd
+	}
+	FTDropIndexWithArgsStub        func(context.Context, string, *redisa.FTDropIndexOptions) *redisa.StatusCmd
+	fTDropIndexWithArgsMutex       sync.RWMutex
+	fTDropIndexWithArgsArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 *redisa.FTDropIndexOptions
+	}
+	fTDropIndexWithArgsReturns struct {
+		result1 *redisa.StatusCmd
+	}
+	fTDropIndexWithArgsReturnsOnCall map[int]struct {
+		result1 *redisa.StatusCmd
+	}
+	FTExplainStub        func(context.Context, string, string) *redisa.StringCmd
+	fTExplainMutex       sync.RWMutex
+	fTExplainArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}
+	fTExplainReturns struct {
+		result1 *redisa.StringCmd
+	}
+	fTExplainReturnsOnCall map[int]struct {
+		result1 *redisa.StringCmd
+	}
+	FTExplainWithArgsStub        func(context.Context, string, string, *redisa.FTExplainOptions) *redisa.StringCmd
+	fTExplainWithArgsMutex       sync.RWMutex
+	fTExplainWithArgsArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+		arg4 *redisa.FTExplainOptions
+	}
+	fTExplainWithArgsReturns struct {
+		result1 *redisa.StringCmd
+	}
+	fTExplainWithArgsReturnsOnCall map[int]struct {
+		result1 *redisa.StringCmd
+	}
+	FTInfoStub        func(context.Context, string) *redisa.FTInfoCmd
+	fTInfoMutex       sync.RWMutex
+	fTInfoArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+	}
+	fTInfoReturns struct {
+		result1 *redisa.FTInfoCmd
+	}
+	fTInfoReturnsOnCall map[int]struct {
+		result1 *redisa.FTInfoCmd
+	}
+	FTSearchStub        func(context.Context, string, string) *redisa.FTSearchCmd
+	fTSearchMutex       sync.RWMutex
+	fTSearchArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}
+	fTSearchReturns struct {
+		result1 *redisa.FTSearchCmd
+	}
+	fTSearchReturnsOnCall map[int]struct {
+		result1 *redisa.FTSearchCmd
+	}
+	FTSearchWithArgsStub        func(context.Context, string, string, *redisa.FTSearchOptions) *redisa.FTSearchCmd
+	fTSearchWithArgsMutex       sync.RWMutex
+	fTSearchWithArgsArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+		arg4 *redisa.FTSearchOptions
+	}
+	fTSearchWithArgsReturns struct {
+		result1 *redisa.FTSearchCmd
+	}
+	fTSearchWithArgsReturnsOnCall map[int]struct {
+		result1 *redisa.FTSearchCmd
+	}
+	FTSpellCheckStub        func(context.Context, string, string) *redisa.FTSpellCheckCmd
+	fTSpellCheckMutex       sync.RWMutex
+	fTSpellCheckArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}
+	fTSpellCheckReturns struct {
+		result1 *redisa.FTSpellCheckCmd
+	}
+	fTSpellCheckReturnsOnCall map[int]struct {
+		result1 *redisa.FTSpellCheckCmd
+	}
+	FTSpellCheckWithArgsStub        func(context.Context, string, string, *redisa.FTSpellCheckOptions) *redisa.FTSpellCheckCmd
+	fTSpellCheckWithArgsMutex       sync.RWMutex
+	fTSpellCheckWithArgsArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+		arg4 *redisa.FTSpellCheckOptions
+	}
+	fTSpellCheckWithArgsReturns struct {
+		result1 *redisa.FTSpellCheckCmd
+	}
+	fTSpellCheckWithArgsReturnsOnCall map[int]struct {
+		result1 *redisa.FTSpellCheckCmd
+	}
+	FTSynDumpStub        func(context.Context, string) *redisa.FTSynDumpCmd
+	fTSynDumpMutex       sync.RWMutex
+	fTSynDumpArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+	}
+	fTSynDumpReturns struct {
+		result1 *redisa.FTSynDumpCmd
+	}
+	fTSynDumpReturnsOnCall map[int]struct {
+		result1 *redisa.FTSynDumpCmd
+	}
+	FTSynUpdateStub        func(context.Context, string, interface{}, []interface{}) *redisa.StatusCmd
+	fTSynUpdateMutex       sync.RWMutex
+	fTSynUpdateArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 interface{}
+		arg4 []interface{}
+	}
+	fTSynUpdateReturns struct {
+		result1 *redisa.StatusCmd
+	}
+	fTSynUpdateReturnsOnCall map[int]struct {
+		result1 *redisa.StatusCmd
+	}
+	FTSynUpdateWithArgsStub        func(context.Context, string, interface{}, *redisa.FTSynUpdateOptions, []interface{}) *redisa.StatusCmd
+	fTSynUpdateWithArgsMutex       sync.RWMutex
+	fTSynUpdateWithArgsArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 interface{}
+		arg4 *redisa.FTSynUpdateOptions
+		arg5 []interface{}
+	}
+	fTSynUpdateWithArgsReturns struct {
+		result1 *redisa.StatusCmd
+	}
+	fTSynUpdateWithArgsReturnsOnCall map[int]struct {
+		result1 *redisa.StatusCmd
+	}
+	FTTagValsStub        func(context.Context, string, string) *redisa.StringSliceCmd
+	fTTagValsMutex       sync.RWMutex
+	fTTagValsArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}
+	fTTagValsReturns struct {
+		result1 *redisa.StringSliceCmd
+	}
+	fTTagValsReturnsOnCall map[int]struct {
+		result1 *redisa.StringSliceCmd
+	}
+	FT_ListStub        func(context.Context) *redisa.StringSliceCmd
+	fT_ListMutex       sync.RWMutex
+	fT_ListArgsForCall []struct {
+		arg1 context.Context
+	}
+	fT_ListReturns struct {
+		result1 *redisa.StringSliceCmd
+	}
+	fT_ListReturnsOnCall map[int]struct {
+		result1 *redisa.StringSliceCmd
+	}
 	FlushAllStub        func(context.Context) *redisa.StatusCmd
 	flushAllMutex       sync.RWMutex
 	flushAllArgsForCall []struct {
@@ -14285,6 +14651,1787 @@ func (fake *FakeClient) FCallRoReturnsOnCall(i int, result1 *redisa.Cmd) {
 	}
 	fake.fCallRoReturnsOnCall[i] = struct {
 		result1 *redisa.Cmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAggregate(arg1 context.Context, arg2 string, arg3 string) *redisa.MapStringInterfaceCmd {
+	fake.fTAggregateMutex.Lock()
+	ret, specificReturn := fake.fTAggregateReturnsOnCall[len(fake.fTAggregateArgsForCall)]
+	fake.fTAggregateArgsForCall = append(fake.fTAggregateArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}{arg1, arg2, arg3})
+	stub := fake.FTAggregateStub
+	fakeReturns := fake.fTAggregateReturns
+	fake.recordInvocation("FTAggregate", []interface{}{arg1, arg2, arg3})
+	fake.fTAggregateMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTAggregateCallCount() int {
+	fake.fTAggregateMutex.RLock()
+	defer fake.fTAggregateMutex.RUnlock()
+	return len(fake.fTAggregateArgsForCall)
+}
+
+func (fake *FakeClient) FTAggregateCalls(stub func(context.Context, string, string) *redisa.MapStringInterfaceCmd) {
+	fake.fTAggregateMutex.Lock()
+	defer fake.fTAggregateMutex.Unlock()
+	fake.FTAggregateStub = stub
+}
+
+func (fake *FakeClient) FTAggregateArgsForCall(i int) (context.Context, string, string) {
+	fake.fTAggregateMutex.RLock()
+	defer fake.fTAggregateMutex.RUnlock()
+	argsForCall := fake.fTAggregateArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTAggregateReturns(result1 *redisa.MapStringInterfaceCmd) {
+	fake.fTAggregateMutex.Lock()
+	defer fake.fTAggregateMutex.Unlock()
+	fake.FTAggregateStub = nil
+	fake.fTAggregateReturns = struct {
+		result1 *redisa.MapStringInterfaceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAggregateReturnsOnCall(i int, result1 *redisa.MapStringInterfaceCmd) {
+	fake.fTAggregateMutex.Lock()
+	defer fake.fTAggregateMutex.Unlock()
+	fake.FTAggregateStub = nil
+	if fake.fTAggregateReturnsOnCall == nil {
+		fake.fTAggregateReturnsOnCall = make(map[int]struct {
+			result1 *redisa.MapStringInterfaceCmd
+		})
+	}
+	fake.fTAggregateReturnsOnCall[i] = struct {
+		result1 *redisa.MapStringInterfaceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAggregateWithArgs(arg1 context.Context, arg2 string, arg3 string, arg4 *redisa.FTAggregateOptions) *redisa.AggregateCmd {
+	fake.fTAggregateWithArgsMutex.Lock()
+	ret, specificReturn := fake.fTAggregateWithArgsReturnsOnCall[len(fake.fTAggregateWithArgsArgsForCall)]
+	fake.fTAggregateWithArgsArgsForCall = append(fake.fTAggregateWithArgsArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+		arg4 *redisa.FTAggregateOptions
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.FTAggregateWithArgsStub
+	fakeReturns := fake.fTAggregateWithArgsReturns
+	fake.recordInvocation("FTAggregateWithArgs", []interface{}{arg1, arg2, arg3, arg4})
+	fake.fTAggregateWithArgsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTAggregateWithArgsCallCount() int {
+	fake.fTAggregateWithArgsMutex.RLock()
+	defer fake.fTAggregateWithArgsMutex.RUnlock()
+	return len(fake.fTAggregateWithArgsArgsForCall)
+}
+
+func (fake *FakeClient) FTAggregateWithArgsCalls(stub func(context.Context, string, string, *redisa.FTAggregateOptions) *redisa.AggregateCmd) {
+	fake.fTAggregateWithArgsMutex.Lock()
+	defer fake.fTAggregateWithArgsMutex.Unlock()
+	fake.FTAggregateWithArgsStub = stub
+}
+
+func (fake *FakeClient) FTAggregateWithArgsArgsForCall(i int) (context.Context, string, string, *redisa.FTAggregateOptions) {
+	fake.fTAggregateWithArgsMutex.RLock()
+	defer fake.fTAggregateWithArgsMutex.RUnlock()
+	argsForCall := fake.fTAggregateWithArgsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) FTAggregateWithArgsReturns(result1 *redisa.AggregateCmd) {
+	fake.fTAggregateWithArgsMutex.Lock()
+	defer fake.fTAggregateWithArgsMutex.Unlock()
+	fake.FTAggregateWithArgsStub = nil
+	fake.fTAggregateWithArgsReturns = struct {
+		result1 *redisa.AggregateCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAggregateWithArgsReturnsOnCall(i int, result1 *redisa.AggregateCmd) {
+	fake.fTAggregateWithArgsMutex.Lock()
+	defer fake.fTAggregateWithArgsMutex.Unlock()
+	fake.FTAggregateWithArgsStub = nil
+	if fake.fTAggregateWithArgsReturnsOnCall == nil {
+		fake.fTAggregateWithArgsReturnsOnCall = make(map[int]struct {
+			result1 *redisa.AggregateCmd
+		})
+	}
+	fake.fTAggregateWithArgsReturnsOnCall[i] = struct {
+		result1 *redisa.AggregateCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAliasAdd(arg1 context.Context, arg2 string, arg3 string) *redisa.StatusCmd {
+	fake.fTAliasAddMutex.Lock()
+	ret, specificReturn := fake.fTAliasAddReturnsOnCall[len(fake.fTAliasAddArgsForCall)]
+	fake.fTAliasAddArgsForCall = append(fake.fTAliasAddArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}{arg1, arg2, arg3})
+	stub := fake.FTAliasAddStub
+	fakeReturns := fake.fTAliasAddReturns
+	fake.recordInvocation("FTAliasAdd", []interface{}{arg1, arg2, arg3})
+	fake.fTAliasAddMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTAliasAddCallCount() int {
+	fake.fTAliasAddMutex.RLock()
+	defer fake.fTAliasAddMutex.RUnlock()
+	return len(fake.fTAliasAddArgsForCall)
+}
+
+func (fake *FakeClient) FTAliasAddCalls(stub func(context.Context, string, string) *redisa.StatusCmd) {
+	fake.fTAliasAddMutex.Lock()
+	defer fake.fTAliasAddMutex.Unlock()
+	fake.FTAliasAddStub = stub
+}
+
+func (fake *FakeClient) FTAliasAddArgsForCall(i int) (context.Context, string, string) {
+	fake.fTAliasAddMutex.RLock()
+	defer fake.fTAliasAddMutex.RUnlock()
+	argsForCall := fake.fTAliasAddArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTAliasAddReturns(result1 *redisa.StatusCmd) {
+	fake.fTAliasAddMutex.Lock()
+	defer fake.fTAliasAddMutex.Unlock()
+	fake.FTAliasAddStub = nil
+	fake.fTAliasAddReturns = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAliasAddReturnsOnCall(i int, result1 *redisa.StatusCmd) {
+	fake.fTAliasAddMutex.Lock()
+	defer fake.fTAliasAddMutex.Unlock()
+	fake.FTAliasAddStub = nil
+	if fake.fTAliasAddReturnsOnCall == nil {
+		fake.fTAliasAddReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StatusCmd
+		})
+	}
+	fake.fTAliasAddReturnsOnCall[i] = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAliasDel(arg1 context.Context, arg2 string) *redisa.StatusCmd {
+	fake.fTAliasDelMutex.Lock()
+	ret, specificReturn := fake.fTAliasDelReturnsOnCall[len(fake.fTAliasDelArgsForCall)]
+	fake.fTAliasDelArgsForCall = append(fake.fTAliasDelArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.FTAliasDelStub
+	fakeReturns := fake.fTAliasDelReturns
+	fake.recordInvocation("FTAliasDel", []interface{}{arg1, arg2})
+	fake.fTAliasDelMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTAliasDelCallCount() int {
+	fake.fTAliasDelMutex.RLock()
+	defer fake.fTAliasDelMutex.RUnlock()
+	return len(fake.fTAliasDelArgsForCall)
+}
+
+func (fake *FakeClient) FTAliasDelCalls(stub func(context.Context, string) *redisa.StatusCmd) {
+	fake.fTAliasDelMutex.Lock()
+	defer fake.fTAliasDelMutex.Unlock()
+	fake.FTAliasDelStub = stub
+}
+
+func (fake *FakeClient) FTAliasDelArgsForCall(i int) (context.Context, string) {
+	fake.fTAliasDelMutex.RLock()
+	defer fake.fTAliasDelMutex.RUnlock()
+	argsForCall := fake.fTAliasDelArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeClient) FTAliasDelReturns(result1 *redisa.StatusCmd) {
+	fake.fTAliasDelMutex.Lock()
+	defer fake.fTAliasDelMutex.Unlock()
+	fake.FTAliasDelStub = nil
+	fake.fTAliasDelReturns = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAliasDelReturnsOnCall(i int, result1 *redisa.StatusCmd) {
+	fake.fTAliasDelMutex.Lock()
+	defer fake.fTAliasDelMutex.Unlock()
+	fake.FTAliasDelStub = nil
+	if fake.fTAliasDelReturnsOnCall == nil {
+		fake.fTAliasDelReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StatusCmd
+		})
+	}
+	fake.fTAliasDelReturnsOnCall[i] = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAliasUpdate(arg1 context.Context, arg2 string, arg3 string) *redisa.StatusCmd {
+	fake.fTAliasUpdateMutex.Lock()
+	ret, specificReturn := fake.fTAliasUpdateReturnsOnCall[len(fake.fTAliasUpdateArgsForCall)]
+	fake.fTAliasUpdateArgsForCall = append(fake.fTAliasUpdateArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}{arg1, arg2, arg3})
+	stub := fake.FTAliasUpdateStub
+	fakeReturns := fake.fTAliasUpdateReturns
+	fake.recordInvocation("FTAliasUpdate", []interface{}{arg1, arg2, arg3})
+	fake.fTAliasUpdateMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTAliasUpdateCallCount() int {
+	fake.fTAliasUpdateMutex.RLock()
+	defer fake.fTAliasUpdateMutex.RUnlock()
+	return len(fake.fTAliasUpdateArgsForCall)
+}
+
+func (fake *FakeClient) FTAliasUpdateCalls(stub func(context.Context, string, string) *redisa.StatusCmd) {
+	fake.fTAliasUpdateMutex.Lock()
+	defer fake.fTAliasUpdateMutex.Unlock()
+	fake.FTAliasUpdateStub = stub
+}
+
+func (fake *FakeClient) FTAliasUpdateArgsForCall(i int) (context.Context, string, string) {
+	fake.fTAliasUpdateMutex.RLock()
+	defer fake.fTAliasUpdateMutex.RUnlock()
+	argsForCall := fake.fTAliasUpdateArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTAliasUpdateReturns(result1 *redisa.StatusCmd) {
+	fake.fTAliasUpdateMutex.Lock()
+	defer fake.fTAliasUpdateMutex.Unlock()
+	fake.FTAliasUpdateStub = nil
+	fake.fTAliasUpdateReturns = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAliasUpdateReturnsOnCall(i int, result1 *redisa.StatusCmd) {
+	fake.fTAliasUpdateMutex.Lock()
+	defer fake.fTAliasUpdateMutex.Unlock()
+	fake.FTAliasUpdateStub = nil
+	if fake.fTAliasUpdateReturnsOnCall == nil {
+		fake.fTAliasUpdateReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StatusCmd
+		})
+	}
+	fake.fTAliasUpdateReturnsOnCall[i] = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAlter(arg1 context.Context, arg2 string, arg3 bool, arg4 []interface{}) *redisa.StatusCmd {
+	var arg4Copy []interface{}
+	if arg4 != nil {
+		arg4Copy = make([]interface{}, len(arg4))
+		copy(arg4Copy, arg4)
+	}
+	fake.fTAlterMutex.Lock()
+	ret, specificReturn := fake.fTAlterReturnsOnCall[len(fake.fTAlterArgsForCall)]
+	fake.fTAlterArgsForCall = append(fake.fTAlterArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 bool
+		arg4 []interface{}
+	}{arg1, arg2, arg3, arg4Copy})
+	stub := fake.FTAlterStub
+	fakeReturns := fake.fTAlterReturns
+	fake.recordInvocation("FTAlter", []interface{}{arg1, arg2, arg3, arg4Copy})
+	fake.fTAlterMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTAlterCallCount() int {
+	fake.fTAlterMutex.RLock()
+	defer fake.fTAlterMutex.RUnlock()
+	return len(fake.fTAlterArgsForCall)
+}
+
+func (fake *FakeClient) FTAlterCalls(stub func(context.Context, string, bool, []interface{}) *redisa.StatusCmd) {
+	fake.fTAlterMutex.Lock()
+	defer fake.fTAlterMutex.Unlock()
+	fake.FTAlterStub = stub
+}
+
+func (fake *FakeClient) FTAlterArgsForCall(i int) (context.Context, string, bool, []interface{}) {
+	fake.fTAlterMutex.RLock()
+	defer fake.fTAlterMutex.RUnlock()
+	argsForCall := fake.fTAlterArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) FTAlterReturns(result1 *redisa.StatusCmd) {
+	fake.fTAlterMutex.Lock()
+	defer fake.fTAlterMutex.Unlock()
+	fake.FTAlterStub = nil
+	fake.fTAlterReturns = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTAlterReturnsOnCall(i int, result1 *redisa.StatusCmd) {
+	fake.fTAlterMutex.Lock()
+	defer fake.fTAlterMutex.Unlock()
+	fake.FTAlterStub = nil
+	if fake.fTAlterReturnsOnCall == nil {
+		fake.fTAlterReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StatusCmd
+		})
+	}
+	fake.fTAlterReturnsOnCall[i] = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTConfigGet(arg1 context.Context, arg2 string) *redisa.MapMapStringInterfaceCmd {
+	fake.fTConfigGetMutex.Lock()
+	ret, specificReturn := fake.fTConfigGetReturnsOnCall[len(fake.fTConfigGetArgsForCall)]
+	fake.fTConfigGetArgsForCall = append(fake.fTConfigGetArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.FTConfigGetStub
+	fakeReturns := fake.fTConfigGetReturns
+	fake.recordInvocation("FTConfigGet", []interface{}{arg1, arg2})
+	fake.fTConfigGetMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTConfigGetCallCount() int {
+	fake.fTConfigGetMutex.RLock()
+	defer fake.fTConfigGetMutex.RUnlock()
+	return len(fake.fTConfigGetArgsForCall)
+}
+
+func (fake *FakeClient) FTConfigGetCalls(stub func(context.Context, string) *redisa.MapMapStringInterfaceCmd) {
+	fake.fTConfigGetMutex.Lock()
+	defer fake.fTConfigGetMutex.Unlock()
+	fake.FTConfigGetStub = stub
+}
+
+func (fake *FakeClient) FTConfigGetArgsForCall(i int) (context.Context, string) {
+	fake.fTConfigGetMutex.RLock()
+	defer fake.fTConfigGetMutex.RUnlock()
+	argsForCall := fake.fTConfigGetArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeClient) FTConfigGetReturns(result1 *redisa.MapMapStringInterfaceCmd) {
+	fake.fTConfigGetMutex.Lock()
+	defer fake.fTConfigGetMutex.Unlock()
+	fake.FTConfigGetStub = nil
+	fake.fTConfigGetReturns = struct {
+		result1 *redisa.MapMapStringInterfaceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTConfigGetReturnsOnCall(i int, result1 *redisa.MapMapStringInterfaceCmd) {
+	fake.fTConfigGetMutex.Lock()
+	defer fake.fTConfigGetMutex.Unlock()
+	fake.FTConfigGetStub = nil
+	if fake.fTConfigGetReturnsOnCall == nil {
+		fake.fTConfigGetReturnsOnCall = make(map[int]struct {
+			result1 *redisa.MapMapStringInterfaceCmd
+		})
+	}
+	fake.fTConfigGetReturnsOnCall[i] = struct {
+		result1 *redisa.MapMapStringInterfaceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTConfigSet(arg1 context.Context, arg2 string, arg3 interface{}) *redisa.StatusCmd {
+	fake.fTConfigSetMutex.Lock()
+	ret, specificReturn := fake.fTConfigSetReturnsOnCall[len(fake.fTConfigSetArgsForCall)]
+	fake.fTConfigSetArgsForCall = append(fake.fTConfigSetArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 interface{}
+	}{arg1, arg2, arg3})
+	stub := fake.FTConfigSetStub
+	fakeReturns := fake.fTConfigSetReturns
+	fake.recordInvocation("FTConfigSet", []interface{}{arg1, arg2, arg3})
+	fake.fTConfigSetMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTConfigSetCallCount() int {
+	fake.fTConfigSetMutex.RLock()
+	defer fake.fTConfigSetMutex.RUnlock()
+	return len(fake.fTConfigSetArgsForCall)
+}
+
+func (fake *FakeClient) FTConfigSetCalls(stub func(context.Context, string, interface{}) *redisa.StatusCmd) {
+	fake.fTConfigSetMutex.Lock()
+	defer fake.fTConfigSetMutex.Unlock()
+	fake.FTConfigSetStub = stub
+}
+
+func (fake *FakeClient) FTConfigSetArgsForCall(i int) (context.Context, string, interface{}) {
+	fake.fTConfigSetMutex.RLock()
+	defer fake.fTConfigSetMutex.RUnlock()
+	argsForCall := fake.fTConfigSetArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTConfigSetReturns(result1 *redisa.StatusCmd) {
+	fake.fTConfigSetMutex.Lock()
+	defer fake.fTConfigSetMutex.Unlock()
+	fake.FTConfigSetStub = nil
+	fake.fTConfigSetReturns = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTConfigSetReturnsOnCall(i int, result1 *redisa.StatusCmd) {
+	fake.fTConfigSetMutex.Lock()
+	defer fake.fTConfigSetMutex.Unlock()
+	fake.FTConfigSetStub = nil
+	if fake.fTConfigSetReturnsOnCall == nil {
+		fake.fTConfigSetReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StatusCmd
+		})
+	}
+	fake.fTConfigSetReturnsOnCall[i] = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTCreate(arg1 context.Context, arg2 string, arg3 *redisa.FTCreateOptions, arg4 ...*redisa.FieldSchema) *redisa.StatusCmd {
+	fake.fTCreateMutex.Lock()
+	ret, specificReturn := fake.fTCreateReturnsOnCall[len(fake.fTCreateArgsForCall)]
+	fake.fTCreateArgsForCall = append(fake.fTCreateArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 *redisa.FTCreateOptions
+		arg4 []*redisa.FieldSchema
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.FTCreateStub
+	fakeReturns := fake.fTCreateReturns
+	fake.recordInvocation("FTCreate", []interface{}{arg1, arg2, arg3, arg4})
+	fake.fTCreateMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTCreateCallCount() int {
+	fake.fTCreateMutex.RLock()
+	defer fake.fTCreateMutex.RUnlock()
+	return len(fake.fTCreateArgsForCall)
+}
+
+func (fake *FakeClient) FTCreateCalls(stub func(context.Context, string, *redisa.FTCreateOptions, ...*redisa.FieldSchema) *redisa.StatusCmd) {
+	fake.fTCreateMutex.Lock()
+	defer fake.fTCreateMutex.Unlock()
+	fake.FTCreateStub = stub
+}
+
+func (fake *FakeClient) FTCreateArgsForCall(i int) (context.Context, string, *redisa.FTCreateOptions, []*redisa.FieldSchema) {
+	fake.fTCreateMutex.RLock()
+	defer fake.fTCreateMutex.RUnlock()
+	argsForCall := fake.fTCreateArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) FTCreateReturns(result1 *redisa.StatusCmd) {
+	fake.fTCreateMutex.Lock()
+	defer fake.fTCreateMutex.Unlock()
+	fake.FTCreateStub = nil
+	fake.fTCreateReturns = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTCreateReturnsOnCall(i int, result1 *redisa.StatusCmd) {
+	fake.fTCreateMutex.Lock()
+	defer fake.fTCreateMutex.Unlock()
+	fake.FTCreateStub = nil
+	if fake.fTCreateReturnsOnCall == nil {
+		fake.fTCreateReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StatusCmd
+		})
+	}
+	fake.fTCreateReturnsOnCall[i] = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTCursorDel(arg1 context.Context, arg2 string, arg3 int) *redisa.StatusCmd {
+	fake.fTCursorDelMutex.Lock()
+	ret, specificReturn := fake.fTCursorDelReturnsOnCall[len(fake.fTCursorDelArgsForCall)]
+	fake.fTCursorDelArgsForCall = append(fake.fTCursorDelArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 int
+	}{arg1, arg2, arg3})
+	stub := fake.FTCursorDelStub
+	fakeReturns := fake.fTCursorDelReturns
+	fake.recordInvocation("FTCursorDel", []interface{}{arg1, arg2, arg3})
+	fake.fTCursorDelMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTCursorDelCallCount() int {
+	fake.fTCursorDelMutex.RLock()
+	defer fake.fTCursorDelMutex.RUnlock()
+	return len(fake.fTCursorDelArgsForCall)
+}
+
+func (fake *FakeClient) FTCursorDelCalls(stub func(context.Context, string, int) *redisa.StatusCmd) {
+	fake.fTCursorDelMutex.Lock()
+	defer fake.fTCursorDelMutex.Unlock()
+	fake.FTCursorDelStub = stub
+}
+
+func (fake *FakeClient) FTCursorDelArgsForCall(i int) (context.Context, string, int) {
+	fake.fTCursorDelMutex.RLock()
+	defer fake.fTCursorDelMutex.RUnlock()
+	argsForCall := fake.fTCursorDelArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTCursorDelReturns(result1 *redisa.StatusCmd) {
+	fake.fTCursorDelMutex.Lock()
+	defer fake.fTCursorDelMutex.Unlock()
+	fake.FTCursorDelStub = nil
+	fake.fTCursorDelReturns = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTCursorDelReturnsOnCall(i int, result1 *redisa.StatusCmd) {
+	fake.fTCursorDelMutex.Lock()
+	defer fake.fTCursorDelMutex.Unlock()
+	fake.FTCursorDelStub = nil
+	if fake.fTCursorDelReturnsOnCall == nil {
+		fake.fTCursorDelReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StatusCmd
+		})
+	}
+	fake.fTCursorDelReturnsOnCall[i] = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTCursorRead(arg1 context.Context, arg2 string, arg3 int, arg4 int) *redisa.MapStringInterfaceCmd {
+	fake.fTCursorReadMutex.Lock()
+	ret, specificReturn := fake.fTCursorReadReturnsOnCall[len(fake.fTCursorReadArgsForCall)]
+	fake.fTCursorReadArgsForCall = append(fake.fTCursorReadArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 int
+		arg4 int
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.FTCursorReadStub
+	fakeReturns := fake.fTCursorReadReturns
+	fake.recordInvocation("FTCursorRead", []interface{}{arg1, arg2, arg3, arg4})
+	fake.fTCursorReadMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTCursorReadCallCount() int {
+	fake.fTCursorReadMutex.RLock()
+	defer fake.fTCursorReadMutex.RUnlock()
+	return len(fake.fTCursorReadArgsForCall)
+}
+
+func (fake *FakeClient) FTCursorReadCalls(stub func(context.Context, string, int, int) *redisa.MapStringInterfaceCmd) {
+	fake.fTCursorReadMutex.Lock()
+	defer fake.fTCursorReadMutex.Unlock()
+	fake.FTCursorReadStub = stub
+}
+
+func (fake *FakeClient) FTCursorReadArgsForCall(i int) (context.Context, string, int, int) {
+	fake.fTCursorReadMutex.RLock()
+	defer fake.fTCursorReadMutex.RUnlock()
+	argsForCall := fake.fTCursorReadArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) FTCursorReadReturns(result1 *redisa.MapStringInterfaceCmd) {
+	fake.fTCursorReadMutex.Lock()
+	defer fake.fTCursorReadMutex.Unlock()
+	fake.FTCursorReadStub = nil
+	fake.fTCursorReadReturns = struct {
+		result1 *redisa.MapStringInterfaceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTCursorReadReturnsOnCall(i int, result1 *redisa.MapStringInterfaceCmd) {
+	fake.fTCursorReadMutex.Lock()
+	defer fake.fTCursorReadMutex.Unlock()
+	fake.FTCursorReadStub = nil
+	if fake.fTCursorReadReturnsOnCall == nil {
+		fake.fTCursorReadReturnsOnCall = make(map[int]struct {
+			result1 *redisa.MapStringInterfaceCmd
+		})
+	}
+	fake.fTCursorReadReturnsOnCall[i] = struct {
+		result1 *redisa.MapStringInterfaceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTDictAdd(arg1 context.Context, arg2 string, arg3 ...interface{}) *redisa.IntCmd {
+	fake.fTDictAddMutex.Lock()
+	ret, specificReturn := fake.fTDictAddReturnsOnCall[len(fake.fTDictAddArgsForCall)]
+	fake.fTDictAddArgsForCall = append(fake.fTDictAddArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []interface{}
+	}{arg1, arg2, arg3})
+	stub := fake.FTDictAddStub
+	fakeReturns := fake.fTDictAddReturns
+	fake.recordInvocation("FTDictAdd", []interface{}{arg1, arg2, arg3})
+	fake.fTDictAddMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTDictAddCallCount() int {
+	fake.fTDictAddMutex.RLock()
+	defer fake.fTDictAddMutex.RUnlock()
+	return len(fake.fTDictAddArgsForCall)
+}
+
+func (fake *FakeClient) FTDictAddCalls(stub func(context.Context, string, ...interface{}) *redisa.IntCmd) {
+	fake.fTDictAddMutex.Lock()
+	defer fake.fTDictAddMutex.Unlock()
+	fake.FTDictAddStub = stub
+}
+
+func (fake *FakeClient) FTDictAddArgsForCall(i int) (context.Context, string, []interface{}) {
+	fake.fTDictAddMutex.RLock()
+	defer fake.fTDictAddMutex.RUnlock()
+	argsForCall := fake.fTDictAddArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTDictAddReturns(result1 *redisa.IntCmd) {
+	fake.fTDictAddMutex.Lock()
+	defer fake.fTDictAddMutex.Unlock()
+	fake.FTDictAddStub = nil
+	fake.fTDictAddReturns = struct {
+		result1 *redisa.IntCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTDictAddReturnsOnCall(i int, result1 *redisa.IntCmd) {
+	fake.fTDictAddMutex.Lock()
+	defer fake.fTDictAddMutex.Unlock()
+	fake.FTDictAddStub = nil
+	if fake.fTDictAddReturnsOnCall == nil {
+		fake.fTDictAddReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntCmd
+		})
+	}
+	fake.fTDictAddReturnsOnCall[i] = struct {
+		result1 *redisa.IntCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTDictDel(arg1 context.Context, arg2 string, arg3 ...interface{}) *redisa.IntCmd {
+	fake.fTDictDelMutex.Lock()
+	ret, specificReturn := fake.fTDictDelReturnsOnCall[len(fake.fTDictDelArgsForCall)]
+	fake.fTDictDelArgsForCall = append(fake.fTDictDelArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 []interface{}
+	}{arg1, arg2, arg3})
+	stub := fake.FTDictDelStub
+	fakeReturns := fake.fTDictDelReturns
+	fake.recordInvocation("FTDictDel", []interface{}{arg1, arg2, arg3})
+	fake.fTDictDelMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTDictDelCallCount() int {
+	fake.fTDictDelMutex.RLock()
+	defer fake.fTDictDelMutex.RUnlock()
+	return len(fake.fTDictDelArgsForCall)
+}
+
+func (fake *FakeClient) FTDictDelCalls(stub func(context.Context, string, ...interface{}) *redisa.IntCmd) {
+	fake.fTDictDelMutex.Lock()
+	defer fake.fTDictDelMutex.Unlock()
+	fake.FTDictDelStub = stub
+}
+
+func (fake *FakeClient) FTDictDelArgsForCall(i int) (context.Context, string, []interface{}) {
+	fake.fTDictDelMutex.RLock()
+	defer fake.fTDictDelMutex.RUnlock()
+	argsForCall := fake.fTDictDelArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTDictDelReturns(result1 *redisa.IntCmd) {
+	fake.fTDictDelMutex.Lock()
+	defer fake.fTDictDelMutex.Unlock()
+	fake.FTDictDelStub = nil
+	fake.fTDictDelReturns = struct {
+		result1 *redisa.IntCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTDictDelReturnsOnCall(i int, result1 *redisa.IntCmd) {
+	fake.fTDictDelMutex.Lock()
+	defer fake.fTDictDelMutex.Unlock()
+	fake.FTDictDelStub = nil
+	if fake.fTDictDelReturnsOnCall == nil {
+		fake.fTDictDelReturnsOnCall = make(map[int]struct {
+			result1 *redisa.IntCmd
+		})
+	}
+	fake.fTDictDelReturnsOnCall[i] = struct {
+		result1 *redisa.IntCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTDictDump(arg1 context.Context, arg2 string) *redisa.StringSliceCmd {
+	fake.fTDictDumpMutex.Lock()
+	ret, specificReturn := fake.fTDictDumpReturnsOnCall[len(fake.fTDictDumpArgsForCall)]
+	fake.fTDictDumpArgsForCall = append(fake.fTDictDumpArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.FTDictDumpStub
+	fakeReturns := fake.fTDictDumpReturns
+	fake.recordInvocation("FTDictDump", []interface{}{arg1, arg2})
+	fake.fTDictDumpMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTDictDumpCallCount() int {
+	fake.fTDictDumpMutex.RLock()
+	defer fake.fTDictDumpMutex.RUnlock()
+	return len(fake.fTDictDumpArgsForCall)
+}
+
+func (fake *FakeClient) FTDictDumpCalls(stub func(context.Context, string) *redisa.StringSliceCmd) {
+	fake.fTDictDumpMutex.Lock()
+	defer fake.fTDictDumpMutex.Unlock()
+	fake.FTDictDumpStub = stub
+}
+
+func (fake *FakeClient) FTDictDumpArgsForCall(i int) (context.Context, string) {
+	fake.fTDictDumpMutex.RLock()
+	defer fake.fTDictDumpMutex.RUnlock()
+	argsForCall := fake.fTDictDumpArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeClient) FTDictDumpReturns(result1 *redisa.StringSliceCmd) {
+	fake.fTDictDumpMutex.Lock()
+	defer fake.fTDictDumpMutex.Unlock()
+	fake.FTDictDumpStub = nil
+	fake.fTDictDumpReturns = struct {
+		result1 *redisa.StringSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTDictDumpReturnsOnCall(i int, result1 *redisa.StringSliceCmd) {
+	fake.fTDictDumpMutex.Lock()
+	defer fake.fTDictDumpMutex.Unlock()
+	fake.FTDictDumpStub = nil
+	if fake.fTDictDumpReturnsOnCall == nil {
+		fake.fTDictDumpReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StringSliceCmd
+		})
+	}
+	fake.fTDictDumpReturnsOnCall[i] = struct {
+		result1 *redisa.StringSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTDropIndex(arg1 context.Context, arg2 string) *redisa.StatusCmd {
+	fake.fTDropIndexMutex.Lock()
+	ret, specificReturn := fake.fTDropIndexReturnsOnCall[len(fake.fTDropIndexArgsForCall)]
+	fake.fTDropIndexArgsForCall = append(fake.fTDropIndexArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.FTDropIndexStub
+	fakeReturns := fake.fTDropIndexReturns
+	fake.recordInvocation("FTDropIndex", []interface{}{arg1, arg2})
+	fake.fTDropIndexMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTDropIndexCallCount() int {
+	fake.fTDropIndexMutex.RLock()
+	defer fake.fTDropIndexMutex.RUnlock()
+	return len(fake.fTDropIndexArgsForCall)
+}
+
+func (fake *FakeClient) FTDropIndexCalls(stub func(context.Context, string) *redisa.StatusCmd) {
+	fake.fTDropIndexMutex.Lock()
+	defer fake.fTDropIndexMutex.Unlock()
+	fake.FTDropIndexStub = stub
+}
+
+func (fake *FakeClient) FTDropIndexArgsForCall(i int) (context.Context, string) {
+	fake.fTDropIndexMutex.RLock()
+	defer fake.fTDropIndexMutex.RUnlock()
+	argsForCall := fake.fTDropIndexArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeClient) FTDropIndexReturns(result1 *redisa.StatusCmd) {
+	fake.fTDropIndexMutex.Lock()
+	defer fake.fTDropIndexMutex.Unlock()
+	fake.FTDropIndexStub = nil
+	fake.fTDropIndexReturns = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTDropIndexReturnsOnCall(i int, result1 *redisa.StatusCmd) {
+	fake.fTDropIndexMutex.Lock()
+	defer fake.fTDropIndexMutex.Unlock()
+	fake.FTDropIndexStub = nil
+	if fake.fTDropIndexReturnsOnCall == nil {
+		fake.fTDropIndexReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StatusCmd
+		})
+	}
+	fake.fTDropIndexReturnsOnCall[i] = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTDropIndexWithArgs(arg1 context.Context, arg2 string, arg3 *redisa.FTDropIndexOptions) *redisa.StatusCmd {
+	fake.fTDropIndexWithArgsMutex.Lock()
+	ret, specificReturn := fake.fTDropIndexWithArgsReturnsOnCall[len(fake.fTDropIndexWithArgsArgsForCall)]
+	fake.fTDropIndexWithArgsArgsForCall = append(fake.fTDropIndexWithArgsArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 *redisa.FTDropIndexOptions
+	}{arg1, arg2, arg3})
+	stub := fake.FTDropIndexWithArgsStub
+	fakeReturns := fake.fTDropIndexWithArgsReturns
+	fake.recordInvocation("FTDropIndexWithArgs", []interface{}{arg1, arg2, arg3})
+	fake.fTDropIndexWithArgsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTDropIndexWithArgsCallCount() int {
+	fake.fTDropIndexWithArgsMutex.RLock()
+	defer fake.fTDropIndexWithArgsMutex.RUnlock()
+	return len(fake.fTDropIndexWithArgsArgsForCall)
+}
+
+func (fake *FakeClient) FTDropIndexWithArgsCalls(stub func(context.Context, string, *redisa.FTDropIndexOptions) *redisa.StatusCmd) {
+	fake.fTDropIndexWithArgsMutex.Lock()
+	defer fake.fTDropIndexWithArgsMutex.Unlock()
+	fake.FTDropIndexWithArgsStub = stub
+}
+
+func (fake *FakeClient) FTDropIndexWithArgsArgsForCall(i int) (context.Context, string, *redisa.FTDropIndexOptions) {
+	fake.fTDropIndexWithArgsMutex.RLock()
+	defer fake.fTDropIndexWithArgsMutex.RUnlock()
+	argsForCall := fake.fTDropIndexWithArgsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTDropIndexWithArgsReturns(result1 *redisa.StatusCmd) {
+	fake.fTDropIndexWithArgsMutex.Lock()
+	defer fake.fTDropIndexWithArgsMutex.Unlock()
+	fake.FTDropIndexWithArgsStub = nil
+	fake.fTDropIndexWithArgsReturns = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTDropIndexWithArgsReturnsOnCall(i int, result1 *redisa.StatusCmd) {
+	fake.fTDropIndexWithArgsMutex.Lock()
+	defer fake.fTDropIndexWithArgsMutex.Unlock()
+	fake.FTDropIndexWithArgsStub = nil
+	if fake.fTDropIndexWithArgsReturnsOnCall == nil {
+		fake.fTDropIndexWithArgsReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StatusCmd
+		})
+	}
+	fake.fTDropIndexWithArgsReturnsOnCall[i] = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTExplain(arg1 context.Context, arg2 string, arg3 string) *redisa.StringCmd {
+	fake.fTExplainMutex.Lock()
+	ret, specificReturn := fake.fTExplainReturnsOnCall[len(fake.fTExplainArgsForCall)]
+	fake.fTExplainArgsForCall = append(fake.fTExplainArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}{arg1, arg2, arg3})
+	stub := fake.FTExplainStub
+	fakeReturns := fake.fTExplainReturns
+	fake.recordInvocation("FTExplain", []interface{}{arg1, arg2, arg3})
+	fake.fTExplainMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTExplainCallCount() int {
+	fake.fTExplainMutex.RLock()
+	defer fake.fTExplainMutex.RUnlock()
+	return len(fake.fTExplainArgsForCall)
+}
+
+func (fake *FakeClient) FTExplainCalls(stub func(context.Context, string, string) *redisa.StringCmd) {
+	fake.fTExplainMutex.Lock()
+	defer fake.fTExplainMutex.Unlock()
+	fake.FTExplainStub = stub
+}
+
+func (fake *FakeClient) FTExplainArgsForCall(i int) (context.Context, string, string) {
+	fake.fTExplainMutex.RLock()
+	defer fake.fTExplainMutex.RUnlock()
+	argsForCall := fake.fTExplainArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTExplainReturns(result1 *redisa.StringCmd) {
+	fake.fTExplainMutex.Lock()
+	defer fake.fTExplainMutex.Unlock()
+	fake.FTExplainStub = nil
+	fake.fTExplainReturns = struct {
+		result1 *redisa.StringCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTExplainReturnsOnCall(i int, result1 *redisa.StringCmd) {
+	fake.fTExplainMutex.Lock()
+	defer fake.fTExplainMutex.Unlock()
+	fake.FTExplainStub = nil
+	if fake.fTExplainReturnsOnCall == nil {
+		fake.fTExplainReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StringCmd
+		})
+	}
+	fake.fTExplainReturnsOnCall[i] = struct {
+		result1 *redisa.StringCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTExplainWithArgs(arg1 context.Context, arg2 string, arg3 string, arg4 *redisa.FTExplainOptions) *redisa.StringCmd {
+	fake.fTExplainWithArgsMutex.Lock()
+	ret, specificReturn := fake.fTExplainWithArgsReturnsOnCall[len(fake.fTExplainWithArgsArgsForCall)]
+	fake.fTExplainWithArgsArgsForCall = append(fake.fTExplainWithArgsArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+		arg4 *redisa.FTExplainOptions
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.FTExplainWithArgsStub
+	fakeReturns := fake.fTExplainWithArgsReturns
+	fake.recordInvocation("FTExplainWithArgs", []interface{}{arg1, arg2, arg3, arg4})
+	fake.fTExplainWithArgsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTExplainWithArgsCallCount() int {
+	fake.fTExplainWithArgsMutex.RLock()
+	defer fake.fTExplainWithArgsMutex.RUnlock()
+	return len(fake.fTExplainWithArgsArgsForCall)
+}
+
+func (fake *FakeClient) FTExplainWithArgsCalls(stub func(context.Context, string, string, *redisa.FTExplainOptions) *redisa.StringCmd) {
+	fake.fTExplainWithArgsMutex.Lock()
+	defer fake.fTExplainWithArgsMutex.Unlock()
+	fake.FTExplainWithArgsStub = stub
+}
+
+func (fake *FakeClient) FTExplainWithArgsArgsForCall(i int) (context.Context, string, string, *redisa.FTExplainOptions) {
+	fake.fTExplainWithArgsMutex.RLock()
+	defer fake.fTExplainWithArgsMutex.RUnlock()
+	argsForCall := fake.fTExplainWithArgsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) FTExplainWithArgsReturns(result1 *redisa.StringCmd) {
+	fake.fTExplainWithArgsMutex.Lock()
+	defer fake.fTExplainWithArgsMutex.Unlock()
+	fake.FTExplainWithArgsStub = nil
+	fake.fTExplainWithArgsReturns = struct {
+		result1 *redisa.StringCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTExplainWithArgsReturnsOnCall(i int, result1 *redisa.StringCmd) {
+	fake.fTExplainWithArgsMutex.Lock()
+	defer fake.fTExplainWithArgsMutex.Unlock()
+	fake.FTExplainWithArgsStub = nil
+	if fake.fTExplainWithArgsReturnsOnCall == nil {
+		fake.fTExplainWithArgsReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StringCmd
+		})
+	}
+	fake.fTExplainWithArgsReturnsOnCall[i] = struct {
+		result1 *redisa.StringCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTInfo(arg1 context.Context, arg2 string) *redisa.FTInfoCmd {
+	fake.fTInfoMutex.Lock()
+	ret, specificReturn := fake.fTInfoReturnsOnCall[len(fake.fTInfoArgsForCall)]
+	fake.fTInfoArgsForCall = append(fake.fTInfoArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.FTInfoStub
+	fakeReturns := fake.fTInfoReturns
+	fake.recordInvocation("FTInfo", []interface{}{arg1, arg2})
+	fake.fTInfoMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTInfoCallCount() int {
+	fake.fTInfoMutex.RLock()
+	defer fake.fTInfoMutex.RUnlock()
+	return len(fake.fTInfoArgsForCall)
+}
+
+func (fake *FakeClient) FTInfoCalls(stub func(context.Context, string) *redisa.FTInfoCmd) {
+	fake.fTInfoMutex.Lock()
+	defer fake.fTInfoMutex.Unlock()
+	fake.FTInfoStub = stub
+}
+
+func (fake *FakeClient) FTInfoArgsForCall(i int) (context.Context, string) {
+	fake.fTInfoMutex.RLock()
+	defer fake.fTInfoMutex.RUnlock()
+	argsForCall := fake.fTInfoArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeClient) FTInfoReturns(result1 *redisa.FTInfoCmd) {
+	fake.fTInfoMutex.Lock()
+	defer fake.fTInfoMutex.Unlock()
+	fake.FTInfoStub = nil
+	fake.fTInfoReturns = struct {
+		result1 *redisa.FTInfoCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTInfoReturnsOnCall(i int, result1 *redisa.FTInfoCmd) {
+	fake.fTInfoMutex.Lock()
+	defer fake.fTInfoMutex.Unlock()
+	fake.FTInfoStub = nil
+	if fake.fTInfoReturnsOnCall == nil {
+		fake.fTInfoReturnsOnCall = make(map[int]struct {
+			result1 *redisa.FTInfoCmd
+		})
+	}
+	fake.fTInfoReturnsOnCall[i] = struct {
+		result1 *redisa.FTInfoCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSearch(arg1 context.Context, arg2 string, arg3 string) *redisa.FTSearchCmd {
+	fake.fTSearchMutex.Lock()
+	ret, specificReturn := fake.fTSearchReturnsOnCall[len(fake.fTSearchArgsForCall)]
+	fake.fTSearchArgsForCall = append(fake.fTSearchArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}{arg1, arg2, arg3})
+	stub := fake.FTSearchStub
+	fakeReturns := fake.fTSearchReturns
+	fake.recordInvocation("FTSearch", []interface{}{arg1, arg2, arg3})
+	fake.fTSearchMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTSearchCallCount() int {
+	fake.fTSearchMutex.RLock()
+	defer fake.fTSearchMutex.RUnlock()
+	return len(fake.fTSearchArgsForCall)
+}
+
+func (fake *FakeClient) FTSearchCalls(stub func(context.Context, string, string) *redisa.FTSearchCmd) {
+	fake.fTSearchMutex.Lock()
+	defer fake.fTSearchMutex.Unlock()
+	fake.FTSearchStub = stub
+}
+
+func (fake *FakeClient) FTSearchArgsForCall(i int) (context.Context, string, string) {
+	fake.fTSearchMutex.RLock()
+	defer fake.fTSearchMutex.RUnlock()
+	argsForCall := fake.fTSearchArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTSearchReturns(result1 *redisa.FTSearchCmd) {
+	fake.fTSearchMutex.Lock()
+	defer fake.fTSearchMutex.Unlock()
+	fake.FTSearchStub = nil
+	fake.fTSearchReturns = struct {
+		result1 *redisa.FTSearchCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSearchReturnsOnCall(i int, result1 *redisa.FTSearchCmd) {
+	fake.fTSearchMutex.Lock()
+	defer fake.fTSearchMutex.Unlock()
+	fake.FTSearchStub = nil
+	if fake.fTSearchReturnsOnCall == nil {
+		fake.fTSearchReturnsOnCall = make(map[int]struct {
+			result1 *redisa.FTSearchCmd
+		})
+	}
+	fake.fTSearchReturnsOnCall[i] = struct {
+		result1 *redisa.FTSearchCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSearchWithArgs(arg1 context.Context, arg2 string, arg3 string, arg4 *redisa.FTSearchOptions) *redisa.FTSearchCmd {
+	fake.fTSearchWithArgsMutex.Lock()
+	ret, specificReturn := fake.fTSearchWithArgsReturnsOnCall[len(fake.fTSearchWithArgsArgsForCall)]
+	fake.fTSearchWithArgsArgsForCall = append(fake.fTSearchWithArgsArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+		arg4 *redisa.FTSearchOptions
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.FTSearchWithArgsStub
+	fakeReturns := fake.fTSearchWithArgsReturns
+	fake.recordInvocation("FTSearchWithArgs", []interface{}{arg1, arg2, arg3, arg4})
+	fake.fTSearchWithArgsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTSearchWithArgsCallCount() int {
+	fake.fTSearchWithArgsMutex.RLock()
+	defer fake.fTSearchWithArgsMutex.RUnlock()
+	return len(fake.fTSearchWithArgsArgsForCall)
+}
+
+func (fake *FakeClient) FTSearchWithArgsCalls(stub func(context.Context, string, string, *redisa.FTSearchOptions) *redisa.FTSearchCmd) {
+	fake.fTSearchWithArgsMutex.Lock()
+	defer fake.fTSearchWithArgsMutex.Unlock()
+	fake.FTSearchWithArgsStub = stub
+}
+
+func (fake *FakeClient) FTSearchWithArgsArgsForCall(i int) (context.Context, string, string, *redisa.FTSearchOptions) {
+	fake.fTSearchWithArgsMutex.RLock()
+	defer fake.fTSearchWithArgsMutex.RUnlock()
+	argsForCall := fake.fTSearchWithArgsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) FTSearchWithArgsReturns(result1 *redisa.FTSearchCmd) {
+	fake.fTSearchWithArgsMutex.Lock()
+	defer fake.fTSearchWithArgsMutex.Unlock()
+	fake.FTSearchWithArgsStub = nil
+	fake.fTSearchWithArgsReturns = struct {
+		result1 *redisa.FTSearchCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSearchWithArgsReturnsOnCall(i int, result1 *redisa.FTSearchCmd) {
+	fake.fTSearchWithArgsMutex.Lock()
+	defer fake.fTSearchWithArgsMutex.Unlock()
+	fake.FTSearchWithArgsStub = nil
+	if fake.fTSearchWithArgsReturnsOnCall == nil {
+		fake.fTSearchWithArgsReturnsOnCall = make(map[int]struct {
+			result1 *redisa.FTSearchCmd
+		})
+	}
+	fake.fTSearchWithArgsReturnsOnCall[i] = struct {
+		result1 *redisa.FTSearchCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSpellCheck(arg1 context.Context, arg2 string, arg3 string) *redisa.FTSpellCheckCmd {
+	fake.fTSpellCheckMutex.Lock()
+	ret, specificReturn := fake.fTSpellCheckReturnsOnCall[len(fake.fTSpellCheckArgsForCall)]
+	fake.fTSpellCheckArgsForCall = append(fake.fTSpellCheckArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}{arg1, arg2, arg3})
+	stub := fake.FTSpellCheckStub
+	fakeReturns := fake.fTSpellCheckReturns
+	fake.recordInvocation("FTSpellCheck", []interface{}{arg1, arg2, arg3})
+	fake.fTSpellCheckMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTSpellCheckCallCount() int {
+	fake.fTSpellCheckMutex.RLock()
+	defer fake.fTSpellCheckMutex.RUnlock()
+	return len(fake.fTSpellCheckArgsForCall)
+}
+
+func (fake *FakeClient) FTSpellCheckCalls(stub func(context.Context, string, string) *redisa.FTSpellCheckCmd) {
+	fake.fTSpellCheckMutex.Lock()
+	defer fake.fTSpellCheckMutex.Unlock()
+	fake.FTSpellCheckStub = stub
+}
+
+func (fake *FakeClient) FTSpellCheckArgsForCall(i int) (context.Context, string, string) {
+	fake.fTSpellCheckMutex.RLock()
+	defer fake.fTSpellCheckMutex.RUnlock()
+	argsForCall := fake.fTSpellCheckArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTSpellCheckReturns(result1 *redisa.FTSpellCheckCmd) {
+	fake.fTSpellCheckMutex.Lock()
+	defer fake.fTSpellCheckMutex.Unlock()
+	fake.FTSpellCheckStub = nil
+	fake.fTSpellCheckReturns = struct {
+		result1 *redisa.FTSpellCheckCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSpellCheckReturnsOnCall(i int, result1 *redisa.FTSpellCheckCmd) {
+	fake.fTSpellCheckMutex.Lock()
+	defer fake.fTSpellCheckMutex.Unlock()
+	fake.FTSpellCheckStub = nil
+	if fake.fTSpellCheckReturnsOnCall == nil {
+		fake.fTSpellCheckReturnsOnCall = make(map[int]struct {
+			result1 *redisa.FTSpellCheckCmd
+		})
+	}
+	fake.fTSpellCheckReturnsOnCall[i] = struct {
+		result1 *redisa.FTSpellCheckCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSpellCheckWithArgs(arg1 context.Context, arg2 string, arg3 string, arg4 *redisa.FTSpellCheckOptions) *redisa.FTSpellCheckCmd {
+	fake.fTSpellCheckWithArgsMutex.Lock()
+	ret, specificReturn := fake.fTSpellCheckWithArgsReturnsOnCall[len(fake.fTSpellCheckWithArgsArgsForCall)]
+	fake.fTSpellCheckWithArgsArgsForCall = append(fake.fTSpellCheckWithArgsArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+		arg4 *redisa.FTSpellCheckOptions
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.FTSpellCheckWithArgsStub
+	fakeReturns := fake.fTSpellCheckWithArgsReturns
+	fake.recordInvocation("FTSpellCheckWithArgs", []interface{}{arg1, arg2, arg3, arg4})
+	fake.fTSpellCheckWithArgsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTSpellCheckWithArgsCallCount() int {
+	fake.fTSpellCheckWithArgsMutex.RLock()
+	defer fake.fTSpellCheckWithArgsMutex.RUnlock()
+	return len(fake.fTSpellCheckWithArgsArgsForCall)
+}
+
+func (fake *FakeClient) FTSpellCheckWithArgsCalls(stub func(context.Context, string, string, *redisa.FTSpellCheckOptions) *redisa.FTSpellCheckCmd) {
+	fake.fTSpellCheckWithArgsMutex.Lock()
+	defer fake.fTSpellCheckWithArgsMutex.Unlock()
+	fake.FTSpellCheckWithArgsStub = stub
+}
+
+func (fake *FakeClient) FTSpellCheckWithArgsArgsForCall(i int) (context.Context, string, string, *redisa.FTSpellCheckOptions) {
+	fake.fTSpellCheckWithArgsMutex.RLock()
+	defer fake.fTSpellCheckWithArgsMutex.RUnlock()
+	argsForCall := fake.fTSpellCheckWithArgsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) FTSpellCheckWithArgsReturns(result1 *redisa.FTSpellCheckCmd) {
+	fake.fTSpellCheckWithArgsMutex.Lock()
+	defer fake.fTSpellCheckWithArgsMutex.Unlock()
+	fake.FTSpellCheckWithArgsStub = nil
+	fake.fTSpellCheckWithArgsReturns = struct {
+		result1 *redisa.FTSpellCheckCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSpellCheckWithArgsReturnsOnCall(i int, result1 *redisa.FTSpellCheckCmd) {
+	fake.fTSpellCheckWithArgsMutex.Lock()
+	defer fake.fTSpellCheckWithArgsMutex.Unlock()
+	fake.FTSpellCheckWithArgsStub = nil
+	if fake.fTSpellCheckWithArgsReturnsOnCall == nil {
+		fake.fTSpellCheckWithArgsReturnsOnCall = make(map[int]struct {
+			result1 *redisa.FTSpellCheckCmd
+		})
+	}
+	fake.fTSpellCheckWithArgsReturnsOnCall[i] = struct {
+		result1 *redisa.FTSpellCheckCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSynDump(arg1 context.Context, arg2 string) *redisa.FTSynDumpCmd {
+	fake.fTSynDumpMutex.Lock()
+	ret, specificReturn := fake.fTSynDumpReturnsOnCall[len(fake.fTSynDumpArgsForCall)]
+	fake.fTSynDumpArgsForCall = append(fake.fTSynDumpArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.FTSynDumpStub
+	fakeReturns := fake.fTSynDumpReturns
+	fake.recordInvocation("FTSynDump", []interface{}{arg1, arg2})
+	fake.fTSynDumpMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTSynDumpCallCount() int {
+	fake.fTSynDumpMutex.RLock()
+	defer fake.fTSynDumpMutex.RUnlock()
+	return len(fake.fTSynDumpArgsForCall)
+}
+
+func (fake *FakeClient) FTSynDumpCalls(stub func(context.Context, string) *redisa.FTSynDumpCmd) {
+	fake.fTSynDumpMutex.Lock()
+	defer fake.fTSynDumpMutex.Unlock()
+	fake.FTSynDumpStub = stub
+}
+
+func (fake *FakeClient) FTSynDumpArgsForCall(i int) (context.Context, string) {
+	fake.fTSynDumpMutex.RLock()
+	defer fake.fTSynDumpMutex.RUnlock()
+	argsForCall := fake.fTSynDumpArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeClient) FTSynDumpReturns(result1 *redisa.FTSynDumpCmd) {
+	fake.fTSynDumpMutex.Lock()
+	defer fake.fTSynDumpMutex.Unlock()
+	fake.FTSynDumpStub = nil
+	fake.fTSynDumpReturns = struct {
+		result1 *redisa.FTSynDumpCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSynDumpReturnsOnCall(i int, result1 *redisa.FTSynDumpCmd) {
+	fake.fTSynDumpMutex.Lock()
+	defer fake.fTSynDumpMutex.Unlock()
+	fake.FTSynDumpStub = nil
+	if fake.fTSynDumpReturnsOnCall == nil {
+		fake.fTSynDumpReturnsOnCall = make(map[int]struct {
+			result1 *redisa.FTSynDumpCmd
+		})
+	}
+	fake.fTSynDumpReturnsOnCall[i] = struct {
+		result1 *redisa.FTSynDumpCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSynUpdate(arg1 context.Context, arg2 string, arg3 interface{}, arg4 []interface{}) *redisa.StatusCmd {
+	var arg4Copy []interface{}
+	if arg4 != nil {
+		arg4Copy = make([]interface{}, len(arg4))
+		copy(arg4Copy, arg4)
+	}
+	fake.fTSynUpdateMutex.Lock()
+	ret, specificReturn := fake.fTSynUpdateReturnsOnCall[len(fake.fTSynUpdateArgsForCall)]
+	fake.fTSynUpdateArgsForCall = append(fake.fTSynUpdateArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 interface{}
+		arg4 []interface{}
+	}{arg1, arg2, arg3, arg4Copy})
+	stub := fake.FTSynUpdateStub
+	fakeReturns := fake.fTSynUpdateReturns
+	fake.recordInvocation("FTSynUpdate", []interface{}{arg1, arg2, arg3, arg4Copy})
+	fake.fTSynUpdateMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTSynUpdateCallCount() int {
+	fake.fTSynUpdateMutex.RLock()
+	defer fake.fTSynUpdateMutex.RUnlock()
+	return len(fake.fTSynUpdateArgsForCall)
+}
+
+func (fake *FakeClient) FTSynUpdateCalls(stub func(context.Context, string, interface{}, []interface{}) *redisa.StatusCmd) {
+	fake.fTSynUpdateMutex.Lock()
+	defer fake.fTSynUpdateMutex.Unlock()
+	fake.FTSynUpdateStub = stub
+}
+
+func (fake *FakeClient) FTSynUpdateArgsForCall(i int) (context.Context, string, interface{}, []interface{}) {
+	fake.fTSynUpdateMutex.RLock()
+	defer fake.fTSynUpdateMutex.RUnlock()
+	argsForCall := fake.fTSynUpdateArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeClient) FTSynUpdateReturns(result1 *redisa.StatusCmd) {
+	fake.fTSynUpdateMutex.Lock()
+	defer fake.fTSynUpdateMutex.Unlock()
+	fake.FTSynUpdateStub = nil
+	fake.fTSynUpdateReturns = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSynUpdateReturnsOnCall(i int, result1 *redisa.StatusCmd) {
+	fake.fTSynUpdateMutex.Lock()
+	defer fake.fTSynUpdateMutex.Unlock()
+	fake.FTSynUpdateStub = nil
+	if fake.fTSynUpdateReturnsOnCall == nil {
+		fake.fTSynUpdateReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StatusCmd
+		})
+	}
+	fake.fTSynUpdateReturnsOnCall[i] = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSynUpdateWithArgs(arg1 context.Context, arg2 string, arg3 interface{}, arg4 *redisa.FTSynUpdateOptions, arg5 []interface{}) *redisa.StatusCmd {
+	var arg5Copy []interface{}
+	if arg5 != nil {
+		arg5Copy = make([]interface{}, len(arg5))
+		copy(arg5Copy, arg5)
+	}
+	fake.fTSynUpdateWithArgsMutex.Lock()
+	ret, specificReturn := fake.fTSynUpdateWithArgsReturnsOnCall[len(fake.fTSynUpdateWithArgsArgsForCall)]
+	fake.fTSynUpdateWithArgsArgsForCall = append(fake.fTSynUpdateWithArgsArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 interface{}
+		arg4 *redisa.FTSynUpdateOptions
+		arg5 []interface{}
+	}{arg1, arg2, arg3, arg4, arg5Copy})
+	stub := fake.FTSynUpdateWithArgsStub
+	fakeReturns := fake.fTSynUpdateWithArgsReturns
+	fake.recordInvocation("FTSynUpdateWithArgs", []interface{}{arg1, arg2, arg3, arg4, arg5Copy})
+	fake.fTSynUpdateWithArgsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTSynUpdateWithArgsCallCount() int {
+	fake.fTSynUpdateWithArgsMutex.RLock()
+	defer fake.fTSynUpdateWithArgsMutex.RUnlock()
+	return len(fake.fTSynUpdateWithArgsArgsForCall)
+}
+
+func (fake *FakeClient) FTSynUpdateWithArgsCalls(stub func(context.Context, string, interface{}, *redisa.FTSynUpdateOptions, []interface{}) *redisa.StatusCmd) {
+	fake.fTSynUpdateWithArgsMutex.Lock()
+	defer fake.fTSynUpdateWithArgsMutex.Unlock()
+	fake.FTSynUpdateWithArgsStub = stub
+}
+
+func (fake *FakeClient) FTSynUpdateWithArgsArgsForCall(i int) (context.Context, string, interface{}, *redisa.FTSynUpdateOptions, []interface{}) {
+	fake.fTSynUpdateWithArgsMutex.RLock()
+	defer fake.fTSynUpdateWithArgsMutex.RUnlock()
+	argsForCall := fake.fTSynUpdateWithArgsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
+}
+
+func (fake *FakeClient) FTSynUpdateWithArgsReturns(result1 *redisa.StatusCmd) {
+	fake.fTSynUpdateWithArgsMutex.Lock()
+	defer fake.fTSynUpdateWithArgsMutex.Unlock()
+	fake.FTSynUpdateWithArgsStub = nil
+	fake.fTSynUpdateWithArgsReturns = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTSynUpdateWithArgsReturnsOnCall(i int, result1 *redisa.StatusCmd) {
+	fake.fTSynUpdateWithArgsMutex.Lock()
+	defer fake.fTSynUpdateWithArgsMutex.Unlock()
+	fake.FTSynUpdateWithArgsStub = nil
+	if fake.fTSynUpdateWithArgsReturnsOnCall == nil {
+		fake.fTSynUpdateWithArgsReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StatusCmd
+		})
+	}
+	fake.fTSynUpdateWithArgsReturnsOnCall[i] = struct {
+		result1 *redisa.StatusCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTTagVals(arg1 context.Context, arg2 string, arg3 string) *redisa.StringSliceCmd {
+	fake.fTTagValsMutex.Lock()
+	ret, specificReturn := fake.fTTagValsReturnsOnCall[len(fake.fTTagValsArgsForCall)]
+	fake.fTTagValsArgsForCall = append(fake.fTTagValsArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 string
+	}{arg1, arg2, arg3})
+	stub := fake.FTTagValsStub
+	fakeReturns := fake.fTTagValsReturns
+	fake.recordInvocation("FTTagVals", []interface{}{arg1, arg2, arg3})
+	fake.fTTagValsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FTTagValsCallCount() int {
+	fake.fTTagValsMutex.RLock()
+	defer fake.fTTagValsMutex.RUnlock()
+	return len(fake.fTTagValsArgsForCall)
+}
+
+func (fake *FakeClient) FTTagValsCalls(stub func(context.Context, string, string) *redisa.StringSliceCmd) {
+	fake.fTTagValsMutex.Lock()
+	defer fake.fTTagValsMutex.Unlock()
+	fake.FTTagValsStub = stub
+}
+
+func (fake *FakeClient) FTTagValsArgsForCall(i int) (context.Context, string, string) {
+	fake.fTTagValsMutex.RLock()
+	defer fake.fTTagValsMutex.RUnlock()
+	argsForCall := fake.fTTagValsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+}
+
+func (fake *FakeClient) FTTagValsReturns(result1 *redisa.StringSliceCmd) {
+	fake.fTTagValsMutex.Lock()
+	defer fake.fTTagValsMutex.Unlock()
+	fake.FTTagValsStub = nil
+	fake.fTTagValsReturns = struct {
+		result1 *redisa.StringSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FTTagValsReturnsOnCall(i int, result1 *redisa.StringSliceCmd) {
+	fake.fTTagValsMutex.Lock()
+	defer fake.fTTagValsMutex.Unlock()
+	fake.FTTagValsStub = nil
+	if fake.fTTagValsReturnsOnCall == nil {
+		fake.fTTagValsReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StringSliceCmd
+		})
+	}
+	fake.fTTagValsReturnsOnCall[i] = struct {
+		result1 *redisa.StringSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FT_List(arg1 context.Context) *redisa.StringSliceCmd {
+	fake.fT_ListMutex.Lock()
+	ret, specificReturn := fake.fT_ListReturnsOnCall[len(fake.fT_ListArgsForCall)]
+	fake.fT_ListArgsForCall = append(fake.fT_ListArgsForCall, struct {
+		arg1 context.Context
+	}{arg1})
+	stub := fake.FT_ListStub
+	fakeReturns := fake.fT_ListReturns
+	fake.recordInvocation("FT_List", []interface{}{arg1})
+	fake.fT_ListMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) FT_ListCallCount() int {
+	fake.fT_ListMutex.RLock()
+	defer fake.fT_ListMutex.RUnlock()
+	return len(fake.fT_ListArgsForCall)
+}
+
+func (fake *FakeClient) FT_ListCalls(stub func(context.Context) *redisa.StringSliceCmd) {
+	fake.fT_ListMutex.Lock()
+	defer fake.fT_ListMutex.Unlock()
+	fake.FT_ListStub = stub
+}
+
+func (fake *FakeClient) FT_ListArgsForCall(i int) context.Context {
+	fake.fT_ListMutex.RLock()
+	defer fake.fT_ListMutex.RUnlock()
+	argsForCall := fake.fT_ListArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeClient) FT_ListReturns(result1 *redisa.StringSliceCmd) {
+	fake.fT_ListMutex.Lock()
+	defer fake.fT_ListMutex.Unlock()
+	fake.FT_ListStub = nil
+	fake.fT_ListReturns = struct {
+		result1 *redisa.StringSliceCmd
+	}{result1}
+}
+
+func (fake *FakeClient) FT_ListReturnsOnCall(i int, result1 *redisa.StringSliceCmd) {
+	fake.fT_ListMutex.Lock()
+	defer fake.fT_ListMutex.Unlock()
+	fake.FT_ListStub = nil
+	if fake.fT_ListReturnsOnCall == nil {
+		fake.fT_ListReturnsOnCall = make(map[int]struct {
+			result1 *redisa.StringSliceCmd
+		})
+	}
+	fake.fT_ListReturnsOnCall[i] = struct {
+		result1 *redisa.StringSliceCmd
 	}{result1}
 }
 
@@ -36565,6 +38712,62 @@ func (fake *FakeClient) Invocations() map[string][][]interface{} {
 	defer fake.fCallROMutex.RUnlock()
 	fake.fCallRoMutex.RLock()
 	defer fake.fCallRoMutex.RUnlock()
+	fake.fTAggregateMutex.RLock()
+	defer fake.fTAggregateMutex.RUnlock()
+	fake.fTAggregateWithArgsMutex.RLock()
+	defer fake.fTAggregateWithArgsMutex.RUnlock()
+	fake.fTAliasAddMutex.RLock()
+	defer fake.fTAliasAddMutex.RUnlock()
+	fake.fTAliasDelMutex.RLock()
+	defer fake.fTAliasDelMutex.RUnlock()
+	fake.fTAliasUpdateMutex.RLock()
+	defer fake.fTAliasUpdateMutex.RUnlock()
+	fake.fTAlterMutex.RLock()
+	defer fake.fTAlterMutex.RUnlock()
+	fake.fTConfigGetMutex.RLock()
+	defer fake.fTConfigGetMutex.RUnlock()
+	fake.fTConfigSetMutex.RLock()
+	defer fake.fTConfigSetMutex.RUnlock()
+	fake.fTCreateMutex.RLock()
+	defer fake.fTCreateMutex.RUnlock()
+	fake.fTCursorDelMutex.RLock()
+	defer fake.fTCursorDelMutex.RUnlock()
+	fake.fTCursorReadMutex.RLock()
+	defer fake.fTCursorReadMutex.RUnlock()
+	fake.fTDictAddMutex.RLock()
+	defer fake.fTDictAddMutex.RUnlock()
+	fake.fTDictDelMutex.RLock()
+	defer fake.fTDictDelMutex.RUnlock()
+	fake.fTDictDumpMutex.RLock()
+	defer fake.fTDictDumpMutex.RUnlock()
+	fake.fTDropIndexMutex.RLock()
+	defer fake.fTDropIndexMutex.RUnlock()
+	fake.fTDropIndexWithArgsMutex.RLock()
+	defer fake.fTDropIndexWithArgsMutex.RUnlock()
+	fake.fTExplainMutex.RLock()
+	defer fake.fTExplainMutex.RUnlock()
+	fake.fTExplainWithArgsMutex.RLock()
+	defer fake.fTExplainWithArgsMutex.RUnlock()
+	fake.fTInfoMutex.RLock()
+	defer fake.fTInfoMutex.RUnlock()
+	fake.fTSearchMutex.RLock()
+	defer fake.fTSearchMutex.RUnlock()
+	fake.fTSearchWithArgsMutex.RLock()
+	defer fake.fTSearchWithArgsMutex.RUnlock()
+	fake.fTSpellCheckMutex.RLock()
+	defer fake.fTSpellCheckMutex.RUnlock()
+	fake.fTSpellCheckWithArgsMutex.RLock()
+	defer fake.fTSpellCheckWithArgsMutex.RUnlock()
+	fake.fTSynDumpMutex.RLock()
+	defer fake.fTSynDumpMutex.RUnlock()
+	fake.fTSynUpdateMutex.RLock()
+	defer fake.fTSynUpdateMutex.RUnlock()
+	fake.fTSynUpdateWithArgsMutex.RLock()
+	defer fake.fTSynUpdateWithArgsMutex.RUnlock()
+	fake.fTTagValsMutex.RLock()
+	defer fake.fTTagValsMutex.RUnlock()
+	fake.fT_ListMutex.RLock()
+	defer fake.fT_ListMutex.RUnlock()
 	fake.flushAllMutex.RLock()
 	defer fake.flushAllMutex.RUnlock()
 	fake.flushAllAsyncMutex.RLock()
