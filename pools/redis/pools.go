@@ -29,6 +29,41 @@ func PoolKey(poolID string) string {
 	return fmt.Sprintf("pools:%s", poolID)
 }
 
+func GetPools(ctx context.Context, rdb redis.Client, timeout time.Duration, poolIDs []string) ([]*types.Pool, error) {
+	pools := make([]*types.Pool, 0)
+	watch := make([]string, 0)
+
+	f := func(tx *redisv9.Tx) error {
+		for _, poolID := range poolIDs {
+			pool := new(types.Pool)
+			poolKey := PoolKey(poolID)
+			err := tx.HMGet(ctx, poolKey, poolKeys...).Scan(pool)
+			if err != nil {
+				if errors.Is(err, redisv9.Nil) {
+					continue
+				}
+				return err
+			}
+			watch = append(watch, poolKey)
+			pools = append(pools, pool)
+		}
+
+		return nil
+	}
+
+	if err := redis.TryTransaction(
+		ctx,
+		rdb,
+		f,
+		backoff.NewExponentialBackOff(backoff.WithMaxElapsedTime(timeout)),
+		watch...,
+	); err != nil {
+		return nil, err
+	}
+
+	return pools, nil
+}
+
 func GetPool(ctx context.Context, rdb redis.Client, timeout time.Duration, poolID string) (*types.Pool, error) {
 	watch := PoolKey(poolID)
 
