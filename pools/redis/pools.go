@@ -34,18 +34,26 @@ func GetPools(ctx context.Context, rdb redis.Client, timeout time.Duration, pool
 	watch := make([]string, 0)
 
 	f := func(tx *redisv9.Tx) error {
-		for _, poolID := range poolIDs {
-			pool := new(types.Pool)
-			poolKey := PoolKey(poolID)
-			err := tx.HMGet(ctx, poolKey, poolKeys...).Scan(pool)
-			if err != nil {
-				if errors.Is(err, redisv9.Nil) {
-					continue
+		cmd, err := tx.TxPipelined(
+			ctx, func(pipe redisv9.Pipeliner) error {
+				for _, poolID := range poolIDs {
+					poolKey := PoolKey(poolID)
+					watch = append(watch, poolKey)
+					pipe.HGetAll(ctx, poolKey)
 				}
+				return nil
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		for _, c := range cmd {
+			p := new(types.Pool)
+			if err = c.(*redisv9.MapStringStringCmd).Scan(p); err != nil {
 				return err
 			}
-			watch = append(watch, poolKey)
-			pools = append(pools, pool)
+			pools = append(pools, p)
 		}
 
 		return nil

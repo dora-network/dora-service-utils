@@ -46,6 +46,19 @@ func TestPools(t *testing.T) {
 		MaturityAt:    time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
 	}
 
+	want1 := types.Pool{
+		PoolID:        "base2-quote2",
+		BaseAsset:     "base2",
+		QuoteAsset:    "quote2",
+		IsProductPool: true,
+		AmountShares:  1000000,
+		AmountBase:    1000000,
+		AmountQuote:   1000000,
+		FeeFactor:     decimal.MustNew(1, 2),
+		CreatedAt:     time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+		MaturityAt:    time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+	}
+
 	t.Run(
 		"Should save a pool to Redis", func(tt *testing.T) {
 			require.NoError(t, redis.CreatePool(ctx, rdb, &want, time.Second))
@@ -80,6 +93,24 @@ func TestPools(t *testing.T) {
 			got, err := redis.GetPool(ctx, rdb, time.Second, orderbook.ID(want.BaseAsset, want.QuoteAsset))
 			require.NoError(tt, err)
 			assert.Equal(tt, want, *got)
+		},
+	)
+
+	t.Run(
+		"Should save 2 pools to Redis and list them", func(tt *testing.T) {
+			require.NoError(t, redis.CreatePool(ctx, rdb, &want, time.Second))
+			require.NoError(t, redis.CreatePool(ctx, rdb, &want1, time.Second))
+
+			got, err := redis.GetPools(
+				ctx, rdb, time.Minute, []string{
+					orderbook.ID(want.BaseAsset, want.QuoteAsset),
+					orderbook.ID(want1.BaseAsset, want1.QuoteAsset),
+				},
+			)
+			require.NoError(tt, err)
+			assert.Len(tt, got, 2)
+			assert.Equal(tt, want, *got[0])
+			assert.Equal(tt, want1, *got[1])
 		},
 	)
 
