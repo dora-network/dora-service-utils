@@ -5,6 +5,7 @@ import (
 	"github.com/dora-network/dora-service-utils/pools/types"
 	"github.com/dora-network/dora-service-utils/testing/consts"
 	"github.com/stretchr/testify/require"
+	"math/big"
 	"testing"
 )
 
@@ -54,7 +55,7 @@ func TestAddLiquidity(t *testing.T) {
 	addBond := ltypes.NewAmount(consts.BondID, 1)
 	addStable := ltypes.NewAmount(consts.StableID, 1000)
 
-	quoteAmt, sharesAmt, err := p.AddLiquidity(addBond)
+	quoteAmt, sharesAmt, err := p.AddLiquidity(addBond, nil)
 	require.NoError(t, err)
 	require.Equal(t, uint64(1001), sharesAmt.Amount)
 	require.Equal(t, uint64(1000), quoteAmt.Amount)
@@ -62,8 +63,31 @@ func TestAddLiquidity(t *testing.T) {
 	require.Equal(t, uint64(11000), p.AmountQuote)
 	require.Equal(t, uint64(11011), p.AmountShares)
 
-	_, _, err = p.AddLiquidity(addStable)
+	_, _, err = p.AddLiquidity(addStable, nil)
 	require.Error(t, err)
+}
+
+func TestAddLiquidityFreshPool(t *testing.T) {
+	poolID := consts.BondID + "-" + consts.StableID
+	p := types.Pool{
+		PoolID:        poolID,
+		IsProductPool: true,
+		BaseAsset:     consts.BondID,
+		AmountBase:    0,
+		QuoteAsset:    consts.StableID,
+		AmountQuote:   0,
+		AmountShares:  0,
+	}
+
+	addBond := ltypes.NewAmount(consts.BondID, 1000)
+	quoteAmt, sharesAmt, err := p.AddLiquidity(addBond, new(big.Float).SetFloat64(0.8))
+	require.NoError(t, err)
+	require.Equal(t, uint64(1800), sharesAmt.Amount)
+	require.Equal(t, uint64(800), quoteAmt.Amount)
+	require.Equal(t, uint64(1000), p.AmountBase)
+	require.Equal(t, uint64(800), p.AmountQuote)
+	require.Equal(t, uint64(1800), p.AmountShares)
+
 }
 
 func TestRemoveLiquidity(t *testing.T) {

@@ -160,7 +160,11 @@ func (p *Pool) SubAmount(amount types.Amount) error {
 }
 
 // AddLiquidity to a pool, based on the assets given. Pool is mutated.
-func (p *Pool) AddLiquidity(baseIn types.Amount) (quoteIn types.Amount, sharesOut types.Amount, err error) {
+func (p *Pool) AddLiquidity(baseIn types.Amount, desiredRatio *big.Float) (
+	quoteIn types.Amount,
+	sharesOut types.Amount,
+	err error,
+) {
 	if err = baseIn.Validate(); err != nil {
 		return types.Amount{}, types.Amount{}, err
 	}
@@ -176,14 +180,22 @@ func (p *Pool) AddLiquidity(baseIn types.Amount) (quoteIn types.Amount, sharesOu
 	poolBaseF := new(big.Float).SetInt64(int64(p.AmountBase))
 	poolQuoteF := new(big.Float).SetInt64(int64(p.AmountQuote))
 	poolSharesF := new(big.Float).SetInt64(int64(p.AmountShares))
-	addedRatio := new(big.Float).Quo(baseInF, poolBaseF)
-
-	// Calculate quote assets in
-	quoteInAmt := math.Int(math.MulF(poolQuoteF, addedRatio))
-	quoteIn = types.NewAmount(p.QuoteAsset, quoteInAmt.Uint64())
-	// Calculate shares out
-	sharesOutAmt := math.Int(math.MulF(poolSharesF, addedRatio))
-	sharesOut = types.NewAmount(p.PoolID, sharesOutAmt.Uint64())
+	if math.IsFloatZero(poolBaseF) {
+		// Calculate quote assets in
+		quoteInAmtF := math.MulF(baseInF, desiredRatio)
+		quoteIn = types.NewAmount(p.QuoteAsset, math.Int(quoteInAmtF).Uint64())
+		// Calculate shares out
+		sharesOutAmt := math.Int(math.AddF(baseInF, quoteInAmtF))
+		sharesOut = types.NewAmount(p.PoolID, sharesOutAmt.Uint64())
+	} else {
+		addedRatio := new(big.Float).Quo(baseInF, poolBaseF)
+		// Calculate quote assets in
+		quoteInAmt := math.Int(math.MulF(poolQuoteF, addedRatio))
+		quoteIn = types.NewAmount(p.QuoteAsset, quoteInAmt.Uint64())
+		// Calculate shares out
+		sharesOutAmt := math.Int(math.MulF(poolSharesF, addedRatio))
+		sharesOut = types.NewAmount(p.PoolID, sharesOutAmt.Uint64())
+	}
 
 	// Mutate the pool
 	if p.AmountShares, err = math.CheckedAddU64(p.AmountShares, sharesOut.Amount); err != nil {
