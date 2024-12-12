@@ -14,6 +14,45 @@ type FakeClient struct {
 	closeMutex       sync.RWMutex
 	closeArgsForCall []struct {
 	}
+	CommitMarkedOffsetsStub        func(context.Context) error
+	commitMarkedOffsetsMutex       sync.RWMutex
+	commitMarkedOffsetsArgsForCall []struct {
+		arg1 context.Context
+	}
+	commitMarkedOffsetsReturns struct {
+		result1 error
+	}
+	commitMarkedOffsetsReturnsOnCall map[int]struct {
+		result1 error
+	}
+	CommitRecordsStub        func(context.Context, ...*kgo.Record) error
+	commitRecordsMutex       sync.RWMutex
+	commitRecordsArgsForCall []struct {
+		arg1 context.Context
+		arg2 []*kgo.Record
+	}
+	commitRecordsReturns struct {
+		result1 error
+	}
+	commitRecordsReturnsOnCall map[int]struct {
+		result1 error
+	}
+	CommitUncommittedOffsetsStub        func(context.Context) error
+	commitUncommittedOffsetsMutex       sync.RWMutex
+	commitUncommittedOffsetsArgsForCall []struct {
+		arg1 context.Context
+	}
+	commitUncommittedOffsetsReturns struct {
+		result1 error
+	}
+	commitUncommittedOffsetsReturnsOnCall map[int]struct {
+		result1 error
+	}
+	MarkCommitRecordsStub        func(...*kgo.Record)
+	markCommitRecordsMutex       sync.RWMutex
+	markCommitRecordsArgsForCall []struct {
+		arg1 []*kgo.Record
+	}
 	PingStub        func(context.Context) error
 	pingMutex       sync.RWMutex
 	pingArgsForCall []struct {
@@ -82,6 +121,222 @@ func (fake *FakeClient) CloseCalls(stub func()) {
 	fake.closeMutex.Lock()
 	defer fake.closeMutex.Unlock()
 	fake.CloseStub = stub
+}
+
+func (fake *FakeClient) CommitMarkedOffsets(arg1 context.Context) error {
+	fake.commitMarkedOffsetsMutex.Lock()
+	ret, specificReturn := fake.commitMarkedOffsetsReturnsOnCall[len(fake.commitMarkedOffsetsArgsForCall)]
+	fake.commitMarkedOffsetsArgsForCall = append(fake.commitMarkedOffsetsArgsForCall, struct {
+		arg1 context.Context
+	}{arg1})
+	stub := fake.CommitMarkedOffsetsStub
+	fakeReturns := fake.commitMarkedOffsetsReturns
+	fake.recordInvocation("CommitMarkedOffsets", []interface{}{arg1})
+	fake.commitMarkedOffsetsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) CommitMarkedOffsetsCallCount() int {
+	fake.commitMarkedOffsetsMutex.RLock()
+	defer fake.commitMarkedOffsetsMutex.RUnlock()
+	return len(fake.commitMarkedOffsetsArgsForCall)
+}
+
+func (fake *FakeClient) CommitMarkedOffsetsCalls(stub func(context.Context) error) {
+	fake.commitMarkedOffsetsMutex.Lock()
+	defer fake.commitMarkedOffsetsMutex.Unlock()
+	fake.CommitMarkedOffsetsStub = stub
+}
+
+func (fake *FakeClient) CommitMarkedOffsetsArgsForCall(i int) context.Context {
+	fake.commitMarkedOffsetsMutex.RLock()
+	defer fake.commitMarkedOffsetsMutex.RUnlock()
+	argsForCall := fake.commitMarkedOffsetsArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeClient) CommitMarkedOffsetsReturns(result1 error) {
+	fake.commitMarkedOffsetsMutex.Lock()
+	defer fake.commitMarkedOffsetsMutex.Unlock()
+	fake.CommitMarkedOffsetsStub = nil
+	fake.commitMarkedOffsetsReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeClient) CommitMarkedOffsetsReturnsOnCall(i int, result1 error) {
+	fake.commitMarkedOffsetsMutex.Lock()
+	defer fake.commitMarkedOffsetsMutex.Unlock()
+	fake.CommitMarkedOffsetsStub = nil
+	if fake.commitMarkedOffsetsReturnsOnCall == nil {
+		fake.commitMarkedOffsetsReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.commitMarkedOffsetsReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeClient) CommitRecords(arg1 context.Context, arg2 ...*kgo.Record) error {
+	fake.commitRecordsMutex.Lock()
+	ret, specificReturn := fake.commitRecordsReturnsOnCall[len(fake.commitRecordsArgsForCall)]
+	fake.commitRecordsArgsForCall = append(fake.commitRecordsArgsForCall, struct {
+		arg1 context.Context
+		arg2 []*kgo.Record
+	}{arg1, arg2})
+	stub := fake.CommitRecordsStub
+	fakeReturns := fake.commitRecordsReturns
+	fake.recordInvocation("CommitRecords", []interface{}{arg1, arg2})
+	fake.commitRecordsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2...)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) CommitRecordsCallCount() int {
+	fake.commitRecordsMutex.RLock()
+	defer fake.commitRecordsMutex.RUnlock()
+	return len(fake.commitRecordsArgsForCall)
+}
+
+func (fake *FakeClient) CommitRecordsCalls(stub func(context.Context, ...*kgo.Record) error) {
+	fake.commitRecordsMutex.Lock()
+	defer fake.commitRecordsMutex.Unlock()
+	fake.CommitRecordsStub = stub
+}
+
+func (fake *FakeClient) CommitRecordsArgsForCall(i int) (context.Context, []*kgo.Record) {
+	fake.commitRecordsMutex.RLock()
+	defer fake.commitRecordsMutex.RUnlock()
+	argsForCall := fake.commitRecordsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeClient) CommitRecordsReturns(result1 error) {
+	fake.commitRecordsMutex.Lock()
+	defer fake.commitRecordsMutex.Unlock()
+	fake.CommitRecordsStub = nil
+	fake.commitRecordsReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeClient) CommitRecordsReturnsOnCall(i int, result1 error) {
+	fake.commitRecordsMutex.Lock()
+	defer fake.commitRecordsMutex.Unlock()
+	fake.CommitRecordsStub = nil
+	if fake.commitRecordsReturnsOnCall == nil {
+		fake.commitRecordsReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.commitRecordsReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeClient) CommitUncommittedOffsets(arg1 context.Context) error {
+	fake.commitUncommittedOffsetsMutex.Lock()
+	ret, specificReturn := fake.commitUncommittedOffsetsReturnsOnCall[len(fake.commitUncommittedOffsetsArgsForCall)]
+	fake.commitUncommittedOffsetsArgsForCall = append(fake.commitUncommittedOffsetsArgsForCall, struct {
+		arg1 context.Context
+	}{arg1})
+	stub := fake.CommitUncommittedOffsetsStub
+	fakeReturns := fake.commitUncommittedOffsetsReturns
+	fake.recordInvocation("CommitUncommittedOffsets", []interface{}{arg1})
+	fake.commitUncommittedOffsetsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeClient) CommitUncommittedOffsetsCallCount() int {
+	fake.commitUncommittedOffsetsMutex.RLock()
+	defer fake.commitUncommittedOffsetsMutex.RUnlock()
+	return len(fake.commitUncommittedOffsetsArgsForCall)
+}
+
+func (fake *FakeClient) CommitUncommittedOffsetsCalls(stub func(context.Context) error) {
+	fake.commitUncommittedOffsetsMutex.Lock()
+	defer fake.commitUncommittedOffsetsMutex.Unlock()
+	fake.CommitUncommittedOffsetsStub = stub
+}
+
+func (fake *FakeClient) CommitUncommittedOffsetsArgsForCall(i int) context.Context {
+	fake.commitUncommittedOffsetsMutex.RLock()
+	defer fake.commitUncommittedOffsetsMutex.RUnlock()
+	argsForCall := fake.commitUncommittedOffsetsArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeClient) CommitUncommittedOffsetsReturns(result1 error) {
+	fake.commitUncommittedOffsetsMutex.Lock()
+	defer fake.commitUncommittedOffsetsMutex.Unlock()
+	fake.CommitUncommittedOffsetsStub = nil
+	fake.commitUncommittedOffsetsReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeClient) CommitUncommittedOffsetsReturnsOnCall(i int, result1 error) {
+	fake.commitUncommittedOffsetsMutex.Lock()
+	defer fake.commitUncommittedOffsetsMutex.Unlock()
+	fake.CommitUncommittedOffsetsStub = nil
+	if fake.commitUncommittedOffsetsReturnsOnCall == nil {
+		fake.commitUncommittedOffsetsReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.commitUncommittedOffsetsReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeClient) MarkCommitRecords(arg1 ...*kgo.Record) {
+	fake.markCommitRecordsMutex.Lock()
+	fake.markCommitRecordsArgsForCall = append(fake.markCommitRecordsArgsForCall, struct {
+		arg1 []*kgo.Record
+	}{arg1})
+	stub := fake.MarkCommitRecordsStub
+	fake.recordInvocation("MarkCommitRecords", []interface{}{arg1})
+	fake.markCommitRecordsMutex.Unlock()
+	if stub != nil {
+		fake.MarkCommitRecordsStub(arg1...)
+	}
+}
+
+func (fake *FakeClient) MarkCommitRecordsCallCount() int {
+	fake.markCommitRecordsMutex.RLock()
+	defer fake.markCommitRecordsMutex.RUnlock()
+	return len(fake.markCommitRecordsArgsForCall)
+}
+
+func (fake *FakeClient) MarkCommitRecordsCalls(stub func(...*kgo.Record)) {
+	fake.markCommitRecordsMutex.Lock()
+	defer fake.markCommitRecordsMutex.Unlock()
+	fake.MarkCommitRecordsStub = stub
+}
+
+func (fake *FakeClient) MarkCommitRecordsArgsForCall(i int) []*kgo.Record {
+	fake.markCommitRecordsMutex.RLock()
+	defer fake.markCommitRecordsMutex.RUnlock()
+	argsForCall := fake.markCommitRecordsArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeClient) Ping(arg1 context.Context) error {
@@ -308,6 +563,14 @@ func (fake *FakeClient) Invocations() map[string][][]interface{} {
 	defer fake.invocationsMutex.RUnlock()
 	fake.closeMutex.RLock()
 	defer fake.closeMutex.RUnlock()
+	fake.commitMarkedOffsetsMutex.RLock()
+	defer fake.commitMarkedOffsetsMutex.RUnlock()
+	fake.commitRecordsMutex.RLock()
+	defer fake.commitRecordsMutex.RUnlock()
+	fake.commitUncommittedOffsetsMutex.RLock()
+	defer fake.commitUncommittedOffsetsMutex.RUnlock()
+	fake.markCommitRecordsMutex.RLock()
+	defer fake.markCommitRecordsMutex.RUnlock()
 	fake.pingMutex.RLock()
 	defer fake.pingMutex.RUnlock()
 	fake.pollRecordsMutex.RLock()
