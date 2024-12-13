@@ -25,7 +25,7 @@ type options[K comparable, V any] struct {
 
 type Option[K comparable, V any] func(options[K, V]) options[K, V]
 
-type ProcessRecordsFunc[K comparable, V any] func(ctx context.Context, timeout time.Duration, fetches kgo.Fetches, cache *map[K]V) error
+type ProcessRecordsFunc[K comparable, V any] func(ctx context.Context, timeout time.Duration, client kafka.Client, fetches kgo.Fetches, cache *map[K]V) error
 
 // WithKafkaConfig sets the Kafka configuration for the cache.
 func WithKafkaConfig[K comparable, V any](config kafka.Config) Option[K, V] {
@@ -146,7 +146,7 @@ func applyOptions[K comparable, V any](options ...Option[K, V]) options[K, V] {
 
 // The very most basic function possible in case we forget to provide a process function
 // we simply log out the record we're processing to Stderr
-func processRecordsFunc[K comparable, V any](_ context.Context, _ time.Duration, fetches kgo.Fetches, _ *map[K]V) error {
+func processRecordsFunc[K comparable, V any](ctx context.Context, _ time.Duration, client kafka.Client, fetches kgo.Fetches, _ *map[K]V) error {
 	logger := zerolog.New(os.Stderr)
 	for _, fetch := range fetches {
 		for _, topic := range fetch.Topics {
@@ -158,7 +158,7 @@ func processRecordsFunc[K comparable, V any](_ context.Context, _ time.Duration,
 						Err(partition.Err).
 						Msg("Error fetching records")
 
-					continue
+					return partition.Err
 				}
 				for _, record := range partition.Records {
 					logger.Info().
@@ -167,6 +167,14 @@ func processRecordsFunc[K comparable, V any](_ context.Context, _ time.Duration,
 						Bytes("key", record.Key).
 						Bytes("value", record.Value).
 						Msg("Processing record")
+
+					// The record has been processed, mark it for commit
+					client.MarkCommitRecords(record)
+				}
+				// now that we've processed all the records for this partition, commit the marked offsets
+				if err := client.CommitMarkedOffsets(ctx); err != nil {
+					logger.Error().Err(err).Msg("failed to commit marked offsets")
+					return err
 				}
 			}
 		}

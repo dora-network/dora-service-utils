@@ -3,6 +3,7 @@ package cache
 import (
 	"context"
 	"errors"
+	"github.com/dora-network/dora-service-utils/kafka"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"github.com/twmb/franz-go/pkg/sasl/plain"
 	"sync"
@@ -48,6 +49,8 @@ func (c *Cache[K, V]) Init() error {
 
 	if c.options.consumerGroup != "" {
 		opts = append(opts, kgo.ConsumerGroup(c.options.consumerGroup))
+	} else {
+		opts = append(opts, kgo.ConsumerGroup(kafka.ConsumerGroup("cache")))
 	}
 
 	if c.options.userID != "" && c.options.password != "" {
@@ -87,17 +90,26 @@ func (c *Cache[K, V]) start(ctx context.Context) {
 	c.status = StatusRunning
 	c.mu.Unlock()
 
+	client := c.options.client
+	// Make sure to commit any uncommitted offsets before closing the client
+	defer func() {
+		if err := client.CommitUncommittedOffsets(ctx); err != nil {
+			c.options.logger.Error().Err(err).Msg("failed to commit uncommitted offsets")
+			client.Close()
+		}
+	}()
+
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		default:
 			pollCtx, cancel := context.WithTimeout(ctx, c.options.pollTimeout)
-			fetches := c.options.client.PollRecords(pollCtx, c.options.maxPollRecords)
+			fetches := client.PollRecords(pollCtx, c.options.maxPollRecords)
 			cancel()
 			// process records
 			c.mu.Lock()
-			if err := c.options.processFunc(ctx, c.options.processTimeout, fetches, &c.records); err != nil {
+			if err := c.options.processFunc(ctx, c.options.processTimeout, client, fetches, &c.records); err != nil {
 				c.options.logger.Error().Err(err).Msg("failed to process records")
 			}
 			c.mu.Unlock()
