@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/cenkalti/backoff/v4"
 	"github.com/dora-network/dora-service-utils/cache"
+	"github.com/dora-network/dora-service-utils/kafka"
 	"github.com/dora-network/dora-service-utils/kafka/kafkafakes"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -44,7 +45,7 @@ func TestCache(t *testing.T) {
 	// Create a new cache
 	testCache := cache.New[string, string](
 		cache.WithClient[string, string](client),
-		cache.WithProcessFunc[string, string](func(ctx context.Context, timeout time.Duration, fetches kgo.Fetches, cache *map[string]string) error {
+		cache.WithProcessFunc[string, string](func(ctx context.Context, timeout time.Duration, client kafka.Client, fetches kgo.Fetches, cache *map[string]string) error {
 			assert.Len(t, fetches, 1)
 			assert.Len(t, fetches[0].Topics, 1)
 			assert.Len(t, fetches[0].Topics[0].Partitions, 1)
