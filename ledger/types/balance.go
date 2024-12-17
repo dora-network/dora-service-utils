@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/goccy/go-json"
 
@@ -234,4 +235,20 @@ func (b *Balance) Repay(amount Amount) error {
 
 func (b *Balance) String() string {
 	return fmt.Sprintf("%#v", *b)
+}
+
+type Interest struct {
+	Earned      uint64    `json:"earned" redis:"earned"`
+	Owed        uint64    `json:"owed" redis:"owed"`
+	Claimed     uint64    `json:"claimed" redis:"claimed"`
+	Paid        uint64    `json:"paid" redis:"paid"`
+	LastUpdated time.Time `json:"last_updated" redis:"last_updated"`
+}
+
+func (i *Interest) MarshalBinary() ([]byte, error) {
+	return json.Marshal(i)
+}
+
+func (i *Interest) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, i)
 }
