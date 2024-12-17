@@ -42,6 +42,22 @@ func GetModuleBalances(ctx context.Context, rdb redis.Client, timeout time.Durat
 	return getBalances(ctx, rdb, timeout, watch, assetIDs...)
 }
 
+func GetModuleBalancesCmd(
+	ctx context.Context,
+	tx *redisv9.Tx,
+	assetIDs ...string,
+) ([]redisv9.Cmder, string, error) {
+	watch := ModuleBalanceKey()
+	cmd, err := tx.TxPipelined(
+		ctx, func(pipe redisv9.Pipeliner) error {
+			pipe.HMGet(ctx, watch, assetIDs...)
+			return nil
+		},
+	)
+
+	return cmd, watch, err
+}
+
 func getBalances(ctx context.Context, rdb redis.Client, timeout time.Duration, keys []string, ids ...string) (
 	[]types.Balance,
 	error,
