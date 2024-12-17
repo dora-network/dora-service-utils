@@ -24,6 +24,27 @@ func GetUserLedger(
 	return getUserLedger(ctx, rdb, timeout, watch)
 }
 
+func GetUserLedgerCmd(
+	ctx context.Context,
+	tx *redisv9.Tx,
+	userIDs ...string,
+) ([]redisv9.Cmder, []string, error) {
+	watch := make([]string, len(userIDs))
+	for i, userID := range userIDs {
+		watch[i] = UserBalanceKey(userID)
+	}
+	cmds, err := tx.TxPipelined(
+		ctx, func(pipe redisv9.Pipeliner) error {
+			for _, key := range watch {
+				pipe.HGetAll(ctx, key)
+			}
+			return nil
+		},
+	)
+
+	return cmds, watch, err
+}
+
 func getUserLedger(ctx context.Context, rdb redis.Client, timeout time.Duration, keys []string) (
 	[]types.UserLedger,
 	error,
