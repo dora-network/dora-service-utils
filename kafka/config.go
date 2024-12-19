@@ -5,6 +5,7 @@ type Config struct {
 	Brokers                     []string `mapstructure:"brokers" json:"brokers"`
 	OrderTopic                  string   `mapstructure:"order_topic" json:"order_topic"`
 	OrderStatusTopic            string   `mapstructure:"order_status_topic" json:"order_status_topic"`
+	OrderSnapshotsTopic         string   `mapstructure:"order_snapshots_topic" json:"order_snapshots_topic"`
 	MatchedOrderTopic           string   `mapstructure:"matched_order_topic" json:"matched_order_topic"`
 	OrderBookAdminTopic         string   `mapstructure:"order_book_admin_topic" json:"order_book_admin_topic"`
 	OrderBookStatusTopic        string   `mapstructure:"order_book_status_topic" json:"order_book_status_topic"`
@@ -38,6 +39,7 @@ func DefaultConfig() Config {
 		Brokers:                     nil,
 		OrderTopic:                  DefaultOrderTopic,
 		OrderStatusTopic:            DefaultOrderStatusTopic,
+		OrderSnapshotsTopic:         DefaultOrderSnapshotsTopic,
 		MatchedOrderTopic:           DefaultMatchedOrderTopic,
 		OrderBookAdminTopic:         DefaultOrderBookAdminTopic,
 		OrderBookStatusTopic:        DefaultOrderBookStatusTopic,
