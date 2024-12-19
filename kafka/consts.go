@@ -3,6 +3,7 @@ package kafka
 const (
 	DefaultOrderTopic                   = "dora.network.orders.incoming"
 	DefaultOrderStatusTopic             = "dora.network.orders.status.updates"
+	DefaultOrderSnapshotsTopic          = "dora.network.orders.snapshots"
 	DefaultMatchedOrderTopic            = "dora.network.orders.matched"
 	DefaultOrderBookAdminTopic          = "dora.network.orderbook.admin"
 	DefaultOrderBookStatusTopic         = "dora.network.orderbook.status"
