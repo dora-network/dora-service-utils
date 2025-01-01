@@ -31,6 +31,9 @@ type Config struct {
 	TradesResponseTopic         string   `mapstructure:"trades_response_topic" json:"trades_response_topic"`
 	TradesUpdateTopic           string   `mapstructure:"trades_update_topic" json:"trades_update_topic"`
 	LastTradedPriceTopic        string   `mapstructure:"last_traded_price_topic" json:"last_traded_price_topic"`
+	CandlesUpdateTopic          string   `mapstructure:"candles_update_topic" json:"candles_update_topic"`
+	CandlesRequestTopic         string   `mapstructure:"candles_request_topic" json:"candles_request_topic"`
+	CandlesSnapshotTopic        string   `mapstructure:"candles_snapshot_topic" json:"candles_snapshot_topic"`
 	Authentication              Auth     `mapstructure:"authentication" json:"authentication"`
 }
 
@@ -65,5 +68,12 @@ func DefaultConfig() Config {
 		TradesResponseTopic:         DefaultTradesResponseTopic,
 		TradesUpdateTopic:           DefaultTradesUpdateTopic,
 		LastTradedPriceTopic:        DefaultLastTradedPriceTopic,
+		CandlesUpdateTopic:          DefaultCandlesUpdateTopic,
+		CandlesRequestTopic:         DefaultCandlesRequestTopic,
+		CandlesSnapshotTopic:        DefaultCandlesSnapshotTopic,
+		Authentication: Auth{
+			Username: "",
+			Password: "",
+		},
 	}
 }
