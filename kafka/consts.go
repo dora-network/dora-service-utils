@@ -29,4 +29,7 @@ const (
 	DefaultTradesResponseTopic          = "dora.network.trades.response"
 	DefaultTradesUpdateTopic            = "dora.network.trades.updates"
 	DefaultLastTradedPriceTopic         = "dora.network.last.traded.price"
+	DefaultCandlesUpdateTopic           = "dora.network.candles.updates"
+	DefaultCandlesRequestTopic          = "dora.network.candles.request"
+	DefaultCandlesSnapshotTopic         = "dora.network.candles.snapshot"
 )
