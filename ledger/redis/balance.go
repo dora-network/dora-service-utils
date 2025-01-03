@@ -188,11 +188,7 @@ func SetBalances(
 	)
 }
 
-func SetBalancesCmd(ctx context.Context, tx *redisv9.Tx, reqs map[string][]*types.Balance) (
-	[]redisv9.Cmder,
-	[]string,
-	error,
-) {
+func SetBalancesCmd(ctx context.Context, tx *redisv9.Tx, reqs map[string][]*types.Balance) ([]redisv9.Cmder, []string) {
 	watch := make([]string, 0)
 	cmds := make([]redisv9.Cmder, 0)
 	for userID, bals := range reqs {
@@ -207,5 +203,5 @@ func SetBalancesCmd(ctx context.Context, tx *redisv9.Tx, reqs map[string][]*type
 		cmd := tx.HSet(ctx, key, values)
 		cmds = append(cmds, cmd)
 	}
-	return cmds, watch, nil
+	return cmds, watch
 }
