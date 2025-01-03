@@ -187,3 +187,21 @@ func SetBalances(
 		watch...,
 	)
 }
+
+func SetBalancesCmd(ctx context.Context, tx *redisv9.Tx, reqs map[string][]*types.Balance) ([]redisv9.Cmder, []string) {
+	watch := make([]string, 0)
+	cmds := make([]redisv9.Cmder, 0)
+	for userID, bals := range reqs {
+		key := UserBalanceKey(userID)
+		watch = append(watch, key)
+		values := make(map[string]any)
+		for _, bal := range bals {
+			values[bal.AssetID] = bal
+		}
+
+		// write the balances to redis
+		cmd := tx.HSet(ctx, key, values)
+		cmds = append(cmds, cmd)
+	}
+	return cmds, watch
+}
