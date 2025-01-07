@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/rs/zerolog"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/protobuf/proto"
 )
@@ -12,8 +11,7 @@ import (
 // SendMessageToTopic will sends to the message specific topic and it will logs the errors if any error occures
 func SendMessageToTopic(
 	ctx context.Context,
-	client *kgo.Client,
-	logger zerolog.Logger,
+	client Client,
 	topic string,
 	messages ...proto.Message,
 ) error {
