@@ -26,7 +26,7 @@ func GetUserLedger(
 
 func GetUserLedgerCmd(
 	ctx context.Context,
-	tx *redisv9.Tx,
+	tx redisv9.Cmdable,
 	userIDs ...string,
 ) ([]redisv9.Cmder, []string, error) {
 	watch := make([]string, len(userIDs))

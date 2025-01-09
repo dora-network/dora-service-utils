@@ -44,7 +44,7 @@ func GetModuleBalances(ctx context.Context, rdb redis.Client, timeout time.Durat
 
 func GetModuleBalancesCmd(
 	ctx context.Context,
-	tx *redisv9.Tx,
+	tx redisv9.Cmdable,
 	assetIDs ...string,
 ) ([]redisv9.Cmder, string, error) {
 	watch := ModuleBalanceKey()
@@ -188,7 +188,7 @@ func SetBalances(
 	)
 }
 
-func SetBalancesCmd(ctx context.Context, tx *redisv9.Tx, reqs map[string][]*types.Balance) ([]redisv9.Cmder, []string) {
+func SetBalancesCmd(ctx context.Context, tx redisv9.Cmdable, reqs map[string][]*types.Balance) ([]redisv9.Cmder, []string) {
 	watch := make([]string, 0)
 	cmds := make([]redisv9.Cmder, 0)
 	for userID, bals := range reqs {

@@ -102,7 +102,7 @@ func GetPool(ctx context.Context, rdb redis.Client, timeout time.Duration, poolI
 	return pool, nil
 }
 
-func GetPoolCmd(ctx context.Context, tx *redisv9.Tx, poolID string) (*redisv9.SliceCmd, string) {
+func GetPoolCmd(ctx context.Context, tx redis.Cmdable, poolID string) (*redisv9.SliceCmd, string) {
 	watch := PoolKey(poolID)
 	return tx.HMGet(ctx, watch, poolKeys...), watch
 }
@@ -142,7 +142,7 @@ func UpdatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout
 
 func UpdatePoolCmd(
 	ctx context.Context,
-	tx *redisv9.Tx,
+	tx redis.Cmdable,
 	pool *types.Pool,
 ) (*redisv9.IntCmd, string) {
 	poolID := orderbook.ID(pool.BaseAsset, pool.QuoteAsset)
@@ -196,7 +196,7 @@ func UpdatePoolBalance(
 }
 
 func UpdatePoolBalanceCmd(
-	ctx context.Context, tx *redisv9.Tx, pool *types.Pool, timeout time.Duration,
+	ctx context.Context, tx redis.Cmdable, pool *types.Pool, timeout time.Duration,
 ) (*redisv9.IntCmd, string) {
 	poolID := orderbook.ID(pool.BaseAsset, pool.QuoteAsset)
 	return tx.HSet(
