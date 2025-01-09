@@ -13,3 +13,10 @@ type Client interface {
 	Close() error
 	Watch(ctx context.Context, fn func(*redis.Tx) error, keys ...string) error
 }
+
+//counterfeiter:generate . Cmdable
+// Cmdable wraps the redis.Cmdable interface, we include this to allow us to mock the redis.Cmdable interface
+// but also so if we need to replace the redis client library, downstream consumers of this package don't need to
+type Cmdable interface {
+	redis.Cmdable
+}
