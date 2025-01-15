@@ -70,6 +70,11 @@ func getPrices(ctx context.Context, rdb redis.Client, timeout time.Duration, key
 	return prices, nil
 }
 
+func GetPricesCmd(ctx context.Context, tx redis.Cmdable, assetIDs ...string) (*redisv9.SliceCmd, string) {
+	watch := PricesKey()
+	return tx.HMGet(ctx, watch, assetIDs...), watch
+}
+
 func SetPrices(
 	ctx context.Context,
 	rdb redis.Client,
