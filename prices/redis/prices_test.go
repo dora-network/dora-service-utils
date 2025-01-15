@@ -7,7 +7,6 @@ import (
 	"github.com/dora-network/dora-service-utils/ptr"
 	"github.com/dora-network/dora-service-utils/testing/consts"
 	"github.com/dora-network/dora-service-utils/testing/integration"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
@@ -36,7 +35,7 @@ func TestPrices(t *testing.T) {
 			emptyPrices := []types.Price{
 				{},
 			}
-			assert.Equal(tt, emptyPrices, prices)
+			require.Equal(tt, emptyPrices, prices)
 		},
 	)
 
@@ -53,21 +52,21 @@ func TestPrices(t *testing.T) {
 					ctx,
 					redis.PricesKey(),
 					consts.StableID,
-					map[string]any{consts.StableID: ptr.From(stablePrice)},
+					ptr.From(stablePrice),
 				).Err(),
 			)
 			prices, err := redis.GetPrices(ctx, rdb, time.Second, consts.StableID)
 			require.NoError(tt, err)
 			require.NotNil(tt, prices)
-			assert.Equal(tt, stablePrice, prices)
+			require.Equal(tt, []types.Price{stablePrice}, prices)
 		},
 	)
 
 	t.Run(
 		"Should retrieve prices for multiple assets", func(tt *testing.T) {
-			bondPrice := &types.Price{
+			bondPrice := types.Price{
 				AssetID: consts.BondID,
-				Price:   0.93,
+				Price:   0.87,
 			}
 
 			require.NoError(
@@ -75,11 +74,11 @@ func TestPrices(t *testing.T) {
 				rdb.HSet(
 					ctx,
 					redis.PricesKey(),
-					consts.StableID,
-					map[string]any{consts.StableID: ptr.From(bondPrice)},
+					consts.BondID,
+					ptr.From(bondPrice),
 				).Err(),
 			)
-			prices, err := redis.GetPrices(ctx, rdb, time.Second, consts.StableID)
+			prices, err := redis.GetPrices(ctx, rdb, time.Second, consts.StableID, consts.BondID)
 			require.NoError(tt, err)
 			require.NotNil(tt, prices)
 			want := []types.Price{
@@ -93,25 +92,29 @@ func TestPrices(t *testing.T) {
 				},
 			}
 
-			assert.Equal(tt, want, prices)
+			require.Equal(tt, want, prices)
 		},
 	)
 
 	t.Run(
 		"Should update bond price", func(tt *testing.T) {
-			prices, err := redis.GetPrices(ctx, rdb, time.Second, consts.StableID)
+			prices, err := redis.GetPrices(ctx, rdb, time.Second, consts.StableID, consts.BondID)
 			require.NoError(tt, err)
 			require.NotNil(tt, prices)
 			require.Len(tt, prices, 2)
 
+			match := 0
 			for _, price := range prices {
 				if price.AssetID == consts.BondID {
-					assert.Equal(tt, 0.87, price.Price)
+					require.Equal(tt, 0.87, price.Price)
+					match++
 				}
 				if price.AssetID == consts.StableID {
-					assert.Equal(tt, 1.0, price.Price)
+					require.Equal(tt, 1.0, price.Price)
+					match++
 				}
 			}
+			require.Equal(tt, 2, match)
 
 			require.NoError(
 				t,
@@ -123,18 +126,22 @@ func TestPrices(t *testing.T) {
 				),
 			)
 
-			prices, err = redis.GetPrices(ctx, rdb, time.Second, consts.StableID)
+			prices, err = redis.GetPrices(ctx, rdb, time.Second, consts.StableID, consts.BondID)
 			require.NoError(tt, err)
 			require.NotNil(tt, prices)
 			require.Len(tt, prices, 2)
+			match = 0
 			for _, price := range prices {
 				if price.AssetID == consts.BondID {
-					assert.Equal(tt, 0.91, price.Price)
+					require.Equal(tt, 0.91, price.Price)
+					match++
 				}
 				if price.AssetID == consts.StableID {
-					assert.Equal(tt, 1.0, price.Price)
+					require.Equal(tt, 1.0, price.Price)
+					match++
 				}
 			}
+			require.Equal(tt, 2, match)
 		},
 	)
 }
