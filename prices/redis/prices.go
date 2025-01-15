@@ -108,7 +108,7 @@ func SetPrices(
 	)
 }
 
-func SetBalancesCmd(ctx context.Context, tx redis.Cmdable, reqs map[string]float64) ([]redisv9.Cmder, []string) {
+func SetPricesCmd(ctx context.Context, tx redis.Cmdable, reqs map[string]float64) ([]redisv9.Cmder, []string) {
 	watch := []string{PricesKey()}
 	cmds := make([]redisv9.Cmder, 0)
 	values := make(map[string]any)
@@ -119,7 +119,7 @@ func SetBalancesCmd(ctx context.Context, tx redis.Cmdable, reqs map[string]float
 		}
 	}
 
-	// write the balances to redis
+	// write the prices to redis
 	cmd := tx.HSet(ctx, PricesKey(), values)
 	cmds = append(cmds, cmd)
 
