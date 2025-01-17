@@ -172,6 +172,19 @@ func SetModuleBalances(
 	return SetBalances(ctx, rdb, txFunc, timeout, watch...)
 }
 
+func SetModuleBalancesCmd(ctx context.Context, tx redis.Cmdable, bals []*types.Balance) (redisv9.Cmder, []string) {
+	watch := []string{ModuleBalanceKey()}
+	key := ModuleBalanceKey()
+	values := make(map[string]any)
+	for _, bal := range bals {
+		values[bal.AssetID] = bal
+	}
+
+	// write the balances to redis
+	cmd := tx.HSet(ctx, key, values)
+	return cmd, watch
+}
+
 func SetBalances(
 	ctx context.Context,
 	rdb redis.Client,
@@ -188,7 +201,10 @@ func SetBalances(
 	)
 }
 
-func SetBalancesCmd(ctx context.Context, tx redis.Cmdable, reqs map[string][]*types.Balance) ([]redisv9.Cmder, []string) {
+func SetBalancesCmd(ctx context.Context, tx redis.Cmdable, reqs map[string][]*types.Balance) (
+	[]redisv9.Cmder,
+	[]string,
+) {
 	watch := make([]string, 0)
 	cmds := make([]redisv9.Cmder, 0)
 	for userID, bals := range reqs {
