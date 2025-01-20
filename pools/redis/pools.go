@@ -102,6 +102,25 @@ func GetPool(ctx context.Context, rdb redis.Client, timeout time.Duration, poolI
 	return pool, nil
 }
 
+func GetPoolsCmd(ctx context.Context, tx redis.Cmdable, poolIDs []string) ([]redisv9.Cmder, error) {
+	watch := make([]string, 0)
+	cmds, err := tx.TxPipelined(
+		ctx, func(pipe redisv9.Pipeliner) error {
+			for _, poolID := range poolIDs {
+				poolKey := PoolKey(poolID)
+				watch = append(watch, poolKey)
+				pipe.HGetAll(ctx, poolKey)
+			}
+			return nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return cmds, nil
+}
+
 func GetPoolCmd(ctx context.Context, tx redis.Cmdable, poolID string) (*redisv9.SliceCmd, string) {
 	watch := PoolKey(poolID)
 	return tx.HMGet(ctx, watch, poolKeys...), watch
