@@ -126,9 +126,7 @@ func GetPoolCmd(ctx context.Context, tx redis.Cmdable, poolID string) (*redisv9.
 	return tx.HMGet(ctx, watch, poolKeys...), watch
 }
 
-func UpdatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout time.Duration, watch ...string) error {
-	poolID := orderbook.ID(pool.BaseAsset, pool.QuoteAsset)
-
+func UpdatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout time.Duration, poolID string) error {
 	txFunc := func(tx *redisv9.Tx) error {
 		return tx.HSet(
 			ctx, PoolKey(poolID),
@@ -155,7 +153,7 @@ func UpdatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout
 		rdb,
 		txFunc,
 		backoff.NewExponentialBackOff(backoff.WithMaxElapsedTime(timeout)),
-		watch...,
+		PoolKey(poolID),
 	)
 }
 
@@ -164,9 +162,8 @@ func UpdatePoolCmd(
 	tx redis.Cmdable,
 	pool *types.Pool,
 ) (*redisv9.IntCmd, string) {
-	poolID := orderbook.ID(pool.BaseAsset, pool.QuoteAsset)
 	return tx.HSet(
-		ctx, PoolKey(poolID),
+		ctx, PoolKey(pool.PoolID),
 		// We have to set each field individually rather than just passing the struct
 		// which would be easier, because when serializing the struct, go-redis uses the
 		// MarshalBinary method for the decimal.Decimal type (fee factor), but when
@@ -182,15 +179,15 @@ func UpdatePoolCmd(
 		"fee_factor", pool.FeeFactor.String(),
 		"created_at", pool.CreatedAt,
 		"maturity_at", pool.MaturityAt,
-	), poolID
+	), PoolKey(pool.PoolID)
 }
 
 func UpdatePoolBalance(
-	ctx context.Context, rdb redis.Client, pool *types.Pool, timeout time.Duration,
-	watch string,
+	ctx context.Context,
+	rdb redis.Client,
+	poolID string, amountShares, amountBase, amountQuote uint64,
+	timeout time.Duration,
 ) error {
-	poolID := orderbook.ID(pool.BaseAsset, pool.QuoteAsset)
-
 	txFunc := func(tx *redisv9.Tx) error {
 		return tx.HSet(
 			ctx, PoolKey(poolID),
@@ -199,9 +196,9 @@ func UpdatePoolBalance(
 			// MarshalBinary method for the decimal.Decimal type (fee factor), but when
 			// deserializing, it uses UnmarshalText which is expecting a number expressed
 			// as a string. This causes the deserialization to fail
-			"amount_shares", pool.AmountShares,
-			"amount_base", pool.AmountBase,
-			"amount_quote", pool.AmountQuote,
+			"amount_shares", amountShares,
+			"amount_base", amountBase,
+			"amount_quote", amountQuote,
 		).Err()
 	}
 
@@ -210,14 +207,13 @@ func UpdatePoolBalance(
 		rdb,
 		txFunc,
 		backoff.NewExponentialBackOff(backoff.WithMaxElapsedTime(timeout)),
-		watch,
+		PoolKey(poolID),
 	)
 }
 
 func UpdatePoolBalanceCmd(
-	ctx context.Context, tx redis.Cmdable, pool *types.Pool, timeout time.Duration,
+	ctx context.Context, tx redis.Cmdable, poolID string, amountShares, amountBase, amountQuote uint64,
 ) (*redisv9.IntCmd, string) {
-	poolID := orderbook.ID(pool.BaseAsset, pool.QuoteAsset)
 	return tx.HSet(
 		ctx, PoolKey(poolID),
 		// We have to set each field individually rather than just passing the struct
@@ -225,10 +221,10 @@ func UpdatePoolBalanceCmd(
 		// MarshalBinary method for the decimal.Decimal type (fee factor), but when
 		// deserializing, it uses UnmarshalText which is expecting a number expressed
 		// as a string. This causes the deserialization to fail
-		"amount_shares", pool.AmountShares,
-		"amount_base", pool.AmountBase,
-		"amount_quote", pool.AmountQuote,
-	), poolID
+		"amount_shares", amountShares,
+		"amount_base", amountBase,
+		"amount_quote", amountQuote,
+	), PoolKey(poolID)
 }
 
 func CreatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout time.Duration) error {
