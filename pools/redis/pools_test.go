@@ -136,7 +136,7 @@ func TestPools(t *testing.T) {
 					rdb,
 					&updated,
 					time.Second,
-					redis.PoolKey(orderbook.ID(updated.BaseAsset, updated.QuoteAsset)),
+					orderbook.ID(updated.BaseAsset, updated.QuoteAsset),
 				),
 			)
 			got, err := redis.GetPool(
@@ -172,13 +172,11 @@ func TestPools(t *testing.T) {
 					rdb,
 					&initial,
 					time.Second,
-					redis.PoolKey(orderbook.ID(initial.BaseAsset, initial.QuoteAsset)),
+					initial.PoolID,
 				),
 			)
 
 			updated := types.Pool{
-				BaseAsset:    "base",
-				QuoteAsset:   "quote",
 				AmountShares: 10000002,
 				AmountBase:   10000001,
 				AmountQuote:  10000001,
@@ -186,19 +184,13 @@ func TestPools(t *testing.T) {
 
 			require.NoError(
 				t,
-				redis.UpdatePoolBalance(
-					ctx,
-					rdb,
-					&updated,
-					time.Second,
-					redis.PoolKey(orderbook.ID(updated.BaseAsset, updated.QuoteAsset)),
-				),
+				redis.UpdatePoolBalance(ctx, rdb, "base-quote", 10000002, 10000001, 10000001, time.Second),
 			)
 			got, err := redis.GetPool(
 				ctx,
 				rdb,
 				time.Second,
-				orderbook.ID(updated.BaseAsset, updated.QuoteAsset),
+				"base-quote",
 			)
 			require.NoError(tt, err)
 			assert.Equal(tt, updated.AmountQuote, got.AmountQuote)
