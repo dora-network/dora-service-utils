@@ -48,10 +48,10 @@ func (m *Module) Init() {
 func InitialModule() Module {
 	m := Module{
 		// Balances (can Validate)
-		Balance:  Balances{},
-		Supplied: Balances{},
-		Borrowed: Balances{},
-		Virtual:  Balances{},
+		Balance:  Balances{Bals: make(map[string]int64)},
+		Supplied: Balances{Bals: make(map[string]int64)},
+		Borrowed: Balances{Bals: make(map[string]int64)},
+		Virtual:  Balances{Bals: make(map[string]int64)},
 		// Tracking fields
 		Sequence:    0,
 		LastUpdated: 0,
