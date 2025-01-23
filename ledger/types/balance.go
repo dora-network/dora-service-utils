@@ -22,18 +22,6 @@ func (b *Balance) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, b)
 }
 
-// NewBal creates a Balance.
-// If asset ID is empty or amount is negative then all fields are zero-valued and Valid() will return false.
-func NewBal(asset string, amount int64) *Balance {
-	if asset != "" && amount >= 0 {
-		return &Balance{
-			Asset:  asset,
-			Amount: uint64(amount),
-		}
-	}
-	return &Balance{}
-}
-
 // NewBalance creates a Balance.
 // If asset ID is empty, then all fields are zero-valued and Valid() will return false.
 func NewBalance(asset string, amount uint64) *Balance {
@@ -71,10 +59,6 @@ func (b *Balance) IsZero() bool {
 	return b.Amount == 0
 }
 
-func (b *Balance) IsPositive() bool {
-	return b.Amount > 0
-}
-
 // Sub from a balance. Error on negative result, mismatched assets, or invalid assets.
 func (b *Balance) Sub(sub *Balance) (*Balance, error) {
 	if !b.Valid() || !sub.Valid() {
@@ -97,7 +81,10 @@ func (b *Balance) SubAmt(amt uint64) (*Balance, bool) {
 	if !b.Valid() || b.Amount < amt {
 		return nil, false
 	}
-	return NewBalance(b.Asset, b.Amount-amt), true
+	var err error
+	result := b.Copy()
+	result, err = result.Sub(NewBalance(b.Asset, amt))
+	return result, err == nil
 }
 
 // MulF a balance's amount by a float, rounding down. Error if f is negative.

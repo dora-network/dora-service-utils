@@ -95,7 +95,7 @@ func (b *Balances) SubToZero(subs *Balances) (result, surplus *Balances) {
 	result = b.Copy()
 	surplus = Empty()
 	for _, id := range subs.AssetIDs() {
-		sub := NewBal(id, subs.AmountOf(id))
+		sub := NewBalance(id, uint64(subs.AmountOf(id)))
 		var s *Balance
 		result, s = result.SubBalToZero(sub)
 		surplus = surplus.Add(s)
@@ -115,10 +115,10 @@ func (b *Balances) SubBalToZero(sub *Balance) (result *Balances, surplus *Balanc
 	if naiveResultAmt < 0 {
 		// naive sub would result in negative amount:
 		// sub to exactly zero, and return surplus amount
-		return b.SubAmount(sub.Asset, b.AmountOf(sub.Asset)), NewBal(sub.Asset, naiveResultAmt*-1)
+		return b.SubAmount(sub.Asset, b.AmountOf(sub.Asset)), NewBalance(sub.Asset, uint64(naiveResultAmt*-1))
 	}
 	// sub to a zero or positive amount. surplus is zero.
-	return b.SubAmount(sub.Asset, sub.Amt()), NewBal(sub.Asset, 0)
+	return b.SubAmount(sub.Asset, sub.Amt()), NewBalance(sub.Asset, 0)
 }
 
 // SubAmountToZero a given amount of a single asset from Balances and return the result.
