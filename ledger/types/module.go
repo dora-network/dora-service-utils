@@ -1,20 +1,20 @@
 package types
 
 import (
-	"encoding/json"
 	"github.com/dora-network/dora-service-utils/errors"
+	"github.com/goccy/go-json"
 )
 
 // Module contains a snapshot of all of the module's assets and debts.
 type Module struct {
 	// Assets owned (including bonds and currencies). Negative values indicate borrows.
-	Balance Balances `json:"balances" redis:"balances"`
+	Balance *Balances `json:"balances" redis:"balances"`
 	// Assets supplied to module but not yet withdrawn.
-	Supplied Balances `json:"supplied" redis:"supplied"`
+	Supplied *Balances `json:"supplied" redis:"supplied"`
 	// Assets minted by virtual-borrowing but not yet repaid
-	Virtual Balances `json:"virtual" redis:"virtual"`
+	Virtual *Balances `json:"virtual" redis:"virtual"`
 	// Assets borrowed from supply but not yet repaid
-	Borrowed Balances `json:"borrowed" redis:"borrowed"`
+	Borrowed *Balances `json:"borrowed" redis:"borrowed"`
 
 	// Tracking fields - see position.go
 	LastUpdated      int64  `json:"last_updated" redis:"last_updated"`
@@ -48,10 +48,10 @@ func (m *Module) Init() {
 func InitialModule() Module {
 	m := Module{
 		// Balances (can Validate)
-		Balance:  Balances{Bals: make(map[string]int64)},
-		Supplied: Balances{Bals: make(map[string]int64)},
-		Borrowed: Balances{Bals: make(map[string]int64)},
-		Virtual:  Balances{Bals: make(map[string]int64)},
+		Balance:  &Balances{Bals: make(map[string]int64)},
+		Supplied: &Balances{Bals: make(map[string]int64)},
+		Borrowed: &Balances{Bals: make(map[string]int64)},
+		Virtual:  &Balances{Bals: make(map[string]int64)},
 		// Tracking fields
 		Sequence:    0,
 		LastUpdated: 0,
@@ -62,11 +62,11 @@ func InitialModule() Module {
 }
 
 func NewModule(
-	balance, supplied, borrowed, virtual Balances,
+	balance, supplied, borrowed, virtual *Balances,
 	lastUpdated int64,
 	sequence uint64,
-) (Module, error) {
-	m := Module{
+) (*Module, error) {
+	m := &Module{
 		// Balances (can Validate)
 		Balance:  balance,
 		Supplied: supplied,
@@ -82,7 +82,7 @@ func NewModule(
 }
 
 // Validate that Module position does not contain any invalid or negative Balances
-func (m Module) Validate() error {
+func (m *Module) Validate() error {
 	if err := m.Balance.Validate(false); err != nil {
 		return errors.Wrap(errors.InvalidInputError, err, "module Balance")
 	}
@@ -102,23 +102,23 @@ func (m Module) Validate() error {
 }
 
 // String
-func (m Module) String() string {
+func (m *Module) String() string {
 	j, _ := json.Marshal(m)
 	return string(j)
 }
 
 // IsModified detects whether a module position's exported fields have changed at all since initialization.
-func (m Module) IsModified() bool {
+func (m *Module) IsModified() bool {
 	return m.original != m.String()
 }
 
 // NextSequence returns module.originalSequence + 1
-func (m Module) NextSequence() uint64 {
+func (m *Module) NextSequence() uint64 {
 	return m.originalSequence + 1
 }
 
 // Copy entire module, including original and isModified data.
-func (m Module) Copy() Module {
+func (m *Module) Copy() Module {
 	j, _ := json.Marshal(m)
 	module := Module{
 		// Any unexported fields must be copied here, before unmarshal
@@ -129,11 +129,11 @@ func (m Module) Copy() Module {
 	return module
 }
 
-// Copy entire module, setting current state as original and isModified to false.
-func (m Module) Snapshot() Module {
+// Snapshot entire module, setting current state as original and isModified to false.
+func (m *Module) Snapshot() Module {
 	j, _ := json.Marshal(m)
 	module := Module{}
 	_ = json.Unmarshal(j, &module)
 	module.Init()
-	return m
+	return module
 }
