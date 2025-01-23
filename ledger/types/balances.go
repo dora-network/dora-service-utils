@@ -25,6 +25,5 @@ func Empty() *Balances {
 // New constructs Balances containing a given amount of a single asset.
 // If asset ID is empty, returns an empty Balances instead.
 func New(assetID string, amount int64) *Balances {
-	b := &Balances{}
-	return b.AddAmount(assetID, amount)
+	return Empty().AddAmount(assetID, amount)
 }

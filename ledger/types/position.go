@@ -64,11 +64,11 @@ func InitialPosition() *Position {
 	p := &Position{
 		UserID: "",
 		// Balances (can Validate)
-		Owned:    &Balances{},
-		Locked:   &Balances{},
-		Supplied: &Balances{},
-		SSEQ:     &Balances{},
-		Inactive: &Balances{},
+		Owned:    &Balances{Bals: make(map[string]int64)},
+		Locked:   &Balances{Bals: make(map[string]int64)},
+		Supplied: &Balances{Bals: make(map[string]int64)},
+		SSEQ:     &Balances{Bals: make(map[string]int64)},
+		Inactive: &Balances{Bals: make(map[string]int64)},
 		// Tracking fields
 		NativeAsset: "",
 		Sequence:    0,
