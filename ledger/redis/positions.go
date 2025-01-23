@@ -86,6 +86,26 @@ func SetUsersPosition(
 	)
 }
 
+func SetUsersPositionCmd(ctx context.Context, tx redis.Cmdable, reqs map[string]*types.Position) (
+	[]redisv9.Cmder,
+	[]string,
+) {
+	watch := make([]string, 0, len(reqs))
+	cmds := make([]redisv9.Cmder, 0, len(reqs))
+	for userID, position := range reqs {
+		key := UserPositionKey(userID)
+		watch = append(watch, key)
+		values := make(map[string]any)
+		values[position.UserID] = position
+
+		// write the position to redis
+		cmd := tx.HSet(ctx, key, values)
+		cmds = append(cmds, cmd)
+	}
+
+	return cmds, watch
+}
+
 func GetModulePosition(
 	ctx context.Context,
 	rdb redis.Client,
