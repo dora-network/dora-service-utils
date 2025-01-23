@@ -45,8 +45,8 @@ func (m *Module) Init() {
 	}
 }
 
-func InitialModule() Module {
-	m := Module{
+func InitialModule() *Module {
+	m := &Module{
 		// Balances (can Validate)
 		Balance:  &Balances{Bals: make(map[string]int64)},
 		Supplied: &Balances{Bals: make(map[string]int64)},
