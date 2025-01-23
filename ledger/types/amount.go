@@ -25,12 +25,12 @@ func NewAmount(assetID string, amount uint64) Amount {
 	}
 }
 
-func (b *Amount) MarshalBinary() ([]byte, error) {
-	return json.Marshal(b)
+func (a *Amount) MarshalBinary() ([]byte, error) {
+	return json.Marshal(a)
 }
 
-func (b *Amount) UnmarshalBinary(data []byte) error {
-	return json.Unmarshal(data, b)
+func (a *Amount) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, a)
 }
 
 // Equal returns true if one Amount is equal to another.
