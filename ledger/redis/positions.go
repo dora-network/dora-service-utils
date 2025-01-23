@@ -110,7 +110,7 @@ func GetModulePosition(
 	ctx context.Context,
 	rdb redis.Client,
 	timeout time.Duration,
-) (*types.Position, error) {
+) (*types.Module, error) {
 	return getModulePosition(ctx, rdb, timeout, ModulePositionKey())
 }
 
@@ -122,7 +122,7 @@ func SetModulePosition(
 	ctx context.Context,
 	rdb redis.Client,
 	timeout time.Duration,
-	position *types.Position,
+	position *types.Module,
 ) error {
 	txFunc := func(tx *redisv9.Tx) error {
 		values := make(map[string]any)
@@ -146,7 +146,7 @@ func SetModulePosition(
 	)
 }
 
-func SetModulePositionCmd(ctx context.Context, tx redis.Cmdable, position *types.Position) (redisv9.Cmder, string) {
+func SetModulePositionCmd(ctx context.Context, tx redis.Cmdable, position *types.Module) (redisv9.Cmder, string) {
 	values := make(map[string]any)
 	values["module"] = position
 
@@ -160,8 +160,8 @@ func getModulePosition(
 	rdb redis.Client,
 	timeout time.Duration,
 	modulePositionKey string,
-) (*types.Position, error) {
-	position := new(types.Position)
+) (*types.Module, error) {
+	position := new(types.Module)
 
 	f := func(tx *redisv9.Tx) error {
 		err := tx.HGet(ctx, modulePositionKey, "module").Scan(position)
