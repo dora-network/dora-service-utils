@@ -114,8 +114,8 @@ func GetModulePosition(
 	return getModulePosition(ctx, rdb, timeout, ModulePositionKey())
 }
 
-func GetModulePositionCmd(ctx context.Context, tx redis.Cmdable) (*redisv9.SliceCmd, string) {
-	return tx.HMGet(ctx, ModulePositionKey(), "module"), ModulePositionKey()
+func GetModulePositionCmd(ctx context.Context, tx redis.Cmdable) (*redisv9.StringCmd, string) {
+	return tx.HGet(ctx, ModulePositionKey(), "module"), ModulePositionKey()
 }
 
 func SetModulePosition(
