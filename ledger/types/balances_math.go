@@ -65,7 +65,7 @@ func (b *Balances) SubAmount(assetID string, amount int64) *Balances {
 // Original Balances object is not mutated. Result can be negative.
 // Negative input is equivalent to using Balances.Add instead.
 // Inputs with empty asset ID or zero amount are ignored.
-func (b *Balances) Sub(subs ...Balance) *Balances {
+func (b *Balances) Sub(subs ...*Balance) *Balances {
 	result := b.Copy()
 	for _, sub := range subs {
 		result = result.SubAmount(sub.Asset, sub.Amt())
