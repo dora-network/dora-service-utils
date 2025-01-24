@@ -151,13 +151,13 @@ func (p *Position) Original() string {
 // Copy entire position, including original and isModified data.
 func (p *Position) Copy() *Position {
 	j, _ := json.Marshal(p)
-	position := Position{
+	position := &Position{
 		// Any unexported fields must be copied here, before unmarshal
 		original:         p.original,
 		originalSequence: p.originalSequence,
 	}
-	_ = json.Unmarshal(j, &position)
-	return &position
+	_ = json.Unmarshal(j, position)
+	return position
 }
 
 // Snapshot entire position, setting current state as original and isModified to false.

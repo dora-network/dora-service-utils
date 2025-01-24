@@ -120,13 +120,13 @@ func (m *Module) NextSequence() uint64 {
 // Copy entire module, including original and isModified data.
 func (m *Module) Copy() *Module {
 	j, _ := json.Marshal(m)
-	module := Module{
+	module := &Module{
 		// Any unexported fields must be copied here, before unmarshal
 		original:         m.original,
 		originalSequence: m.originalSequence,
 	}
-	_ = json.Unmarshal(j, &module)
-	return &module
+	_ = json.Unmarshal(j, module)
+	return module
 }
 
 // Snapshot entire module, setting current state as original and isModified to false.
