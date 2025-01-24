@@ -165,7 +165,7 @@ func (p *Position) Snapshot() *Position {
 	j, _ := json.Marshal(p)
 	position := Position{}
 	_ = json.Unmarshal(j, &position)
-	p.Init()
+	position.Init()
 	return &position
 }
 
