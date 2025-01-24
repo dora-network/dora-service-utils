@@ -29,7 +29,7 @@ func GetUsersPosition(
 	for i, userID := range userIDs {
 		watch[i] = UserPositionKey(userID)
 	}
-	return getUsersPosition(ctx, rdb, timeout, watch)
+	return getUsersPosition(ctx, rdb, timeout, watch, userIDs...)
 }
 
 func GetUsersPositionCmd(
@@ -167,6 +167,7 @@ func getModulePosition(
 		err := tx.HGet(ctx, modulePositionKey, "module").Scan(position)
 		if err != nil {
 			if errors.Is(err, redisv9.Nil) {
+				position = nil
 				return nil
 			}
 			return err
@@ -185,10 +186,14 @@ func getModulePosition(
 		return nil, err
 	}
 
+	if position == nil {
+		return types.InitialModule(), nil
+	}
+
 	return position, nil
 }
 
-func getUsersPosition(ctx context.Context, rdb redis.Client, timeout time.Duration, keys []string) (
+func getUsersPosition(ctx context.Context, rdb redis.Client, timeout time.Duration, keys []string, userIDs ...string) (
 	map[string]*types.Position,
 	error,
 ) {
@@ -227,6 +232,11 @@ func getUsersPosition(ctx context.Context, rdb redis.Client, timeout time.Durati
 		}
 
 		return err
+	}
+	for _, userID := range userIDs {
+		if _, ok := positions[userID]; !ok {
+			positions[userID] = types.InitialPosition(userID)
+		}
 	}
 
 	if err := redis.TryTransaction(
