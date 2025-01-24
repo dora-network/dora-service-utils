@@ -60,9 +60,9 @@ func (p *Position) Init() {
 
 // InitialPosition returns a position with zero balances and a sequence number of 0,
 // representing an account's state before its first activity.
-func InitialPosition() *Position {
+func InitialPosition(userID string) *Position {
 	p := &Position{
-		UserID: "",
+		UserID: userID,
 		// Balances (can Validate)
 		Owned:    &Balances{Bals: make(map[string]int64)},
 		Locked:   &Balances{Bals: make(map[string]int64)},
