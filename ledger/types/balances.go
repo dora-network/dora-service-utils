@@ -15,15 +15,15 @@ func (b *Balances) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, b)
 }
 
-// Empty returns an empty Balances.
-func Empty() *Balances {
+// EmptyBalances returns an empty Balances.
+func EmptyBalances() *Balances {
 	return &Balances{
 		Bals: make(map[string]int64),
 	}
 }
 
-// New constructs Balances containing a given amount of a single asset.
+// NewBalances constructs Balances containing a given amount of a single asset.
 // If asset ID is empty, returns an empty Balances instead.
-func New(assetID string, amount int64) *Balances {
-	return Empty().AddAmount(assetID, amount)
+func NewBalances(assetID string, amount int64) *Balances {
+	return EmptyBalances().AddAmount(assetID, amount)
 }

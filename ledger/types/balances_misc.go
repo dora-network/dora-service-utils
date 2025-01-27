@@ -25,7 +25,7 @@ func (b *Balances) Validate(allowNegative bool) error {
 
 // SelectPositive a single Balance from Balances, if positive.
 func (b *Balances) SelectPositive(assetID string) *Balance {
-	result := NewBalance(assetID, 0)
+	result := NewBalance(assetID, int64(0))
 	if b.Bals != nil {
 		amt := b.Bals[assetID]
 		if amt > 0 {

@@ -34,7 +34,14 @@ func TestUserAndModulePosition_Redis(t *testing.T) {
 			positions, err := redis.GetUsersPosition(ctx, rdb, time.Second, consts.UserIDOne, consts.UserIDTwo)
 			require.NoError(tt, err)
 			require.NotNil(tt, positions)
-			assert.Equal(tt, map[string]*types.Position{}, positions)
+			assert.Equal(
+				tt,
+				map[string]*types.Position{
+					consts.UserIDOne: types.InitialPosition(consts.UserIDOne),
+					consts.UserIDTwo: types.InitialPosition(consts.UserIDTwo),
+				},
+				positions,
+			)
 		},
 	)
 
@@ -42,23 +49,33 @@ func TestUserAndModulePosition_Redis(t *testing.T) {
 		"Should set and retrieve user positions", func(tt *testing.T) {
 			userPositions := map[string]*types.Position{
 				consts.UserIDOne: {
-					UserID:      consts.UserIDOne,
-					Owned:       types.New(consts.StableID, 1000).Add(types.NewBalance(consts.BondID, 3)),
-					Locked:      types.New(consts.StableID, 200),
-					Supplied:    types.New(consts.BondID, 1),
-					SSEQ:        types.Empty(),
-					Inactive:    types.Empty(),
+					UserID: consts.UserIDOne,
+					Owned: types.NewBalances(consts.StableID, 1000).Add(
+						types.NewBalance(
+							consts.BondID,
+							int64(3),
+						),
+					),
+					Locked:      types.NewBalances(consts.StableID, 200),
+					Supplied:    types.NewBalances(consts.BondID, 1),
+					SSEQ:        types.EmptyBalances(),
+					Inactive:    types.EmptyBalances(),
 					NativeAsset: "USD",
 					LastUpdated: time.Now().Unix(),
 					Sequence:    1,
 				},
 				consts.UserIDTwo: {
-					UserID:      consts.UserIDTwo,
-					Owned:       types.New(consts.BondID, -122).Add(types.NewBalance(consts.StableID, 5000)),
-					Locked:      types.New(consts.BondID, 100),
-					Supplied:    types.New(consts.BondID, 22),
-					SSEQ:        types.Empty(),
-					Inactive:    types.Empty(),
+					UserID: consts.UserIDTwo,
+					Owned: types.NewBalances(consts.BondID, -122).Add(
+						types.NewBalance(
+							consts.StableID,
+							int64(5000),
+						),
+					),
+					Locked:      types.NewBalances(consts.BondID, 100),
+					Supplied:    types.NewBalances(consts.BondID, 22),
+					SSEQ:        types.EmptyBalances(),
+					Inactive:    types.EmptyBalances(),
 					NativeAsset: "USD",
 					LastUpdated: time.Now().Unix(),
 					Sequence:    1,
@@ -89,14 +106,21 @@ func TestUserAndModulePosition_Redis(t *testing.T) {
 
 	t.Run(
 		"Should set and retrieve module position", func(tt *testing.T) {
-			modulePosition := &types.Position{
-				UserID:      "module",
-				Owned:       types.New(consts.BondID, 1000).Add(types.NewBalance(consts.StableID, 50000)),
-				Locked:      types.Empty(),
-				Supplied:    types.New(consts.BondID, 1000).Add(types.NewBalance(consts.StableID, 50000)),
-				SSEQ:        types.Empty(),
-				Inactive:    types.Empty(),
-				NativeAsset: "USD",
+			modulePosition := &types.Module{
+				Balance: types.NewBalances(consts.BondID, 1000).Add(
+					types.NewBalance(
+						consts.StableID,
+						int64(50000),
+					),
+				),
+				Supplied: types.NewBalances(consts.BondID, 1000).Add(
+					types.NewBalance(
+						consts.StableID,
+						int64(50000),
+					),
+				),
+				Virtual:     types.EmptyBalances(),
+				Borrowed:    types.EmptyBalances(),
 				LastUpdated: time.Now().Unix(),
 				Sequence:    1,
 			}
