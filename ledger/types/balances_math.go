@@ -93,7 +93,7 @@ func (b *Balances) SafeSub(assetID string, amount int64) (*Balances, error) {
 // Negative or zero input is a no-op.
 func (b *Balances) SubToZero(subs *Balances) (result, surplus *Balances) {
 	result = b.Copy()
-	surplus = Empty()
+	surplus = EmptyBalances()
 	for _, id := range subs.AssetIDs() {
 		sub := NewBalance(id, uint64(subs.AmountOf(id)))
 		var s *Balance
@@ -118,7 +118,7 @@ func (b *Balances) SubBalToZero(sub *Balance) (result *Balances, surplus *Balanc
 		return b.SubAmount(sub.Asset, b.AmountOf(sub.Asset)), NewBalance(sub.Asset, uint64(naiveResultAmt*-1))
 	}
 	// sub to a zero or positive amount. surplus is zero.
-	return b.SubAmount(sub.Asset, sub.Amt()), NewBalance(sub.Asset, 0)
+	return b.SubAmount(sub.Asset, sub.Amt()), NewBalance(sub.Asset, int64(0))
 }
 
 // SubAmountToZero a given amount of a single asset from Balances and return the result.

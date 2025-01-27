@@ -14,6 +14,10 @@ type Balance struct {
 	Amount uint64 `json:"amount" redis:"amount"`
 }
 
+type Integer64 interface {
+	int64 | uint64
+}
+
 func (b *Balance) MarshalBinary() ([]byte, error) {
 	return json.Marshal(b)
 }
@@ -24,11 +28,15 @@ func (b *Balance) UnmarshalBinary(data []byte) error {
 
 // NewBalance creates a Balance.
 // If asset ID is empty, then all fields are zero-valued and Valid() will return false.
-func NewBalance(asset string, amount uint64) *Balance {
+func NewBalance[T Integer64](asset string, amount T) *Balance {
+	amt := uint64(0)
+	if amount > 0 {
+		amt = uint64(amount)
+	}
 	if asset != "" {
 		return &Balance{
 			Asset:  asset,
-			Amount: amount,
+			Amount: amt,
 		}
 	}
 	return &Balance{}

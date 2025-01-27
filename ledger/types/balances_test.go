@@ -11,9 +11,9 @@ func TestBalanceJSON(t *testing.T) {
 	require := require.New(t)
 
 	bals := Balances{}
-	bals0 := New("bondA", 0)
-	bals1 := New("bondA", -100)
-	bals2 := New("pool-share", 100).AddAmount("bond_B_001", 42)
+	bals0 := NewBalances("bondA", 0)
+	bals1 := NewBalances("bondA", -100)
+	bals2 := NewBalances("pool-share", 100).AddAmount("bond_B_001", 42)
 
 	b, _ := json.Marshal(bals0)
 	require.Equal("{}", string(b))
