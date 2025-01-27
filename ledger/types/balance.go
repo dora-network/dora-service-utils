@@ -42,6 +42,17 @@ func NewBalance[T Integer64](asset string, amount T) *Balance {
 	return &Balance{}
 }
 
+// ZeroBalance creates a Balance with zero amount.
+func ZeroBalance(asset string) *Balance {
+	if asset != "" {
+		return &Balance{
+			Asset:  asset,
+			Amount: 0,
+		}
+	}
+	return &Balance{}
+}
+
 // Valid will only be true if Balance was constructed properly
 func (b *Balance) Valid() bool {
 	return b.Asset != ""
