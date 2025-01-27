@@ -8,7 +8,7 @@ import (
 // Module contains a snapshot of all of the module's assets and debts.
 type Module struct {
 	// Assets owned (including bonds and currencies). Negative values indicate borrows.
-	Balance *Balances `json:"balances" redis:"balances"`
+	Balance *Balances `json:"balance" redis:"balance"`
 	// Assets supplied to module but not yet withdrawn.
 	Supplied *Balances `json:"supplied" redis:"supplied"`
 	// Assets minted by virtual-borrowing but not yet repaid
