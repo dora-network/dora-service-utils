@@ -3,8 +3,9 @@ package types
 import (
 	"errors"
 	"fmt"
-	"github.com/goccy/go-json"
 	"time"
+
+	"github.com/goccy/go-json"
 )
 
 // Balance contains an asset ID and a uint64 amount.
@@ -80,6 +81,9 @@ func (b *Balance) IsZero() bool {
 
 // Sub from a balance. Error on negative result, mismatched assets, or invalid assets.
 func (b *Balance) Sub(sub *Balance) (*Balance, error) {
+	if sub == nil {
+		return b, nil // no-op is safe
+	}
 	if !b.Valid() || !sub.Valid() {
 		return nil, errors.New("balance.Sub: invalid input")
 	}
