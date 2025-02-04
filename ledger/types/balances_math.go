@@ -29,7 +29,9 @@ func (b *Balances) AddAmount(assetID string, amount int64) *Balances {
 func (b *Balances) Add(adds ...*Balance) *Balances {
 	result := b.Copy()
 	for _, add := range adds {
-		result = result.AddAmount(add.Asset, add.Amt())
+		if add != nil {
+			result = result.AddAmount(add.Asset, add.Amt())
+		}
 	}
 	return result
 }
@@ -68,7 +70,9 @@ func (b *Balances) SubAmount(assetID string, amount int64) *Balances {
 func (b *Balances) Sub(subs ...*Balance) *Balances {
 	result := b.Copy()
 	for _, sub := range subs {
-		result = result.SubAmount(sub.Asset, sub.Amt())
+		if sub != nil {
+			result = result.SubAmount(sub.Asset, sub.Amt())
+		}
 	}
 	return result
 }
