@@ -16,6 +16,9 @@ type Module struct {
 	// Assets borrowed from supply but not yet repaid
 	Borrowed *Balances `json:"borrowed" redis:"borrowed"`
 
+	// Assets provided to the module by LPs to fund coupon interest.
+	CouponFunds *Balances `json:"coupon_funds" redis:"coupon_funds"`
+
 	// Tracking fields - see position.go
 	LastUpdated      int64  `json:"last_updated" redis:"last_updated"`
 	Sequence         uint64 `json:"sequence" redis:"sequence"`
@@ -48,10 +51,11 @@ func (m *Module) Init() {
 func InitialModule() *Module {
 	m := &Module{
 		// Balances (can Validate)
-		Balance:  &Balances{Bals: make(map[string]int64)},
-		Supplied: &Balances{Bals: make(map[string]int64)},
-		Borrowed: &Balances{Bals: make(map[string]int64)},
-		Virtual:  &Balances{Bals: make(map[string]int64)},
+		Balance:     &Balances{Bals: make(map[string]int64)},
+		Supplied:    &Balances{Bals: make(map[string]int64)},
+		Borrowed:    &Balances{Bals: make(map[string]int64)},
+		Virtual:     &Balances{Bals: make(map[string]int64)},
+		CouponFunds: &Balances{Bals: make(map[string]int64)},
 		// Tracking fields
 		Sequence:    0,
 		LastUpdated: 0,
@@ -62,16 +66,17 @@ func InitialModule() *Module {
 }
 
 func NewModule(
-	balance, supplied, borrowed, virtual *Balances,
+	balance, supplied, borrowed, virtual, coupon *Balances,
 	lastUpdated int64,
 	sequence uint64,
 ) (*Module, error) {
 	m := &Module{
 		// Balances (can Validate)
-		Balance:  balance,
-		Supplied: supplied,
-		Borrowed: borrowed,
-		Virtual:  virtual,
+		Balance:     balance,
+		Supplied:    supplied,
+		Borrowed:    borrowed,
+		Virtual:     virtual,
+		CouponFunds: coupon,
 		// Tracking fields
 		Sequence:    sequence,
 		LastUpdated: lastUpdated,
@@ -94,6 +99,9 @@ func (m *Module) Validate() error {
 	}
 	if err := m.Borrowed.Validate(false); err != nil {
 		return errors.Wrap(errors.InvalidInputError, err, "module Borrowed")
+	}
+	if err := m.CouponFunds.Validate(false); err != nil {
+		return errors.Wrap(errors.InvalidInputError, err, "module Coupon Funds")
 	}
 	if m.original == "" {
 		return errors.NewInternal("module position not initialized")
