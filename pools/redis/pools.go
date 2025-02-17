@@ -105,28 +105,26 @@ func GetPool(ctx context.Context, rdb redis.Client, timeout time.Duration, poolI
 	return pool, nil
 }
 
-func GetPoolsCmd(ctx context.Context, tx redis.Cmdable, poolIDs []string) ([]redisv9.Cmder, []string, error) {
-	watch := make([]string, 0)
+func GetPoolsCmd(ctx context.Context, tx redis.Cmdable, poolIDs []string) ([]redisv9.Cmder, error) {
 	cmds, err := tx.TxPipelined(
 		ctx, func(pipe redisv9.Pipeliner) error {
 			for _, poolID := range poolIDs {
 				poolKey := PoolKey(poolID)
-				watch = append(watch, poolKey)
 				pipe.HGetAll(ctx, poolKey)
 			}
 			return nil
 		},
 	)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return cmds, watch, nil
+	return cmds, nil
 }
 
-func GetPoolCmd(ctx context.Context, tx redis.Cmdable, poolID string) (*redisv9.SliceCmd, string) {
+func GetPoolCmd(ctx context.Context, tx redis.Cmdable, poolID string) *redisv9.SliceCmd {
 	watch := PoolKey(poolID)
-	return tx.HMGet(ctx, watch, poolKeys...), watch
+	return tx.HMGet(ctx, watch, poolKeys...)
 }
 
 func UpdatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout time.Duration, poolID string) error {
@@ -166,7 +164,7 @@ func UpdatePoolCmd(
 	ctx context.Context,
 	tx redis.Cmdable,
 	pool *types.Pool,
-) (*redisv9.IntCmd, string) {
+) *redisv9.IntCmd {
 	return tx.HSet(
 		ctx, PoolKey(pool.PoolID),
 		// We have to set each field individually rather than just passing the struct
@@ -186,7 +184,7 @@ func UpdatePoolCmd(
 		"maturity_at", pool.MaturityAt,
 		"fees_collected_base", pool.FeesCollectedBase,
 		"fees_collected_quote", pool.FeesCollectedQuote,
-	), PoolKey(pool.PoolID)
+	)
 }
 
 func UpdatePoolBalance(
@@ -220,7 +218,7 @@ func UpdatePoolBalance(
 
 func UpdatePoolBalanceCmd(
 	ctx context.Context, tx redis.Cmdable, poolID string, amountShares, amountBase, amountQuote uint64,
-) (*redisv9.IntCmd, string) {
+) *redisv9.IntCmd {
 	return tx.HSet(
 		ctx, PoolKey(poolID),
 		// We have to set each field individually rather than just passing the struct
@@ -231,7 +229,7 @@ func UpdatePoolBalanceCmd(
 		"amount_shares", amountShares,
 		"amount_base", amountBase,
 		"amount_quote", amountQuote,
-	), PoolKey(poolID)
+	)
 }
 
 func CreatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout time.Duration) error {

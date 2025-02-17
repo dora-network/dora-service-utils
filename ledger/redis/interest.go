@@ -9,6 +9,9 @@ import (
 	redisv9 "github.com/redis/go-redis/v9"
 	"strconv"
 	"time"
+
+	gtypes "github.com/dora-network/bond-api-golang/graph/types"
+	"github.com/dora-network/bond-api-golang/match/helpers"
 )
 
 func UserInterestKey(userID string) string {
@@ -21,6 +24,9 @@ const (
 	InterestClaimed     = "claimed"
 	InterestPaid        = "paid"
 	InterestLastUpdated = "last_updated"
+
+	secondsPerYear = 31556952.0 // 365.2425 days in a year
+	MODULE         = "module"
 )
 
 func GetUserInterest(
@@ -43,62 +49,13 @@ func getInterest(
 	timeout time.Duration,
 	keys ...string,
 ) ([]types.Interest, error) {
-	var interests []types.Interest
+	var (
+		interests []types.Interest
+		err       error
+	)
 
 	f := func(tx *redisv9.Tx) error {
-		cmd, err := tx.TxPipelined(ctx, func(pipe redisv9.Pipeliner) error {
-			for _, key := range keys {
-				pipe.HGetAll(ctx, key)
-			}
-			return nil
-		})
-
-		for _, c := range cmd {
-			res, err := c.(*redisv9.MapStringStringCmd).Result()
-			if err != nil {
-				return err
-			}
-
-			if len(res) == 0 {
-				interests = append(interests, types.Interest{})
-				continue
-			}
-
-			earned, err := strconv.ParseUint(res[InterestEarned], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			owed, err := strconv.ParseUint(res[InterestOwed], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			claimed, err := strconv.ParseUint(res[InterestClaimed], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			paid, err := strconv.ParseUint(res[InterestPaid], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			lastUpdated, err := time.Parse(time.RFC3339Nano, res[InterestLastUpdated])
-			if err != nil {
-				return err
-			}
-
-			interest := types.Interest{
-				Earned:      earned,
-				Owed:        owed,
-				Claimed:     claimed,
-				Paid:        paid,
-				LastUpdated: lastUpdated,
-			}
-
-			interests = append(interests, interest)
-		}
+		interests, err = getInterestTx(ctx, tx, keys...)
 		return err
 	}
 
@@ -115,6 +72,70 @@ func getInterest(
 	return interests, nil
 }
 
+func getInterestTx(ctx context.Context, tx redis.Cmdable, keys ...string) ([]types.Interest, error) {
+	var interests []types.Interest
+
+	cmd, err := tx.TxPipelined(ctx, func(pipe redisv9.Pipeliner) error {
+		for _, key := range keys {
+			pipe.HGetAll(ctx, key)
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, c := range cmd {
+		res, err := c.(*redisv9.MapStringStringCmd).Result()
+		if err != nil {
+			return nil, err
+		}
+
+		if len(res) == 0 {
+			interests = append(interests, types.Interest{})
+			continue
+		}
+
+		earned, err := strconv.ParseUint(res[InterestEarned], 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		owed, err := strconv.ParseUint(res[InterestOwed], 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		claimed, err := strconv.ParseUint(res[InterestClaimed], 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		paid, err := strconv.ParseUint(res[InterestPaid], 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		lastUpdated, err := time.Parse(time.RFC3339Nano, res[InterestLastUpdated])
+		if err != nil {
+			return nil, err
+		}
+
+		interest := types.Interest{
+			Earned:      earned,
+			Owed:        owed,
+			Claimed:     claimed,
+			Paid:        paid,
+			LastUpdated: lastUpdated,
+		}
+
+		interests = append(interests, interest)
+	}
+
+	return interests, nil
+}
+
 func SetUserInterest(
 	ctx context.Context,
 	rdb redis.Client,
@@ -122,18 +143,12 @@ func SetUserInterest(
 	reqs map[string]*types.Interest,
 ) error {
 	watch := make([]string, len(reqs))
+	for userID := range reqs {
+		watch = append(watch, UserInterestKey(userID))
+	}
 	txFunc := func(tx *redisv9.Tx) error {
 		for userID, interest := range reqs {
-			key := UserInterestKey(userID)
-			watch = append(watch, key)
-			values := map[string]interface{}{
-				InterestEarned:      interest.Earned,
-				InterestOwed:        interest.Owed,
-				InterestClaimed:     interest.Claimed,
-				InterestPaid:        interest.Paid,
-				InterestLastUpdated: interest.LastUpdated,
-			}
-			if _, err := tx.HMSet(ctx, key, values).Result(); err != nil {
+			if err := setUserInterestTx(ctx, tx, userID, interest); err != nil {
 				return err
 			}
 		}
@@ -141,4 +156,165 @@ func SetUserInterest(
 	}
 
 	return redis.TryTransaction(ctx, rdb, txFunc, backoff.NewExponentialBackOff(backoff.WithMaxElapsedTime(timeout)), watch...)
+}
+
+func setUserInterestTx(ctx context.Context, tx redis.Cmdable, userID string, interest *types.Interest) error {
+	key := UserInterestKey(userID)
+	values := map[string]interface{}{
+		InterestEarned:      interest.Earned,
+		InterestOwed:        interest.Owed,
+		InterestClaimed:     interest.Claimed,
+		InterestPaid:        interest.Paid,
+		InterestLastUpdated: interest.LastUpdated,
+	}
+	if _, err := tx.HMSet(ctx, key, values).Result(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func AccrueLendingInterest(ctx context.Context, rdb redis.Client, timeout time.Duration, userID string, assetData helpers.AssetData, flatRate float64) (*gtypes.Transaction, error) {
+	// this has to be calculated within one transaction, we don't want positions changing between reads etc.
+	// as this could lead to inconsistencies
+	watch := []string{
+		UserInterestKey(userID),
+		UserPositionKey(userID),
+		UserInterestKey(MODULE),
+		ModulePositionKey(),
+	}
+
+	var accrualTransaction *gtypes.Transaction
+
+	txFunc := func(tx *redisv9.Tx) error {
+		transaction, err := accrueLendingInterestTx(ctx, tx, userID, assetData, flatRate)
+		if err != nil {
+			return err
+		}
+
+		accrualTransaction = transaction
+		return nil
+	}
+
+	err := redis.TryTransaction(ctx, rdb, txFunc, backoff.NewExponentialBackOff(backoff.WithMaxElapsedTime(timeout)), watch...)
+	if err != nil {
+		return nil, err
+	}
+
+	return accrualTransaction, nil
+}
+
+func AccrueAllLendingInterest(ctx context.Context, rdb redis.Client, timeout time.Duration, assetData helpers.AssetData, flatRate float64, watch []string, users ...string) ([]*gtypes.Transaction, error) {
+	watch = append(watch, UserInterestKey(MODULE), ModulePositionKey())
+	var accrualTransactions []*gtypes.Transaction
+
+	txFunc := func(tx *redisv9.Tx) error {
+		for _, userID := range users {
+			transaction, err := accrueLendingInterestTx(ctx, tx, userID, assetData, flatRate)
+			if err != nil {
+				return err
+			}
+
+			accrualTransactions = append(accrualTransactions, transaction)
+		}
+
+		return nil
+	}
+
+	err := redis.TryTransaction(ctx, rdb, txFunc, backoff.NewExponentialBackOff(backoff.WithMaxElapsedTime(timeout)), watch...)
+	if err != nil {
+		return nil, err
+	}
+
+	return accrualTransactions, nil
+}
+
+func accrueLendingInterestTx(ctx context.Context, tx redis.Cmdable, userID string, assetData helpers.AssetData, flatRate float64) (*gtypes.Transaction, error) {
+	now := time.Now()
+
+	// first get the module positions
+	var (
+		moduleInterest     types.Interest
+		accrualTransaction *gtypes.Transaction
+	)
+	interest, err := getInterestTx(ctx, tx, MODULE)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(interest) > 0 {
+		moduleInterest = interest[0]
+	}
+
+	// then get the user's positions
+	userPositionsCmd, err := GetUsersPositionCmd(ctx, tx, userID)
+	if err != nil {
+		return nil, err
+	}
+	var userPositions *types.Position
+	for _, cmd := range userPositionsCmd {
+		res, err := cmd.(*redisv9.MapStringStringCmd).Result()
+		if err != nil {
+			return nil, err
+		}
+
+		for _, v := range res {
+			p := new(types.Position)
+			if err := p.UnmarshalBinary([]byte(v)); err != nil {
+				return nil, err
+			}
+			if p.UserID == userID {
+				userPositions = p
+				break
+			}
+		}
+	}
+
+	borrowedValue, err := assetData.ExactBorrowedValue(userPositions)
+	if err != nil {
+		return nil, err
+	}
+
+	var userInterest types.Interest
+	interest, err = getInterestTx(ctx, tx, userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(interest) > 0 {
+		userInterest = interest[0]
+	}
+
+	if userInterest.LastUpdated.After(time.Now()) {
+		return nil, fmt.Errorf("last updated time is in the future")
+	}
+
+	interestAccrued := 0.0
+
+	if borrowedValue > 0 && now.After(userInterest.LastUpdated) {
+		// compute interest accrued
+		yearsElapsed := float64(now.Unix()-userInterest.LastUpdated.Unix()) / secondsPerYear
+		interestAccrued = yearsElapsed * flatRate * borrowedValue
+		userInterest.Owed += uint64(interestAccrued)
+		moduleInterest.Owed += uint64(interestAccrued)
+	}
+
+	if err := setUserInterestTx(ctx, tx, userID, &userInterest); err != nil {
+		return nil, err
+	}
+
+	if err := setUserInterestTx(ctx, tx, MODULE, &moduleInterest); err != nil {
+		return nil, err
+	}
+
+	accrualTransaction = gtypes.NewTransaction("", "", userID, int(now.Unix()), "", "").WithTxLendingInterestAccrual(
+		&gtypes.TxLendingInterestAccrual{
+			FromUnixTime: int(userInterest.LastUpdated.Unix()),
+			ToUnixTime:   int(now.Unix()),
+			Earned:       "0",
+			Owed:         strconv.FormatFloat(float64(userInterest.Owed), 'f', -1, 64),
+		},
+	)
+
+	return accrualTransaction, nil
 }

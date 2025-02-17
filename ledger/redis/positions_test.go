@@ -100,7 +100,7 @@ func TestUserAndModulePosition_Redis(t *testing.T) {
 		"Should return empty module position if it doesn't exist", func(tt *testing.T) {
 			position, err := redis.GetModulePosition(ctx, rdb, time.Second)
 			require.NoError(tt, err)
-			assert.Equal(tt, &types.Position{}, position)
+			assert.Equal(tt, types.InitialModule(), position)
 		},
 	)
 
@@ -130,6 +130,17 @@ func TestUserAndModulePosition_Redis(t *testing.T) {
 			position, err := redis.GetModulePosition(ctx, rdb, time.Second)
 			require.NoError(tt, err)
 			assert.Equal(tt, modulePosition, position)
+		},
+	)
+
+	t.Run(
+		"Should return all users positions keys", func(tt *testing.T) {
+			keys, err := redis.GetAllUsersPositionKeys(ctx, rdb)
+			require.NoError(tt, err)
+			assert.ElementsMatch(tt, keys, []string{
+				"positions:users:user1",
+				"positions:users:user2",
+			})
 		},
 	)
 }

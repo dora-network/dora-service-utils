@@ -32,25 +32,25 @@ func GetUsersPosition(
 	return getUsersPosition(ctx, rdb, timeout, watch, userIDs...)
 }
 
+func GetUsersPositionKeys(userIDs ...string) []string {
+	return redis.WatchKeys(UserPositionKey, userIDs...)
+}
+
 func GetUsersPositionCmd(
 	ctx context.Context,
 	tx redis.Cmdable,
-	userIDs ...string,
-) ([]redisv9.Cmder, []string, error) {
-	watch := make([]string, len(userIDs))
-	for i, userID := range userIDs {
-		watch[i] = UserPositionKey(userID)
-	}
+	keys ...string,
+) ([]redisv9.Cmder, error) {
 	cmds, err := tx.TxPipelined(
 		ctx, func(pipe redisv9.Pipeliner) error {
-			for _, key := range watch {
+			for _, key := range keys {
 				pipe.HGetAll(ctx, key)
 			}
 			return nil
 		},
 	)
 
-	return cmds, watch, err
+	return cmds, err
 }
 
 func SetUsersPosition(
@@ -86,15 +86,10 @@ func SetUsersPosition(
 	)
 }
 
-func SetUsersPositionCmd(ctx context.Context, tx redis.Cmdable, reqs map[string]*types.Position) (
-	[]redisv9.Cmder,
-	[]string,
-) {
-	watch := make([]string, 0, len(reqs))
+func SetUsersPositionCmd(ctx context.Context, tx redis.Cmdable, reqs map[string]*types.Position) []redisv9.Cmder {
 	cmds := make([]redisv9.Cmder, 0, len(reqs))
 	for userID, position := range reqs {
 		key := UserPositionKey(userID)
-		watch = append(watch, key)
 		values := make(map[string]any)
 		values[position.UserID] = position
 
@@ -103,7 +98,7 @@ func SetUsersPositionCmd(ctx context.Context, tx redis.Cmdable, reqs map[string]
 		cmds = append(cmds, cmd)
 	}
 
-	return cmds, watch
+	return cmds
 }
 
 func GetModulePosition(
@@ -114,8 +109,8 @@ func GetModulePosition(
 	return getModulePosition(ctx, rdb, timeout, ModulePositionKey())
 }
 
-func GetModulePositionCmd(ctx context.Context, tx redis.Cmdable) (*redisv9.StringCmd, string) {
-	return tx.HGet(ctx, ModulePositionKey(), "module"), ModulePositionKey()
+func GetModulePositionCmd(ctx context.Context, tx redis.Cmdable) *redisv9.StringCmd {
+	return tx.HGet(ctx, ModulePositionKey(), "module")
 }
 
 func SetModulePosition(
@@ -146,13 +141,17 @@ func SetModulePosition(
 	)
 }
 
-func SetModulePositionCmd(ctx context.Context, tx redis.Cmdable, position *types.Module) (redisv9.Cmder, string) {
+func SetModulePositionCmd(ctx context.Context, tx redis.Cmdable, position *types.Module) redisv9.Cmder {
 	values := make(map[string]any)
 	values["module"] = position
 
 	// write the balances to redis
 	cmd := tx.HSet(ctx, ModulePositionKey(), values)
-	return cmd, ModulePositionKey()
+	return cmd
+}
+
+func getModulePositionCmd(ctx context.Context, modulePositionKey string, tx redis.Cmdable) *redisv9.StringCmd {
+	return tx.HGet(ctx, modulePositionKey, "module")
 }
 
 func getModulePosition(
@@ -164,7 +163,7 @@ func getModulePosition(
 	position := new(types.Module)
 
 	f := func(tx *redisv9.Tx) error {
-		err := tx.HGet(ctx, modulePositionKey, "module").Scan(position)
+		err := getModulePositionCmd(ctx, modulePositionKey, tx).Scan(position)
 		if err != nil {
 			if errors.Is(err, redisv9.Nil) {
 				position = nil
@@ -250,4 +249,12 @@ func getUsersPosition(ctx context.Context, rdb redis.Client, timeout time.Durati
 	}
 
 	return positions, nil
+}
+
+func GetAllUsersPositionKeys(ctx context.Context, rdb redis.Cmdable) ([]string, error) {
+	keys, err := rdb.Keys(ctx, UserPositionKey("*")).Result()
+	if err != nil {
+		return nil, err
+	}
+	return keys, nil
 }

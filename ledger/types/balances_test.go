@@ -10,7 +10,7 @@ import (
 func TestBalanceJSON(t *testing.T) {
 	require := require.New(t)
 
-	bals := Balances{}
+	bals := &Balances{}
 	bals0 := NewBalances("bondA", 0)
 	bals1 := NewBalances("bondA", -100)
 	bals2 := NewBalances("pool-share", 100).AddAmount("bond_B_001", 42)
@@ -19,7 +19,7 @@ func TestBalanceJSON(t *testing.T) {
 	require.Equal("{}", string(b))
 	require.NoError(json.Unmarshal(b, &bals))
 	require.Equal(
-		Balances{
+		&Balances{
 			Bals: map[string]int64{},
 		}, bals,
 	)
