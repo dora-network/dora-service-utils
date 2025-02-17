@@ -2,29 +2,32 @@ package types
 
 import (
 	"fmt"
+	"math/big"
+	"sort"
+	"strings"
+
 	"github.com/dora-network/dora-service-utils/errors"
 	"github.com/dora-network/dora-service-utils/ledger/types"
 	"github.com/dora-network/dora-service-utils/math"
 	"github.com/goccy/go-json"
 	"github.com/govalues/decimal"
-	"math/big"
-	"sort"
-	"strings"
 )
 
 // Pool represents a liquidity pool in the DORA network.
 // This struct is for serialization purposes only.
 type Pool struct {
-	PoolID        string          `json:"pool_id" redis:"pool_id"`
-	BaseAsset     string          `json:"base_asset" redis:"base_asset"`
-	QuoteAsset    string          `json:"quote_asset" redis:"quote_asset"`
-	IsProductPool bool            `json:"is_product_pool" redis:"is_product_pool"`
-	AmountShares  uint64          `json:"amount_shares" redis:"amount_shares"`
-	AmountBase    uint64          `json:"amount_base" redis:"amount_base"`
-	AmountQuote   uint64          `json:"amount_quote" redis:"amount_quote"`
-	FeeFactor     decimal.Decimal `json:"fee_factor" redis:"fee_factor"`
-	CreatedAt     int64           `json:"created_at" redis:"created_at"`
-	MaturityAt    int64           `json:"maturity_at" redis:"maturity_at"`
+	PoolID             string          `json:"pool_id" redis:"pool_id"`
+	BaseAsset          string          `json:"base_asset" redis:"base_asset"`
+	QuoteAsset         string          `json:"quote_asset" redis:"quote_asset"`
+	IsProductPool      bool            `json:"is_product_pool" redis:"is_product_pool"`
+	AmountShares       uint64          `json:"amount_shares" redis:"amount_shares"`
+	AmountBase         uint64          `json:"amount_base" redis:"amount_base"`
+	AmountQuote        uint64          `json:"amount_quote" redis:"amount_quote"`
+	FeesCollectedBase  uint64          `json:"fees_collected_base" redis:"fees_collected_base"`
+	FeesCollectedQuote uint64          `json:"fees_collected_quote" redis:"fees_collected_quote"`
+	FeeFactor          decimal.Decimal `json:"fee_factor" redis:"fee_factor"`
+	CreatedAt          int64           `json:"created_at" redis:"created_at"`
+	MaturityAt         int64           `json:"maturity_at" redis:"maturity_at"`
 }
 
 func (p *Pool) MarshalBinary() ([]byte, error) {
@@ -33,6 +36,31 @@ func (p *Pool) MarshalBinary() ([]byte, error) {
 
 func (p *Pool) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, p)
+}
+
+func (p *Pool) GetFeesCollectedBase() uint64 {
+	return p.FeesCollectedBase
+}
+
+func (p *Pool) GetFeesCollectedQuote() uint64 {
+	return p.FeesCollectedQuote
+}
+
+// AddAccumulatedFees to a pool. Error on invalid balance or asset ID not matching pool's base or quote.
+func (p *Pool) AddAccumulatedFees(bal *types.Balance) error {
+	if !bal.Valid() {
+		return errors.New(errors.InvalidInputError, "invalid object")
+	}
+	switch bal.Asset {
+	case p.BaseAsset:
+		p.FeesCollectedBase += bal.Amount
+		return nil
+	case p.QuoteAsset:
+		p.FeesCollectedQuote += bal.Amount
+		return nil
+	default:
+		return errors.New(errors.InvalidInputError, "did not match pool assets")
+	}
 }
 
 // Amount retrieves a specific asset from pool.
