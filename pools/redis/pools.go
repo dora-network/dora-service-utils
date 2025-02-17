@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/cenkalti/backoff/v4"
 	"github.com/dora-network/dora-service-utils/orderbook"
 	"github.com/dora-network/dora-service-utils/pools/types"
 	"github.com/dora-network/dora-service-utils/redis"
 	redisv9 "github.com/redis/go-redis/v9"
-	"time"
 )
 
 var poolKeys = []string{
@@ -23,6 +24,8 @@ var poolKeys = []string{
 	"fee_factor",
 	"created_at",
 	"maturity_at",
+	"fees_collected_base",
+	"fees_collected_quote",
 }
 
 func PoolKey(poolID string) string {
@@ -145,6 +148,8 @@ func UpdatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout
 			"fee_factor", pool.FeeFactor.String(),
 			"created_at", pool.CreatedAt,
 			"maturity_at", pool.MaturityAt,
+			"fees_collected_base", pool.FeesCollectedBase,
+			"fees_collected_quote", pool.FeesCollectedQuote,
 		).Err()
 	}
 
@@ -179,6 +184,8 @@ func UpdatePoolCmd(
 		"fee_factor", pool.FeeFactor.String(),
 		"created_at", pool.CreatedAt,
 		"maturity_at", pool.MaturityAt,
+		"fees_collected_base", pool.FeesCollectedBase,
+		"fees_collected_quote", pool.FeesCollectedQuote,
 	), PoolKey(pool.PoolID)
 }
 
