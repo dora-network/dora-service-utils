@@ -1,8 +1,9 @@
 package types
 
 import (
-	"github.com/dora-network/dora-service-utils/errors"
 	"github.com/goccy/go-json"
+
+	"github.com/dora-network/dora-service-utils/errors"
 )
 
 // Module contains a snapshot of all of the module's assets and debts.
