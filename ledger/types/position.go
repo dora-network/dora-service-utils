@@ -1,14 +1,16 @@
 package types
 
 import (
-	"github.com/dora-network/dora-service-utils/errors"
 	"github.com/goccy/go-json"
+
+	"github.com/dora-network/dora-service-utils/errors"
 )
 
 // Position contains a snapshot of all of a user's assets and debts.
 type Position struct {
 	// UserID identifies the owner of the position
 	UserID string `json:"user_id" redis:"user_id"`
+
 	// Assets owned (including bonds and currencies). Negative values indicate borrows.
 	Owned *Balances `json:"owned" redis:"owned"`
 	// Assets locked as potential inputs to user open orders. Subset of positive Owned amounts.
@@ -21,6 +23,16 @@ type Position struct {
 	SSEQ *Balances `json:"sseq" redis:"sseq"`
 	// Assets which have been withheld from a user's Owned balance for technical reasons.
 	Inactive *Balances `json:"inactive" redis:"inactive"`
+	// InterestSources contains supplemental information about Owned "Interest" balances related to coupon payments.
+	// We recycle the Balances struct here, containing map[string]int64, but rather than representing a set of
+	// asset balances like map[AssetID]Amount, each entry in this map represents the amount of AssetID="Interest"
+	// present in Position.Owned which came from a particular bond's specific coupon period.
+	// For example, if InterestSources["Bond_A-Coupon_123456"]=789, then $7.89 of this user's owned interest
+	// came from asset Bond_A's coupon period ending at unix timestamp 123456. Note that the single hyphen
+	// makes the key pass asset ID validation rules, even though it is not any asset's AssetID.
+	// Also note that a negative value (for example, -789) is valid here and would refer to the user owing
+	// interest due to having bought a bond mid-coupon-period.
+	InterestSources *Balances `json:"interest_sources" redis:"interest_sources"`
 
 	// Native stablecoin asset which the user originally deposited and will prefer for withdrawals
 	NativeAsset string `json:"native_asset" redis:"native_asset"`
@@ -41,13 +53,35 @@ func (p *Position) MarshalBinary() ([]byte, error) {
 }
 
 func (p *Position) UnmarshalBinary(data []byte) error {
-	return json.Unmarshal(data, p)
+	err := json.Unmarshal(data, p)
+	p.Init() // Init must be called after json unmarshaling
+	return err
 }
 
 // Init sets a position's original field to its current json representation. No-op if already set.
 // For a position object to be valid, this must be called after json unmarshaling.
 func (p *Position) Init() {
-	if p != nil && p.original == "" {
+	// Nil balances should not be allowed
+	if p.Owned == nil {
+		p.Owned = EmptyBalances()
+	}
+	if p.Locked == nil {
+		p.Locked = EmptyBalances()
+	}
+	if p.Supplied == nil {
+		p.Supplied = EmptyBalances()
+	}
+	if p.SSEQ == nil {
+		p.SSEQ = EmptyBalances()
+	}
+	if p.Inactive == nil {
+		p.Inactive = EmptyBalances()
+	}
+	if p.InterestSources == nil {
+		p.InterestSources = EmptyBalances()
+	}
+	// Store original state. No-op if already stored.
+	if p.original == "" {
 		j, err := json.Marshal(p)
 		if err != nil {
 			return
@@ -63,16 +97,11 @@ func (p *Position) Init() {
 func InitialPosition(userID string) *Position {
 	p := &Position{
 		UserID: userID,
-		// Balances (can Validate)
-		Owned:    &Balances{Bals: make(map[string]int64)},
-		Locked:   &Balances{Bals: make(map[string]int64)},
-		Supplied: &Balances{Bals: make(map[string]int64)},
-		SSEQ:     &Balances{Bals: make(map[string]int64)},
-		Inactive: &Balances{Bals: make(map[string]int64)},
 		// Tracking fields
 		NativeAsset: "",
 		Sequence:    0,
 		LastUpdated: 0,
+		// Note: All *Balances fields are set to EmptyBalances by p.Init()
 	}
 	// Track exported fields for IsModified, as well as initial Sequence
 	p.Init()
@@ -81,7 +110,7 @@ func InitialPosition(userID string) *Position {
 
 func NewPosition(
 	userID string,
-	owned, locked, supplied, sseq, inactive *Balances,
+	owned, locked, supplied, sseq, inactive, interestSources *Balances,
 	nativeAsset string,
 	lastUpdated int64,
 	sequence uint64,
@@ -89,27 +118,37 @@ func NewPosition(
 	p := &Position{
 		UserID: userID,
 		// Balances (can Validate)
-		Owned:    owned,
-		Locked:   locked,
-		Supplied: supplied,
-		SSEQ:     sseq,
-		Inactive: inactive,
+		Owned:           owned,
+		Locked:          locked,
+		Supplied:        supplied,
+		SSEQ:            sseq,
+		Inactive:        inactive,
+		InterestSources: interestSources,
 		// Tracking fields
 		NativeAsset: nativeAsset,
 		Sequence:    sequence,
 		LastUpdated: lastUpdated,
 	}
 	// Track exported fields for IsModified, as well as initial Sequence
+	// Also overrides any nil *Balances with EmptyBalances()
 	p.Init()
-	return p, nil
+	return p, p.Validate()
 }
 
-// Validate that Position does not contain any invalid Balances
+// Validate that Position does not contain any invalid Balances or empty required fields
 func (p *Position) Validate() error {
 	if p.UserID == "" {
 		return errors.Data("empty user ID in Position")
 	}
-
+	// Balances.Validate will panic if Balances are nil, so we check first
+	if p.Owned == nil ||
+		p.Locked == nil ||
+		p.Supplied == nil ||
+		p.SSEQ == nil ||
+		p.Inactive == nil ||
+		p.InterestSources == nil {
+		return errors.Data("nil Balances in Position")
+	}
 	if err := p.Owned.Validate(true); err != nil {
 		return errors.Wrap(errors.InvalidInputError, err, "position Owned")
 	}
@@ -122,8 +161,14 @@ func (p *Position) Validate() error {
 	if err := p.SSEQ.Validate(true); err != nil {
 		return errors.Wrap(errors.InvalidInputError, err, "position SSEQ")
 	}
+	if err := p.InterestSources.Validate(true); err != nil {
+		return errors.Wrap(errors.InvalidInputError, err, "position Interest Sources")
+	}
 	if err := p.Inactive.Validate(true); err != nil {
 		return errors.Wrap(errors.InvalidInputError, err, "position Inactive")
+	}
+	if err := ValidAssetID(p.NativeAsset); err != nil && p.NativeAsset != "" {
+		return err // notice that error is ignored if NativeAsset is not set
 	}
 	if p.original == "" {
 		return errors.NewInternal("position not initialized")

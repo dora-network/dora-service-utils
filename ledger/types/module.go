@@ -1,8 +1,9 @@
 package types
 
 import (
-	"github.com/dora-network/dora-service-utils/errors"
 	"github.com/goccy/go-json"
+
+	"github.com/dora-network/dora-service-utils/errors"
 )
 
 // Module contains a snapshot of all of the module's assets and debts.
@@ -15,7 +16,6 @@ type Module struct {
 	Virtual *Balances `json:"virtual" redis:"virtual"`
 	// Assets borrowed from supply but not yet repaid
 	Borrowed *Balances `json:"borrowed" redis:"borrowed"`
-
 	// Assets provided to the module by LPs to fund coupon interest.
 	CouponFunds *Balances `json:"coupon_funds" redis:"coupon_funds"`
 
@@ -31,13 +31,32 @@ func (m *Module) MarshalBinary() ([]byte, error) {
 }
 
 func (m *Module) UnmarshalBinary(data []byte) error {
-	return json.Unmarshal(data, m)
+	err := json.Unmarshal(data, m)
+	m.Init() // Init must be called after json unmarshaling
+	return err
 }
 
-// Init sets a position's original field to its current json representation. No-op if already set.
+// Init sets a module's original field to its current json representation. No-op if already set.
 // For a module object to be valid, this must be called after json unmarshaling.
 func (m *Module) Init() {
-	if m != nil && m.original == "" {
+	// Nil balances should not be allowed
+	if m.Balance == nil {
+		m.Balance = EmptyBalances()
+	}
+	if m.Supplied == nil {
+		m.Supplied = EmptyBalances()
+	}
+	if m.Virtual == nil {
+		m.Virtual = EmptyBalances()
+	}
+	if m.Borrowed == nil {
+		m.Borrowed = EmptyBalances()
+	}
+	if m.CouponFunds == nil {
+		m.CouponFunds = EmptyBalances()
+	}
+	// Store original state. No-op if already stored.
+	if m.original == "" {
 		j, err := json.Marshal(m)
 		if err != nil {
 			return
@@ -50,15 +69,10 @@ func (m *Module) Init() {
 
 func InitialModule() *Module {
 	m := &Module{
-		// Balances (can Validate)
-		Balance:     &Balances{Bals: make(map[string]int64)},
-		Supplied:    &Balances{Bals: make(map[string]int64)},
-		Borrowed:    &Balances{Bals: make(map[string]int64)},
-		Virtual:     &Balances{Bals: make(map[string]int64)},
-		CouponFunds: &Balances{Bals: make(map[string]int64)},
 		// Tracking fields
 		Sequence:    0,
 		LastUpdated: 0,
+		// Note: All *Balances fields are set to EmptyBalances by m.Init()
 	}
 	// Track exported fields for IsModified, as well as initial Sequence
 	m.Init()
@@ -82,12 +96,21 @@ func NewModule(
 		LastUpdated: lastUpdated,
 	}
 	// Track exported fields for IsModified, as well as initial Sequence
+	// Also overrides any nil *Balances with EmptyBalances()
 	m.Init()
-	return m, nil
+	return m, m.Validate()
 }
 
 // Validate that Module position does not contain any invalid or negative Balances
 func (m *Module) Validate() error {
+	// Balances.Validate will panic if Balances are nil, so we check first
+	if m.Balance == nil ||
+		m.Supplied == nil ||
+		m.Borrowed == nil ||
+		m.Virtual == nil ||
+		m.CouponFunds == nil {
+		return errors.Data("nil Balances in Module")
+	}
 	if err := m.Balance.Validate(false); err != nil {
 		return errors.Wrap(errors.InvalidInputError, err, "module Balance")
 	}

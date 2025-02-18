@@ -2,11 +2,12 @@ package types
 
 import (
 	"fmt"
-	"github.com/goccy/go-json"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/goccy/go-json"
 )
 
 // MarshalJSON Error on invalid input. Omits zero-valued assets. Also sorts assetIDs in output alphabetically.
