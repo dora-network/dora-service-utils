@@ -70,9 +70,9 @@ func getPrices(ctx context.Context, rdb redis.Client, timeout time.Duration, key
 	return prices, nil
 }
 
-func GetPricesCmd(ctx context.Context, tx redis.Cmdable, assetIDs ...string) (*redisv9.SliceCmd, string) {
+func GetPricesCmd(ctx context.Context, tx redis.Cmdable, assetIDs ...string) *redisv9.SliceCmd {
 	watch := PricesKey()
-	return tx.HMGet(ctx, watch, assetIDs...), watch
+	return tx.HMGet(ctx, watch, assetIDs...)
 }
 
 func SetPrices(
@@ -108,8 +108,7 @@ func SetPrices(
 	)
 }
 
-func SetPricesCmd(ctx context.Context, tx redis.Cmdable, reqs map[string]float64) ([]redisv9.Cmder, []string) {
-	watch := []string{PricesKey()}
+func SetPricesCmd(ctx context.Context, tx redis.Cmdable, reqs map[string]float64) []redisv9.Cmder {
 	cmds := make([]redisv9.Cmder, 0)
 	values := make(map[string]any)
 	for assetID, price := range reqs {
@@ -123,5 +122,5 @@ func SetPricesCmd(ctx context.Context, tx redis.Cmdable, reqs map[string]float64
 	cmd := tx.HSet(ctx, PricesKey(), values)
 	cmds = append(cmds, cmd)
 
-	return cmds, watch
+	return cmds
 }

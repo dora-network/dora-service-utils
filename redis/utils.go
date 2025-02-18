@@ -87,3 +87,13 @@ func NewClient(config Config) (Client, error) {
 		DisableIndentity: config.DisableIdentity,
 	}), nil
 }
+
+type KeyFunc func(string) string
+
+func WatchKeys(f KeyFunc, keys ...string) []string {
+	watchedKeys := make([]string, 0, len(keys))
+	for _, key := range keys {
+		watchedKeys = append(watchedKeys, f(key))
+	}
+	return watchedKeys
+}
