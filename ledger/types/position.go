@@ -53,7 +53,7 @@ func (p *Position) MarshalBinary() ([]byte, error) {
 
 func (p *Position) UnmarshalBinary(data []byte) error {
 	err := json.Unmarshal(data, p)
-	p.Init()
+	p.Init() // Init must be called after json unmarshaling
 	return err
 }
 
@@ -79,7 +79,7 @@ func (p *Position) Init() {
 	if p.InterestSources == nil {
 		p.InterestSources = EmptyBalances()
 	}
-	// Store original position. No-op if already stored.
+	// Store original state. No-op if already stored.
 	if p.original == "" {
 		j, err := json.Marshal(p)
 		if err != nil {
