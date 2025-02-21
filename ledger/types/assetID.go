@@ -59,3 +59,21 @@ func ValidAssetID(id string) error {
 	}
 	return nil
 }
+
+// InterpretUsingSpecialPrefix converts any balances in b which take the form
+// ID = <Asset>-<Prefix><int64> AMT = <int64> and returns a map[idInt]amtInt.
+// Ignores balances that do not match the pattern.
+func (b *Balances) InterpretUsingSpecialPrefix(asset, prefix string) map[int64]int64 {
+	fullPrefix := asset + "-" + prefix
+	result := map[int64]int64{}
+	for id, amt := range b.Bals {
+		if strings.HasPrefix(id, fullPrefix) {
+			s := strings.TrimPrefix(id, fullPrefix)
+			n, err := strconv.ParseInt(s, 10, 64)
+			if err == nil {
+				result[n] = amt
+			}
+		}
+	}
+	return result
+}
