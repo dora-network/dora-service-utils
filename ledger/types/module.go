@@ -8,7 +8,8 @@ import (
 
 // Module contains a snapshot of all of the module's assets and debts.
 type Module struct {
-	// Assets owned (including bonds and currencies). Negative values indicate borrows.
+	// Module balance is generally supplied assets minus direct borrowed assets.
+	// It represents the module's general store of assets, excluding CouponFunds.
 	Balance *Balances `json:"balance" redis:"balance"`
 	// Assets supplied to module but not yet withdrawn.
 	Supplied *Balances `json:"supplied" redis:"supplied"`
@@ -16,8 +17,29 @@ type Module struct {
 	Virtual *Balances `json:"virtual" redis:"virtual"`
 	// Assets borrowed from supply but not yet repaid
 	Borrowed *Balances `json:"borrowed" redis:"borrowed"`
+
 	// Assets provided to the module by LPs to fund coupon interest.
+	// Always stays separate from module balance.
 	CouponFunds *Balances `json:"coupon_funds" redis:"coupon_funds"`
+	// Tracks the sources of all DollarAsset ("USD") in CouponFunds, by originating bond and coupon period.
+	// We recycle the Balances struct here, containing map[string]int64, but rather than representing a set of
+	// asset balances like map[AssetID]Amount, each entry in this map represents the amount of AssetID="USD"
+	// present in Module.CouponFunds which is allocated to a particular bond's specific coupon period.
+	// For example, if DollarCouponFundSources["Bond_A-Coupon_123456"]=789, then $7.89 of Module.CouponFunds's USD
+	// amount came from asset Bond_A's coupon period ending at unix timestamp 123456. Note that the single hyphen
+	// makes the key pass asset ID validation rules, even though it is not any asset's AssetID.
+	// Also note that a negative value (for example, -789) is NOT valid here.
+	DollarCouponFundSources *Balances `json:"dollar_coupon_fund_sources" redis:"dollar_coupon_fund_sources"`
+	// Tracks the total supply of all coupon-paying bonds at the start and end of each of their coupon periods.
+	// We recycle the Balances struct here, containing map[string]int64, but rather than representing a set of
+	// asset balances like map[AssetID]Amount, each entry in this map represents the amount of
+	// AssetID=Bond at unixSeconds=Time that was present in the system.
+	// For example, if TotalSupplySnapshots["Bond_A-Snapshot_123456"]=789, then 789 of Bond_A was present in the system
+	// at time=123456.
+	// Note that the single hyphen makes the key pass asset ID validation rules, even though it is not any asset's AssetID.
+	// Also note that a negative value (-1) indicates that supply has not yet been tracked for a coupon period.
+	// -1 Is used for in-progress periods, and also periods where supply was actually zero, unknown, or invalid.
+	TotalSupplySnapshots *Balances `json:"total_supply_snapshots" redis:"total_supply_snapshots"`
 
 	// Tracking fields - see position.go
 	LastUpdated      int64  `json:"last_updated" redis:"last_updated"`
@@ -55,6 +77,12 @@ func (m *Module) Init() {
 	if m.CouponFunds == nil {
 		m.CouponFunds = EmptyBalances()
 	}
+	if m.DollarCouponFundSources == nil {
+		m.DollarCouponFundSources = EmptyBalances()
+	}
+	if m.TotalSupplySnapshots == nil {
+		m.TotalSupplySnapshots = EmptyBalances()
+	}
 	// Store original state. No-op if already stored.
 	if m.original == "" {
 		j, err := json.Marshal(m)
@@ -80,17 +108,18 @@ func InitialModule() *Module {
 }
 
 func NewModule(
-	balance, supplied, borrowed, virtual, coupon *Balances,
+	balance, supplied, borrowed, virtual, coupon, sources *Balances,
 	lastUpdated int64,
 	sequence uint64,
 ) (*Module, error) {
 	m := &Module{
 		// Balances (can Validate)
-		Balance:     balance,
-		Supplied:    supplied,
-		Borrowed:    borrowed,
-		Virtual:     virtual,
-		CouponFunds: coupon,
+		Balance:                 balance,
+		Supplied:                supplied,
+		Borrowed:                borrowed,
+		Virtual:                 virtual,
+		CouponFunds:             coupon,
+		DollarCouponFundSources: sources,
 		// Tracking fields
 		Sequence:    sequence,
 		LastUpdated: lastUpdated,
@@ -108,7 +137,8 @@ func (m *Module) Validate() error {
 		m.Supplied == nil ||
 		m.Borrowed == nil ||
 		m.Virtual == nil ||
-		m.CouponFunds == nil {
+		m.CouponFunds == nil ||
+		m.DollarCouponFundSources == nil {
 		return errors.Data("nil Balances in Module")
 	}
 	if err := m.Balance.Validate(false); err != nil {
@@ -125,6 +155,17 @@ func (m *Module) Validate() error {
 	}
 	if err := m.CouponFunds.Validate(false); err != nil {
 		return errors.Wrap(errors.InvalidInputError, err, "module Coupon Funds")
+	}
+	if err := m.DollarCouponFundSources.Validate(false); err != nil {
+		return errors.Wrap(errors.InvalidInputError, err, "module Dollar Coupon Fund Sources")
+	}
+	if err := m.TotalSupplySnapshots.Validate(true); err != nil {
+		return errors.Wrap(errors.InvalidInputError, err, "module Total Supply Snapshots")
+	}
+	for id, amt := range m.TotalSupplySnapshots.Bals {
+		if amt < -1 || amt == 0 {
+			return errors.Data("module Total Supply Snapshots: must be > 0 or == -1 (%d %s)", amt, id)
+		}
 	}
 	if m.original == "" {
 		return errors.NewInternal("module position not initialized")
