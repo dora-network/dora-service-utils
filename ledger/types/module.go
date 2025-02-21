@@ -38,6 +38,7 @@ type Module struct {
 	// at time=123456.
 	// Note that the single hyphen makes the key pass asset ID validation rules, even though it is not any asset's AssetID.
 	// Also note that a negative value (-1) indicates that supply has not yet been tracked for a coupon period.
+	// -1 Is used for in-progress periods, and also periods where supply was actually zero, unknown, or invalid.
 	TotalSupplySnapshots *Balances `json:"total_supply_snapshots" redis:"total_supply_snapshots"`
 
 	// Tracking fields - see position.go
@@ -157,6 +158,14 @@ func (m *Module) Validate() error {
 	}
 	if err := m.DollarCouponFundSources.Validate(false); err != nil {
 		return errors.Wrap(errors.InvalidInputError, err, "module Dollar Coupon Fund Sources")
+	}
+	if err := m.TotalSupplySnapshots.Validate(true); err != nil {
+		return errors.Wrap(errors.InvalidInputError, err, "module Total Supply Snapshots")
+	}
+	for id, amt := range m.TotalSupplySnapshots.Bals {
+		if amt < -1 || amt == 0 {
+			return errors.Data("module Total Supply Snapshots: must be > 0 or == -1 (%d %s)", amt, id)
+		}
 	}
 	if m.original == "" {
 		return errors.NewInternal("module position not initialized")
