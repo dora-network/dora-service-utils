@@ -1,6 +1,9 @@
 package types
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/goccy/go-json"
 
 	"github.com/dora-network/dora-service-utils/errors"
@@ -126,4 +129,20 @@ func (b *Balances) String() string {
 		return "{\"Error\": " + err.Error() + "}" // so data output is always json
 	}
 	return string(j)
+}
+
+// InterpretUsingSpecialPrefix converts any balances in b which take the form
+// ID = <Prefix><int64> AMT = <int64>
+// and returns a map[idInt]amtInt, ignoring balances that do not match the pattern.
+func (b *Balances) InterpretUsingSpecialPrefix(prefix string) map[int64]int64 {
+	result := map[int64]int64{}
+	for id, amt := range b.Bals {
+		if strings.HasPrefix(id, prefix) {
+			s := strings.TrimPrefix(id, prefix)
+			if n, err := strconv.ParseInt(s, 10, 64); err == nil {
+				result[n] = amt
+			}
+		}
+	}
+	return result
 }
