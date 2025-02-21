@@ -45,7 +45,7 @@ func TestAssetID(t *testing.T) {
 		NewBalance("Bond_A-Snapshot_5", int64(1)),
 	)
 
-	m := bals.InterpretUsingSpecialPrefix("Bond_A", SnapshotPrefix)
+	m := bals.InterpretSpecialPrefix("Bond_A", SnapshotPrefix)
 	require.Len(m, 3)
 	require.Equal(int64(1), m[1])
 	require.Equal(int64(4), m[4])
