@@ -79,6 +79,23 @@ func (b *Balance) IsZero() bool {
 	return b.Amount == 0
 }
 
+// Add a balance to this one, returning the result and an error if asset IDs do not match.
+func (b *Balance) Add(bal *Balance) (*Balance, error) {
+	if bal == nil {
+		return b, nil
+	}
+	if !b.Valid() || !bal.Valid() {
+		return nil, errors.New("balance.Add: invalid input")
+	}
+	if b.Asset != bal.Asset {
+		return nil, fmt.Errorf("balance.Add: mismatched assets %s and %s", b.Asset, bal.Asset)
+	}
+	if bal.Amount == 0 {
+		return b, nil
+	}
+	return NewBalance(b.Asset, b.Amount+bal.Amount), nil
+}
+
 // Sub from a balance. Error on negative result, mismatched assets, or invalid assets.
 func (b *Balance) Sub(sub *Balance) (*Balance, error) {
 	if sub == nil {
@@ -87,11 +104,11 @@ func (b *Balance) Sub(sub *Balance) (*Balance, error) {
 	if !b.Valid() || !sub.Valid() {
 		return nil, errors.New("balance.Sub: invalid input")
 	}
-	if sub.Amount == 0 {
-		return b, nil // no-op is safe
-	}
 	if b.Asset != sub.Asset {
 		return nil, fmt.Errorf("balance.Sub: mismatched assets %s and %s", b.Asset, sub.Asset)
+	}
+	if sub.Amount == 0 {
+		return b, nil // no-op is safe
 	}
 	if b.Amount < sub.Amount {
 		return nil, fmt.Errorf("balance.Sub (%s): result would be negative", b.Asset)

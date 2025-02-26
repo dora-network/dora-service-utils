@@ -2,9 +2,11 @@ package types
 
 import (
 	"fmt"
+	gmath "math"
 	"math/big"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/dora-network/dora-service-utils/errors"
 	"github.com/dora-network/dora-service-utils/ledger/types"
@@ -292,4 +294,234 @@ func contains(set []string, target string) bool {
 
 func HasHyphen(UID string) bool {
 	return strings.Contains(UID, "-")
+}
+
+func (p *Pool) Balances(assetA string) (balanceA, balanceB *types.Balance, err error) {
+	if assetA == p.BaseAsset {
+		return types.NewBalance(p.BaseAsset, int64(p.AmountBase)), types.NewBalance(p.QuoteAsset, int64(p.AmountQuote)), err
+	}
+
+	if assetA == p.QuoteAsset {
+		return types.NewBalance(p.QuoteAsset, int64(p.AmountQuote)), types.NewBalance(p.BaseAsset, int64(p.AmountBase)), err
+	}
+
+	err = errors.ErrAssetNotFoundInPool
+
+	return
+}
+
+func (p *Pool) SimulateSwap(balanceIn *types.Balance) (balanceOut, balanceFee *types.Balance, err error) {
+	if p.IsProductPool {
+		return p.simulateProductPoolSwap(balanceIn)
+	}
+
+	return p.simulateYieldPoolSwap(balanceIn)
+}
+
+func (p *Pool) simulateProductPoolSwap(balanceIn *types.Balance) (*types.Balance, *types.Balance, error) {
+	if !balanceIn.Valid() {
+		return nil, nil, errors.New(errors.InvalidInputError, "invalid balance")
+	}
+	if balanceIn.IsZero() {
+		return nil, nil, errors.ErrAmountCannotBeZero
+	}
+	poolReserveAssetIn, poolReserveAssetOut, err := p.Balances(balanceIn.Asset)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	amtIn := big.NewInt(balanceIn.Amt())
+	fee := math.MulIF64(amtIn, p.SwapFee())
+	amtInAfterFee := math.Sub(amtIn, fee)
+	if amtInAfterFee.Sign() != 1 {
+		return nil, nil, errors.ErrInsufficientBalance
+	}
+
+	poolReserveAmountOut := big.NewInt(int64(poolReserveAssetOut.Amount))
+	poolReserveAmountIn := big.NewInt(int64(poolReserveAssetIn.Amount))
+
+	poolReserveAmountOutMulAmountIn := math.Mul(poolReserveAmountOut, amtInAfterFee)
+	poolReserveAmountInPlusAmountIn := math.Add(poolReserveAmountIn, amtInAfterFee)
+	amountOut := new(big.Int).Quo(poolReserveAmountOutMulAmountIn, poolReserveAmountInPlusAmountIn)
+
+	balanceOut := types.NewBalance(poolReserveAssetOut.Asset, amountOut.Int64())
+	balanceFee := types.NewBalance(balanceIn.Asset, fee.Int64())
+
+	return balanceOut, balanceFee, nil
+}
+
+// calculate t, which should range from 1 to 0 over the life of the bond,
+// derived from the current time (now), maturity (end) time, and total duration of the bond.
+// returns 0 if time is past maturity (that is, now >= end). Also returns zero on invalid duration.
+func calculateT(now, end, duration int64) float64 {
+	if duration <= 0 || now >= end {
+		return 0
+	}
+	t := float64(end-now) / float64(duration)
+	if t > 1 {
+		t = 1
+	}
+	return t
+}
+
+// Calculates z := 1-tg for buys, or z := 1-t/g for sells.
+// G should never be zero due to pool validation (though we will return 0 rather than panic if it is)
+// If the result z is zero, special action will need to be taken in downstream swap math. This will occur once
+// in every pool's lifetime for sells and cause them to behave like a product pool for sell swaps at that unix time.
+// Also applies to buys for pools with zero fees for swaps occurring at the same unix time they were created.
+func calculateZ(t, g float64, isSell bool) float64 {
+	if g == 0 {
+		return 0 // Buy or Sell with invalid G
+	}
+	if isSell {
+		return 1 - (t / g) // Swap is a Sell
+	}
+	return 1 - t*g // Swap is a Buy
+}
+
+// returns k := x^t' + y^t'
+// where t' := 1 - (t * g) and t progresses from 1 to 0 over time
+func calculateK(x, y *big.Int, t, g float64) float64 {
+	xf, _ := x.Float64()
+	yf, _ := y.Float64()
+	tPrime := 1 - (t * g)
+	return gmath.Pow(xf, tPrime) + gmath.Pow(yf, tPrime)
+}
+
+// Calculates how the out asset changes if we increase in asset.
+// <param:assetInBalance> [x_end] = x_start + ∆x
+//
+// y_end = [k - x_end^(1-tg)]^[1/(1-t)]  || Note: tg can also be t/g depending on the asset.
+//
+// ∆y = y_end - y_start
+func calculateDelta(
+	assetOutBalance, assetInBalance *big.Int,
+	k, timeToMaturity, gFeeFactor float64,
+) *big.Int {
+	in, _ := assetInBalance.Float64()
+	out, _ := assetOutBalance.Float64()
+
+	updatedOut := k - gmath.Pow(in, 1-(gFeeFactor*timeToMaturity))
+	updatedOut = gmath.Pow(updatedOut, 1/(1-(gFeeFactor*timeToMaturity)))
+	delta := math.Int(big.NewFloat(updatedOut - out))
+	return delta
+}
+
+func (p *Pool) Duration() int64 {
+	if p.IsProductPool {
+		return 0
+	}
+	return p.MaturityAt - p.CreatedAt
+}
+
+func (p *Pool) SwapFee() float64 {
+	if !p.IsProductPool {
+		return 0
+	}
+
+	ff, _ := p.FeeFactor.Float64()
+	return ff
+}
+
+func (p *Pool) G() float64 {
+	if p.IsProductPool {
+		return 0
+	}
+
+	ff, _ := p.FeeFactor.Float64()
+	return ff
+}
+
+func (p *Pool) simulateYieldPoolSwap(balanceIn *types.Balance) (*types.Balance, *types.Balance, error) {
+	if !balanceIn.Valid() {
+		return nil, nil, errors.New(errors.InvalidInputError, "invalid balance")
+	}
+	if balanceIn.IsZero() {
+		return nil, nil, errors.ErrAmountCannotBeZero
+	}
+	timeToMaturity := calculateT(time.Now().Unix(), p.MaturityAt, p.Duration())
+
+	stableAmount := types.Balance{
+		Asset:  p.QuoteAsset,
+		Amount: p.AmountQuote,
+	}
+
+	bondAmount := types.Balance{
+		Asset:  p.BaseAsset,
+		Amount: p.AmountBase,
+	}
+
+	assetOutID, err := p.OtherAssetID(balanceIn.Asset)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	poolBalanceOfIn, poolBalanceOfOut, err := p.Balances(balanceIn.Asset)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	G := p.G()
+	if balanceIn.Asset == p.BaseAsset {
+		G = 1 / G
+	}
+
+	poolBalanceOfIn, err = poolBalanceOfIn.Add(balanceIn)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	k := calculateK(
+		big.NewInt(int64(stableAmount.Amount)),
+		big.NewInt(int64(bondAmount.Amount)),
+		timeToMaturity,
+		1,
+	)
+	pbOut := big.NewInt(int64(poolBalanceOfOut.Amount))
+	pbIn := big.NewInt(int64(poolBalanceOfIn.Amount))
+	outWithoutFee := calculateDelta(
+		pbOut,
+		pbIn,
+		k,
+		timeToMaturity,
+		1,
+	)
+	k = calculateK(
+		big.NewInt(int64(stableAmount.Amount)),
+		big.NewInt(int64(bondAmount.Amount)),
+		timeToMaturity,
+		G,
+	)
+	outWithFee := calculateDelta(
+		pbOut,
+		pbIn,
+		k,
+		timeToMaturity,
+		G,
+	)
+
+	feeAmt := math.Sub(outWithFee, outWithoutFee)
+	outWithFee = math.Mul(outWithFee, big.NewInt(-1))
+	balanceOut := types.NewBalance(assetOutID, outWithFee.Int64())
+	balanceFee := types.NewBalance(balanceIn.Asset, feeAmt.Int64())
+
+	return balanceOut, balanceFee, nil
+}
+
+func (p *Pool) SimulateSwapPrice(isSell bool, balIn *types.Balance) (float64, error) {
+	var (
+		err    error
+		balOut *types.Balance
+	)
+
+	balOut, _, err = p.SimulateSwap(balIn)
+	if err != nil {
+		return 0, err
+	}
+
+	return math.ExecutedPrice(
+		isSell,
+		balIn.Amount,
+		balOut.Amount,
+	), nil
 }
