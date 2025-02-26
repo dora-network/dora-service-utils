@@ -342,3 +342,15 @@ func Min(a, b *big.Int) *big.Int {
 	}
 	return b
 }
+
+func ExecutedPrice(isSell bool, balanceIn, balanceOut uint64) float64 {
+	if balanceIn == 0 || balanceOut == 0 {
+		return 1 // Edge cases return default price
+	}
+	if isSell {
+		// Sell Price = Out / In
+		return float64(balanceOut) / float64(balanceIn)
+	}
+	// Buy Price = In / Out
+	return float64(balanceIn) / float64(balanceOut)
+}
