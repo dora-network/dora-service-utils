@@ -168,3 +168,25 @@ func DivI(a, b *big.Int, roundUp bool) *big.Int {
 	}
 	return quo
 }
+
+// RoundBigInt will round a big.Float to the nearest big.Int
+// 14.2 = 14
+// 14.5 = 15
+// 14.9 = 15
+func RoundBigInt(x *big.Float) *big.Int {
+	delta := 0.5
+	if x.Sign() < 0 {
+		delta = -0.5
+	}
+	x.Add(x, new(big.Float).SetFloat64(delta))
+	bint, _ := x.Int(nil)
+	return bint
+}
+
+// MulIF64Round multiplies a big.Int by a float64 and rounds the result to the nearest big.Int.
+func MulIF64Round(i *big.Int, f64 float64) *big.Int {
+	f := big.NewFloat(f64)
+	iFloat := big.NewFloat(0).SetInt(i)
+	outFloat := MulF(f, iFloat)
+	return RoundBigInt(outFloat)
+}
