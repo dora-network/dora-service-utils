@@ -31,6 +31,10 @@ const (
 	InstrumentationTypeCacheRequestSuccess
 	InstrumentationTypeCacheRequestFailure
 	InstrumentationTypeSubscriberCount
+	InstrumentationTypeNetworkRequestCount
+	InstrumentationTypeNetworkRequestDuration
+	InstrumentationTypeNetworkRequestSuccess
+	InstrumentationTypeNetworkRequestFailure
 )
 
 type Instrumentation struct {
