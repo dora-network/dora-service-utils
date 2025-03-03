@@ -1,6 +1,9 @@
 package metrics
 
-import "github.com/prometheus/client_golang/prometheus"
+import (
+	"github.com/prometheus/client_golang/prometheus"
+	"time"
+)
 
 // InstrumentationType is the type of instrumentation the metric is capturing
 // Use this type to define your own instrumentation types e.g.:
@@ -94,4 +97,46 @@ func (i *Instrumentation) Collectors() (collectors []prometheus.Collector) {
 		collectors = append(collectors, summaryVecs)
 	}
 	return
+}
+
+func RecordDbMetric(f func() error, instrumentation *Instrumentation, labels ...string) error {
+	instrumentation.CounterVecs[InstrumentationTypeDbRequestCount].WithLabelValues(labels...).Inc()
+	start := time.Now()
+	err := f()
+	duration := time.Since(start).Seconds()
+	instrumentation.HistogramVecs[InstrumentationTypeDbRequestDuration].WithLabelValues(labels...).Observe(duration)
+	if err != nil {
+		instrumentation.CounterVecs[InstrumentationTypeDbRequestFailure].WithLabelValues(labels...).Inc()
+	} else {
+		instrumentation.CounterVecs[InstrumentationTypeDbRequestSuccess].WithLabelValues(labels...).Inc()
+	}
+	return err
+}
+
+func RecordCacheMetric(f func() error, instrumentation *Instrumentation, labels ...string) error {
+	instrumentation.CounterVecs[InstrumentationTypeCacheRequestCount].WithLabelValues(labels...).Inc()
+	start := time.Now()
+	err := f()
+	duration := time.Since(start).Seconds()
+	instrumentation.HistogramVecs[InstrumentationTypeCacheRequestDuration].WithLabelValues(labels...).Observe(duration)
+	if err != nil {
+		instrumentation.CounterVecs[InstrumentationTypeCacheRequestFailure].WithLabelValues(labels...).Inc()
+	} else {
+		instrumentation.CounterVecs[InstrumentationTypeCacheRequestSuccess].WithLabelValues(labels...).Inc()
+	}
+	return err
+}
+
+func RecordNetworkMetric(f func() error, instrumentation *Instrumentation, labels ...string) error {
+	instrumentation.CounterVecs[InstrumentationTypeNetworkRequestCount].WithLabelValues(labels...).Inc()
+	start := time.Now()
+	err := f()
+	duration := time.Since(start).Seconds()
+	instrumentation.HistogramVecs[InstrumentationTypeNetworkRequestDuration].WithLabelValues(labels...).Observe(duration)
+	if err != nil {
+		instrumentation.CounterVecs[InstrumentationTypeNetworkRequestFailure].WithLabelValues(labels...).Inc()
+	} else {
+		instrumentation.CounterVecs[InstrumentationTypeNetworkRequestSuccess].WithLabelValues(labels...).Inc()
+	}
+	return err
 }
