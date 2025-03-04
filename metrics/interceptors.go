@@ -20,13 +20,13 @@ func NewConnectInterceptor(
 			resp, err := next(ctx, req)
 			elapsed := time.Since(start).Milliseconds()
 			instrumentation.HistogramVecs[InstrumentationTypeHttpRequestDuration].
-				WithLabelValues(req.Spec().Procedure).Observe(float64(elapsed))
+				WithLabelValues(req.HTTPMethod(), req.Spec().Procedure).Observe(float64(elapsed))
 			if err != nil {
 				instrumentation.CounterVecs[InstrumentationTypeHttpRequestFailure].
-					WithLabelValues(req.Spec().Procedure).Inc()
+					WithLabelValues(req.HTTPMethod(), req.Spec().Procedure).Inc()
 			} else {
 				instrumentation.CounterVecs[InstrumentationTypeHttpRequestSuccess].
-					WithLabelValues(req.Spec().Procedure).Inc()
+					WithLabelValues(req.HTTPMethod(), req.Spec().Procedure).Inc()
 			}
 			return resp, err
 		}
