@@ -2,9 +2,10 @@ package redis_test
 
 import (
 	"context"
-	"github.com/dora-network/dora-service-utils/pools/redis"
 	"testing"
 	"time"
+
+	"github.com/dora-network/dora-service-utils/pools/redis"
 
 	"github.com/dora-network/dora-service-utils/orderbook"
 	"github.com/stretchr/testify/assert"
@@ -74,6 +75,8 @@ func TestPools(t *testing.T) {
 				"fee_factor",
 				"created_at",
 				"maturity_at",
+				"fees_collected_base",
+				"fees_collected_quote",
 			}
 			var got types.Pool
 			require.NoError(
@@ -117,16 +120,18 @@ func TestPools(t *testing.T) {
 	t.Run(
 		"Should update a pool in Redis", func(tt *testing.T) {
 			updated := types.Pool{
-				PoolID:        "base-quote",
-				BaseAsset:     "base",
-				QuoteAsset:    "quote",
-				IsProductPool: true,
-				AmountShares:  1000000,
-				AmountBase:    1000000,
-				AmountQuote:   1000000,
-				FeeFactor:     decimal.MustNew(1, 2),
-				CreatedAt:     time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
-				MaturityAt:    time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+				PoolID:             "base-quote",
+				BaseAsset:          "base",
+				QuoteAsset:         "quote",
+				IsProductPool:      true,
+				AmountShares:       1000000,
+				AmountBase:         1000000,
+				AmountQuote:        1000000,
+				FeeFactor:          decimal.MustNew(1, 2),
+				CreatedAt:          time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+				MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+				FeesCollectedBase:  0,
+				FeesCollectedQuote: 0,
 			}
 
 			require.NoError(
@@ -153,16 +158,18 @@ func TestPools(t *testing.T) {
 	t.Run(
 		"Should update a pool balance in Redis", func(tt *testing.T) {
 			initial := types.Pool{
-				PoolID:        "base-quote",
-				BaseAsset:     "base",
-				QuoteAsset:    "quote",
-				IsProductPool: true,
-				AmountShares:  1000000,
-				AmountBase:    1000000,
-				AmountQuote:   1000000,
-				FeeFactor:     decimal.MustNew(1, 2),
-				CreatedAt:     time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
-				MaturityAt:    time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+				PoolID:             "base-quote",
+				BaseAsset:          "base",
+				QuoteAsset:         "quote",
+				IsProductPool:      true,
+				AmountShares:       1000000,
+				AmountBase:         1000000,
+				AmountQuote:        1000000,
+				FeeFactor:          decimal.MustNew(1, 2),
+				CreatedAt:          time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+				MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+				FeesCollectedBase:  0,
+				FeesCollectedQuote: 0,
 			}
 
 			require.NoError(
@@ -177,14 +184,16 @@ func TestPools(t *testing.T) {
 			)
 
 			updated := types.Pool{
-				AmountShares: 10000002,
-				AmountBase:   10000001,
-				AmountQuote:  10000001,
+				AmountShares:       10000002,
+				AmountBase:         10000001,
+				AmountQuote:        10000001,
+				FeesCollectedBase:  1000,
+				FeesCollectedQuote: 1000,
 			}
 
 			require.NoError(
 				t,
-				redis.UpdatePoolBalance(ctx, rdb, "base-quote", 10000002, 10000001, 10000001, time.Second),
+				redis.UpdatePoolBalance(ctx, rdb, "base-quote", 10000002, 10000001, 10000001, 0, 0, time.Second),
 			)
 			got, err := redis.GetPool(
 				ctx,
@@ -196,6 +205,8 @@ func TestPools(t *testing.T) {
 			assert.Equal(tt, updated.AmountQuote, got.AmountQuote)
 			assert.Equal(tt, updated.AmountBase, got.AmountBase)
 			assert.Equal(tt, updated.AmountShares, got.AmountShares)
+			assert.Equal(tt, updated.FeesCollectedBase, updated.FeesCollectedBase)
+			assert.Equal(tt, updated.FeesCollectedQuote, updated.FeesCollectedQuote)
 			assert.Equal(tt, initial.PoolID, got.PoolID)
 			assert.Equal(tt, initial.BaseAsset, got.BaseAsset)
 			assert.Equal(tt, initial.QuoteAsset, got.QuoteAsset)
