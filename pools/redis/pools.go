@@ -190,7 +190,7 @@ func UpdatePoolCmd(
 func UpdatePoolBalance(
 	ctx context.Context,
 	rdb redis.Client,
-	poolID string, amountShares, amountBase, amountQuote uint64,
+	poolID string, amountShares, amountBase, amountQuote, feesCollectedBase, feesCollectedQuote uint64,
 	timeout time.Duration,
 ) error {
 	txFunc := func(tx *redisv9.Tx) error {
@@ -204,6 +204,8 @@ func UpdatePoolBalance(
 			"amount_shares", amountShares,
 			"amount_base", amountBase,
 			"amount_quote", amountQuote,
+			"fees_collected_base", feesCollectedBase,
+			"fees_collected_quote", feesCollectedQuote,
 		).Err()
 	}
 
@@ -217,7 +219,7 @@ func UpdatePoolBalance(
 }
 
 func UpdatePoolBalanceCmd(
-	ctx context.Context, tx redis.Cmdable, poolID string, amountShares, amountBase, amountQuote uint64,
+	ctx context.Context, tx redis.Cmdable, poolID string, amountShares, amountBase, amountQuote, feesCollectedBase, feesCollectedQuote uint64,
 ) *redisv9.IntCmd {
 	return tx.HSet(
 		ctx, PoolKey(poolID),
@@ -229,6 +231,8 @@ func UpdatePoolBalanceCmd(
 		"amount_shares", amountShares,
 		"amount_base", amountBase,
 		"amount_quote", amountQuote,
+		"fees_collected_base", feesCollectedBase,
+		"fees_collected_quote", feesCollectedQuote,
 	)
 }
 
