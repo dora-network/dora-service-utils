@@ -217,7 +217,7 @@ func UpdatePoolBalance(
 }
 
 func UpdatePoolBalanceCmd(
-	ctx context.Context, tx redis.Cmdable, poolID string, amountShares, amountBase, amountQuote uint64,
+	ctx context.Context, tx redis.Cmdable, poolID string, amountShares, amountBase, amountQuote, feesCollectedBase, feesCollectedQuote uint64,
 ) *redisv9.IntCmd {
 	return tx.HSet(
 		ctx, PoolKey(poolID),
@@ -229,6 +229,8 @@ func UpdatePoolBalanceCmd(
 		"amount_shares", amountShares,
 		"amount_base", amountBase,
 		"amount_quote", amountQuote,
+		"fees_collected_base", feesCollectedBase,
+		"fees_collected_quote", feesCollectedQuote,
 	)
 }
 
