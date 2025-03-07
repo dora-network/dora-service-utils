@@ -34,6 +34,9 @@ type Config struct {
 	CandlesUpdateTopic          string   `mapstructure:"candles_update_topic" json:"candles_update_topic"`
 	CandlesRequestTopic         string   `mapstructure:"candles_request_topic" json:"candles_request_topic"`
 	CandlesSnapshotTopic        string   `mapstructure:"candles_snapshot_topic" json:"candles_snapshot_topic"`
+	DollarPricesUpdateTopic     string   `mapstructure:"dollar_prices_update_topic" json:"dollar_prices_update_topic"`
+	DollarPricesRequestTopic    string   `mapstructure:"dollar_prices_request_topic" json:"dollar_prices_request_topic"`
+	DollarPricesSnapshotTopic   string   `mapstructure:"dollar_prices_snapshot_topic" json:"dollar_prices_snapshot_topic"`
 	Authentication              Auth     `mapstructure:"authentication" json:"authentication"`
 }
 
@@ -71,6 +74,9 @@ func DefaultConfig() Config {
 		CandlesUpdateTopic:          DefaultCandlesUpdateTopic,
 		CandlesRequestTopic:         DefaultCandlesRequestTopic,
 		CandlesSnapshotTopic:        DefaultCandlesSnapshotTopic,
+		DollarPricesUpdateTopic:     DefaultDollarPricesUpdateTopic,
+		DollarPricesRequestTopic:    DefaultDollarPricesRequestTopic,
+		DollarPricesSnapshotTopic:   DefaultDollarPricesSnapshotTopic,
 		Authentication: Auth{
 			Username: "",
 			Password: "",

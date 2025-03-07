@@ -32,4 +32,7 @@ const (
 	DefaultCandlesUpdateTopic           = "dora.network.candles.updates"
 	DefaultCandlesRequestTopic          = "dora.network.candles.request"
 	DefaultCandlesSnapshotTopic         = "dora.network.candles.snapshot"
+	DefaultDollarPricesUpdateTopic      = "dora.network.prices.updates"
+	DefaultDollarPricesRequestTopic     = "dora.network.prices.request"
+	DefaultDollarPricesSnapshotTopic    = "dora.network.prices.snapshot"
 )
