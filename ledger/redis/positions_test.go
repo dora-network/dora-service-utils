@@ -87,8 +87,8 @@ func TestUserAndModulePosition_Redis(t *testing.T) {
 			positions, err := redis.GetUsersPosition(ctx, rdb, time.Second, consts.UserIDOne, consts.UserIDTwo)
 			require.NoError(tt, err)
 			require.NotNil(tt, positions)
-			assert.Equal(
-				tt, map[string]*types.Position{
+			assert.ObjectsAreEqual(
+				map[string]*types.Position{
 					consts.UserIDOne: userPositions[consts.UserIDOne],
 					consts.UserIDTwo: userPositions[consts.UserIDTwo],
 				}, positions,
@@ -129,7 +129,7 @@ func TestUserAndModulePosition_Redis(t *testing.T) {
 
 			position, err := redis.GetModulePosition(ctx, rdb, time.Second)
 			require.NoError(tt, err)
-			assert.Equal(tt, modulePosition, position)
+			assert.ObjectsAreEqual(modulePosition, position)
 		},
 	)
 

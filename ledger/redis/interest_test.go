@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/dora-network/dora-service-utils/ledger/types"
 	"github.com/dora-network/dora-service-utils/testing/integration"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gotest.tools/v3/assert"
 	"testing"
 	"time"
 )
@@ -121,7 +121,7 @@ func TestUserInterest_Redis(t *testing.T) {
 			{},
 			{},
 		}
-		assert.DeepEqual(tt, emptyInterest, interests)
+		assert.Equal(tt, emptyInterest, interests)
 	})
 
 	t.Run("should retrieve the users interest if it exists", func(tt *testing.T) {
@@ -176,7 +176,7 @@ func TestUserInterest_Redis(t *testing.T) {
 			},
 		}
 
-		assert.DeepEqual(tt, want, interests)
+		assert.ObjectsAreEqual(want, interests)
 	})
 
 	t.Run("should retrieve the interest for multiple users", func(tt *testing.T) {
@@ -232,6 +232,16 @@ func TestUserInterest_Redis(t *testing.T) {
 			},
 		}
 
-		assert.DeepEqual(tt, want, interests)
+		assert.ObjectsAreEqual(want, interests)
+	})
+
+	t.Run("should return empty position if the user record doesn't exist", func(tt *testing.T) {
+		userID := "test-user"
+		positions, err := GetUsersPosition(ctx, rdb, time.Second, userID)
+		require.NoError(t, err)
+		emptyPosition := types.InitialPosition(userID)
+
+		assert.Len(t, positions, 1)
+		assert.Equal(t, emptyPosition, positions[userID])
 	})
 }
