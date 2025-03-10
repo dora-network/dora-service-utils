@@ -250,7 +250,8 @@ func accrueLendingInterestTx(ctx context.Context, tx redis.Cmdable, userID strin
 	if err != nil {
 		return nil, err
 	}
-	var userPositions *types.Position
+	userPositions := types.InitialPosition(userID)
+
 	for _, cmd := range userPositionsCmd {
 		res, err := cmd.(*redisv9.MapStringStringCmd).Result()
 		if err != nil {
