@@ -39,12 +39,12 @@ func GetUsersPositionKeys(userIDs ...string) []string {
 func GetUsersPositionCmd(
 	ctx context.Context,
 	tx redis.Cmdable,
-	keys ...string,
+	users ...string,
 ) ([]redisv9.Cmder, error) {
 	cmds, err := tx.TxPipelined(
 		ctx, func(pipe redisv9.Pipeliner) error {
-			for _, key := range keys {
-				pipe.HGetAll(ctx, key)
+			for _, user := range users {
+				pipe.HGetAll(ctx, UserPositionKey(user))
 			}
 			return nil
 		},
