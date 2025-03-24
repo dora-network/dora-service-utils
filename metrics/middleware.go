@@ -23,8 +23,8 @@ func (m *HttpMiddleware) Handle(next http.Handler) http.Handler {
 			WithLabelValues(r.Method, r.URL.Path).Inc()
 		start := time.Now()
 		next.ServeHTTP(w, r)
-		elapsed := time.Since(start).Milliseconds()
+		elapsed := time.Since(start).Seconds()
 		m.instrumentation.HistogramVecs[m.instrumentationType].
-			WithLabelValues(r.Method, r.URL.Path).Observe(float64(elapsed))
+			WithLabelValues(r.Method, r.URL.Path).Observe(elapsed)
 	})
 }

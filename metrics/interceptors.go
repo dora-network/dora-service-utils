@@ -1,10 +1,11 @@
 package metrics
 
 import (
-	"connectrpc.com/connect"
 	"context"
-	"google.golang.org/grpc"
 	"time"
+
+	"connectrpc.com/connect"
+	"google.golang.org/grpc"
 )
 
 func NewConnectInterceptor(
@@ -40,8 +41,8 @@ func NewGrpcInterceptor(
 		instrumentation.CounterVecs[InstrumentationTypeGrpcRequestCount].WithLabelValues(info.FullMethod).Inc()
 		start := time.Now()
 		resp, err = handler(ctx, req)
-		elapsed := time.Since(start).Milliseconds()
-		instrumentation.HistogramVecs[InstrumentationTypeGrpcRequestDuration].WithLabelValues(info.FullMethod).Observe(float64(elapsed))
+		elapsed := time.Since(start).Seconds()
+		instrumentation.HistogramVecs[InstrumentationTypeGrpcRequestDuration].WithLabelValues(info.FullMethod).Observe(elapsed)
 		if err != nil {
 			instrumentation.CounterVecs[InstrumentationTypeGrpcRequestFailure].WithLabelValues(info.FullMethod).Inc()
 		} else {
