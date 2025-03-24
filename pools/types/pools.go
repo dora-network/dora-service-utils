@@ -298,11 +298,17 @@ func HasHyphen(UID string) bool {
 
 func (p *Pool) Balances(assetA string) (balanceA, balanceB *types.Balance, err error) {
 	if assetA == p.BaseAsset {
-		return types.NewBalance(p.BaseAsset, int64(p.AmountBase)), types.NewBalance(p.QuoteAsset, int64(p.AmountQuote)), err
+		return types.NewBalance(p.BaseAsset, int64(p.AmountBase)), types.NewBalance(
+			p.QuoteAsset,
+			int64(p.AmountQuote),
+		), err
 	}
 
 	if assetA == p.QuoteAsset {
-		return types.NewBalance(p.QuoteAsset, int64(p.AmountQuote)), types.NewBalance(p.BaseAsset, int64(p.AmountBase)), err
+		return types.NewBalance(p.QuoteAsset, int64(p.AmountQuote)), types.NewBalance(
+			p.BaseAsset,
+			int64(p.AmountBase),
+		), err
 	}
 
 	err = errors.ErrAssetNotFoundInPool
@@ -364,6 +370,7 @@ func calculateT(now, end, duration int64) float64 {
 	return t
 }
 
+// nolint:unused
 // Calculates z := 1-tg for buys, or z := 1-t/g for sells.
 // G should never be zero due to pool validation (though we will return 0 rather than panic if it is)
 // If the result z is zero, special action will need to be taken in downstream swap math. This will occur once

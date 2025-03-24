@@ -45,9 +45,11 @@ func Test_Migrate(t *testing.T) {
 	resource, err := emulator.Start()
 	require.NoError(t, err, "couldn't start cloud spanner emulator")
 
-	defer t.Cleanup(func() {
-		require.NoError(t, emulator.Cleanup(resource), "could not purge spanner emulator")
-	})
+	defer t.Cleanup(
+		func() {
+			require.NoError(t, emulator.Cleanup(resource), "could not purge spanner emulator")
+		},
+	)
 
 	// Now that we've started the emulator container we need to get the host and port
 	// and set the SPANNER_EMULATOR_HOST env var so that we can use it with the API
@@ -75,22 +77,27 @@ func Test_Migrate(t *testing.T) {
 	var want int64 = 2
 	assert.Equal(t, want, got)
 
-	iter := client.Single().Query(ctx, gs.Statement{
-		SQL:    "select * from information_schema.tables where  table_schema = 'public' and table_type = 'BASE TABLE';",
-		Params: map[string]interface{}{"p1": migration.SchemaVersionTable},
-	})
+	iter := client.Single().Query(
+		ctx, gs.Statement{
+			SQL:    "select * from information_schema.tables where  table_schema = 'public' and table_type = 'BASE TABLE';",
+			Params: map[string]interface{}{"p1": migration.SchemaVersionTable},
+		},
+	)
 
 	defer iter.Stop()
 
 	gotTables := make([]string, 0)
-	err = iter.Do(func(r *gs.Row) error {
-		var tableName string
-		if err := r.ColumnByName("table_name", &tableName); err != nil {
-			return err
-		}
-		gotTables = append(gotTables, tableName)
-		return nil
-	})
+	err = iter.Do(
+		func(r *gs.Row) error {
+			var tableName string
+			if err := r.ColumnByName("table_name", &tableName); err != nil {
+				return err
+			}
+			gotTables = append(gotTables, tableName)
+			return nil
+		},
+	)
+	require.NoError(t, err)
 	wantTables := []string{migration.SchemaVersionTable, "users", "addresses"}
 	assert.ElementsMatch(t, wantTables, gotTables)
 }
@@ -101,9 +108,11 @@ func TestEnsureMigrationTable(t *testing.T) {
 	resource, err := emulator.Start()
 	require.NoError(t, err, "couldn't start cloud spanner emulator")
 
-	defer t.Cleanup(func() {
-		require.NoError(t, emulator.Cleanup(resource), "could not purge spanner emulator")
-	})
+	defer t.Cleanup(
+		func() {
+			require.NoError(t, emulator.Cleanup(resource), "could not purge spanner emulator")
+		},
+	)
 
 	// Now that we've started the emulator container we need to get the host and port
 	// and set the SPANNER_EMULATOR_HOST env var so that we can use it with the API
@@ -127,22 +136,26 @@ func TestEnsureMigrationTable(t *testing.T) {
 
 	require.NoError(t, migration.EnsureMigrationTable(ctx, config, client, migration.SchemaVersionTable))
 
-	iter := client.Single().Query(ctx, gs.Statement{
-		SQL:    "select * from information_schema.tables where table_name = $1;",
-		Params: map[string]interface{}{"p1": migration.SchemaVersionTable},
-	})
+	iter := client.Single().Query(
+		ctx, gs.Statement{
+			SQL:    "select * from information_schema.tables where table_name = $1;",
+			Params: map[string]interface{}{"p1": migration.SchemaVersionTable},
+		},
+	)
 	defer iter.Stop()
 	tableFound := false
-	err = iter.Do(func(row *gs.Row) error {
-		var tableName string
-		if err := row.ColumnByName("table_name", &tableName); err != nil {
-			return err
-		}
-		if tableName == migration.SchemaVersionTable {
-			tableFound = true
-		}
-		return nil
-	})
+	err = iter.Do(
+		func(row *gs.Row) error {
+			var tableName string
+			if err := row.ColumnByName("table_name", &tableName); err != nil {
+				return err
+			}
+			if tableName == migration.SchemaVersionTable {
+				tableFound = true
+			}
+			return nil
+		},
+	)
 	require.NoError(t, err)
 	assert.True(t, tableFound, "schema migrations table not found, but should have been created")
 }
@@ -153,9 +166,11 @@ func TestGetCurrentVersion(t *testing.T) {
 	resource, err := emulator.Start()
 	require.NoError(t, err, "couldn't start cloud spanner emulator")
 
-	defer t.Cleanup(func() {
-		require.NoError(t, emulator.Cleanup(resource), "could not purge spanner emulator")
-	})
+	defer t.Cleanup(
+		func() {
+			require.NoError(t, emulator.Cleanup(resource), "could not purge spanner emulator")
+		},
+	)
 
 	// Now that we've started the emulator container we need to get the host and port
 	// and set the SPANNER_EMULATOR_HOST env var so that we can use it with the API
@@ -180,21 +195,25 @@ func TestGetCurrentVersion(t *testing.T) {
 	err = migration.EnsureMigrationTable(ctx, config, client, migration.SchemaVersionTable)
 	require.NoError(t, err, "could not create schema migrations table")
 	var want int64 = 20
-	_, err = client.ReadWriteTransaction(ctx, func(ctx context.Context, txn *gs.ReadWriteTransaction) error {
-		stmt := gs.Statement{
-			SQL: fmt.Sprintf(`INSERT INTO %s (version) VALUES
+	_, err = client.ReadWriteTransaction(
+		ctx, func(ctx context.Context, txn *gs.ReadWriteTransaction) error {
+			stmt := gs.Statement{
+				SQL: fmt.Sprintf(
+					`INSERT INTO %s (version) VALUES
 								(18),
 								(19),
-                                ($1)`, migration.SchemaVersionTable),
-			Params: map[string]interface{}{"p1": want},
-		}
-		rowCount, err := txn.Update(ctx, stmt)
-		if err != nil {
+                                ($1)`, migration.SchemaVersionTable,
+				),
+				Params: map[string]interface{}{"p1": want},
+			}
+			rowCount, err := txn.Update(ctx, stmt)
+			if err != nil {
+				return err
+			}
+			require.Equal(t, int64(3), rowCount, "expected 1 row to be updated")
 			return err
-		}
-		require.Equal(t, int64(3), rowCount, "expected 1 row to be updated")
-		return err
-	})
+		},
+	)
 	require.NoError(t, err)
 	got, err := migration.GetCurrentVersion(ctx, client, migration.SchemaVersionTable)
 	require.NoError(t, err)
@@ -207,9 +226,11 @@ func TestSetCurrentVersion(t *testing.T) {
 	resource, err := emulator.Start()
 	require.NoError(t, err, "couldn't start cloud spanner emulator")
 
-	defer t.Cleanup(func() {
-		require.NoError(t, emulator.Cleanup(resource), "could not purge spanner emulator")
-	})
+	defer t.Cleanup(
+		func() {
+			require.NoError(t, emulator.Cleanup(resource), "could not purge spanner emulator")
+		},
+	)
 
 	// Now that we've started the emulator container we need to get the host and port
 	// and set the SPANNER_EMULATOR_HOST env var so that we can use it with the API
@@ -234,37 +255,45 @@ func TestSetCurrentVersion(t *testing.T) {
 	err = migration.EnsureMigrationTable(ctx, config, client, migration.SchemaVersionTable)
 	require.NoError(t, err, "could not create schema migrations table")
 	var want int64 = 21
-	_, err = client.ReadWriteTransaction(ctx, func(ctx context.Context, txn *gs.ReadWriteTransaction) error {
-		stmt := gs.Statement{
-			SQL: fmt.Sprintf(`INSERT INTO %s (version) VALUES
+	_, err = client.ReadWriteTransaction(
+		ctx, func(ctx context.Context, txn *gs.ReadWriteTransaction) error {
+			stmt := gs.Statement{
+				SQL: fmt.Sprintf(
+					`INSERT INTO %s (version) VALUES
 								(18),
 								(19),
-                                (20)`, migration.SchemaVersionTable),
-		}
-		rowCount, err := txn.Update(ctx, stmt)
-		if err != nil {
+                                (20)`, migration.SchemaVersionTable,
+				),
+			}
+			rowCount, err := txn.Update(ctx, stmt)
+			if err != nil {
+				return err
+			}
+			require.Equal(t, int64(3), rowCount, "expected 1 row to be updated")
 			return err
-		}
-		require.Equal(t, int64(3), rowCount, "expected 1 row to be updated")
-		return err
-	})
+		},
+	)
 	require.NoError(t, err)
 	err = migration.SetCurrentVersion(ctx, client, migration.SchemaVersionTable, want)
 	require.NoError(t, err)
 
-	iter := client.Single().Query(ctx, gs.Statement{
-		SQL: "select version from public.schema_migrations order by version desc;",
-	})
+	iter := client.Single().Query(
+		ctx, gs.Statement{
+			SQL: "select version from public.schema_migrations order by version desc;",
+		},
+	)
 
 	versions := make([]int64, 0)
-	err = iter.Do(func(r *gs.Row) error {
-		var version int64
-		if err := r.ColumnByName("version", &version); err != nil {
-			return err
-		}
-		versions = append(versions, version)
-		return nil
-	})
+	err = iter.Do(
+		func(r *gs.Row) error {
+			var version int64
+			if err := r.ColumnByName("version", &version); err != nil {
+				return err
+			}
+			versions = append(versions, version)
+			return nil
+		},
+	)
 	require.NoError(t, err)
 	assert.Equal(t, want, versions[0])
 	assert.ElementsMatch(t, []int64{want, 20, 19, 18}, versions)

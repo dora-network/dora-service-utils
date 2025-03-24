@@ -16,7 +16,7 @@ func UserPositionKey(userID string) string {
 }
 
 func ModulePositionKey() string {
-	return fmt.Sprintf("positions")
+	return fmt.Sprint("positions")
 }
 
 func GetUsersPosition(

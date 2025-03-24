@@ -14,7 +14,7 @@ import (
 )
 
 func PricesKey() string {
-	return fmt.Sprintf("prices")
+	return fmt.Sprint("prices")
 }
 
 func GetPrices(
