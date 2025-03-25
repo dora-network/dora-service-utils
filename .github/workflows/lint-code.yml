@@ -1,0 +1,29 @@
+name: Lint-Code
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: github.com/dora-network/
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: false
+      - run: git config --global url.https://$GH_TOKEN@github.com/.insteadOf https://github.com/
+      - name: Install Dependencies
+        run: go mod tidy
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          args: --timeout=10m --out-format=colored-line-number

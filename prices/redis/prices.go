@@ -3,7 +3,6 @@ package redis
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/dora-network/dora-service-utils/prices/types"
 	"time"
 
@@ -14,7 +13,7 @@ import (
 )
 
 func PricesKey() string {
-	return fmt.Sprintf("prices")
+	return "prices"
 }
 
 func GetPrices(
