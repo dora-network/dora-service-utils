@@ -47,7 +47,7 @@ func TestPools(t *testing.T) {
 		FeeFactor:          decimal.MustNew(1, 2),
 		CreatedAt:          time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
 		MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
-		InitialAssetsRatio: 0.8,
+		InitialAssetsRatio: decimal.MustNew(1, 2),
 		DisplayName:        "base-quote-display",
 	}
 
@@ -64,7 +64,7 @@ func TestPools(t *testing.T) {
 		FeeFactor:          decimal.MustNew(1, 2),
 		CreatedAt:          time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
 		MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
-		InitialAssetsRatio: 0.8,
+		InitialAssetsRatio: decimal.MustNew(1, 2),
 		DisplayName:        "base-quote-display",
 	}
 
@@ -142,7 +142,7 @@ func TestPools(t *testing.T) {
 				MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
 				FeesCollectedBase:  133,
 				FeesCollectedQuote: 155,
-				InitialAssetsRatio: 0.8,
+				InitialAssetsRatio: decimal.MustNew(1, 2),
 				DisplayName:        "base-quote-display",
 			}
 
@@ -182,7 +182,7 @@ func TestPools(t *testing.T) {
 				MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
 				FeesCollectedBase:  133,
 				FeesCollectedQuote: 155,
-				InitialAssetsRatio: 0.8,
+				InitialAssetsRatio: decimal.MustNew(1, 2),
 				DisplayName:        "base-quote-display",
 			}
 

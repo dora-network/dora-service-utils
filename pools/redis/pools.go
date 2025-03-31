@@ -150,7 +150,7 @@ func UpdatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout
 			"maturity_at", pool.MaturityAt,
 			"fees_collected_base", pool.FeesCollectedBase,
 			"fees_collected_quote", pool.FeesCollectedQuote,
-			"initial_assets_ratio", pool.InitialAssetsRatio,
+			"initial_assets_ratio", pool.InitialAssetsRatio.String(),
 			"display_name", pool.DisplayName,
 		).Err()
 	}
@@ -188,7 +188,7 @@ func UpdatePoolCmd(
 		"maturity_at", pool.MaturityAt,
 		"fees_collected_base", pool.FeesCollectedBase,
 		"fees_collected_quote", pool.FeesCollectedQuote,
-		"initial_assets_ratio", pool.InitialAssetsRatio,
+		"initial_assets_ratio", pool.InitialAssetsRatio.String(),
 		"display_name", pool.DisplayName,
 	)
 }
