@@ -35,29 +35,37 @@ func TestPools(t *testing.T) {
 	require.NoError(t, err)
 
 	want := types.Pool{
-		PoolID:        "base-quote",
-		BaseAsset:     "base",
-		QuoteAsset:    "quote",
-		IsProductPool: true,
-		AmountShares:  1000000,
-		AmountBase:    1000000,
-		AmountQuote:   1000000,
-		FeeFactor:     decimal.MustNew(1, 2),
-		CreatedAt:     time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
-		MaturityAt:    time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+		PoolID:             "base-quote",
+		BaseAsset:          "base",
+		QuoteAsset:         "quote",
+		IsProductPool:      true,
+		AmountShares:       1000000,
+		AmountBase:         1000000,
+		AmountQuote:        1000000,
+		FeesCollectedBase:  133,
+		FeesCollectedQuote: 155,
+		FeeFactor:          decimal.MustNew(1, 2),
+		CreatedAt:          time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+		MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+		InitialAssetsRatio: decimal.MustNew(1, 2),
+		DisplayName:        "base-quote-display",
 	}
 
 	want1 := types.Pool{
-		PoolID:        "base2-quote2",
-		BaseAsset:     "base2",
-		QuoteAsset:    "quote2",
-		IsProductPool: true,
-		AmountShares:  1000000,
-		AmountBase:    1000000,
-		AmountQuote:   1000000,
-		FeeFactor:     decimal.MustNew(1, 2),
-		CreatedAt:     time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
-		MaturityAt:    time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+		PoolID:             "base2-quote2",
+		BaseAsset:          "base2",
+		QuoteAsset:         "quote2",
+		IsProductPool:      true,
+		AmountShares:       1000000,
+		AmountBase:         1000000,
+		AmountQuote:        1000000,
+		FeesCollectedBase:  133,
+		FeesCollectedQuote: 155,
+		FeeFactor:          decimal.MustNew(1, 2),
+		CreatedAt:          time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+		MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
+		InitialAssetsRatio: decimal.MustNew(1, 2),
+		DisplayName:        "base-quote-display",
 	}
 
 	t.Run(
@@ -77,6 +85,8 @@ func TestPools(t *testing.T) {
 				"maturity_at",
 				"fees_collected_base",
 				"fees_collected_quote",
+				"initial_assets_ratio",
+				"display_name",
 			}
 			var got types.Pool
 			require.NoError(
@@ -130,8 +140,10 @@ func TestPools(t *testing.T) {
 				FeeFactor:          decimal.MustNew(1, 2),
 				CreatedAt:          time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
 				MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
-				FeesCollectedBase:  0,
-				FeesCollectedQuote: 0,
+				FeesCollectedBase:  133,
+				FeesCollectedQuote: 155,
+				InitialAssetsRatio: decimal.MustNew(1, 2),
+				DisplayName:        "base-quote-display",
 			}
 
 			require.NoError(
@@ -168,8 +180,10 @@ func TestPools(t *testing.T) {
 				FeeFactor:          decimal.MustNew(1, 2),
 				CreatedAt:          time.Date(2024, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
 				MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
-				FeesCollectedBase:  0,
-				FeesCollectedQuote: 0,
+				FeesCollectedBase:  133,
+				FeesCollectedQuote: 155,
+				InitialAssetsRatio: decimal.MustNew(1, 2),
+				DisplayName:        "base-quote-display",
 			}
 
 			require.NoError(
@@ -214,6 +228,8 @@ func TestPools(t *testing.T) {
 			assert.Equal(tt, initial.FeeFactor, got.FeeFactor)
 			assert.Equal(tt, initial.CreatedAt, got.CreatedAt)
 			assert.Equal(tt, initial.MaturityAt, got.MaturityAt)
+			assert.Equal(tt, initial.InitialAssetsRatio, got.InitialAssetsRatio)
+			assert.Equal(tt, initial.DisplayName, got.DisplayName)
 		},
 	)
 }

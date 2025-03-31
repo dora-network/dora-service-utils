@@ -26,6 +26,8 @@ var poolKeys = []string{
 	"maturity_at",
 	"fees_collected_base",
 	"fees_collected_quote",
+	"initial_assets_ratio",
+	"display_name",
 }
 
 func PoolKey(poolID string) string {
@@ -148,6 +150,8 @@ func UpdatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout
 			"maturity_at", pool.MaturityAt,
 			"fees_collected_base", pool.FeesCollectedBase,
 			"fees_collected_quote", pool.FeesCollectedQuote,
+			"initial_assets_ratio", pool.InitialAssetsRatio.String(),
+			"display_name", pool.DisplayName,
 		).Err()
 	}
 
@@ -184,6 +188,8 @@ func UpdatePoolCmd(
 		"maturity_at", pool.MaturityAt,
 		"fees_collected_base", pool.FeesCollectedBase,
 		"fees_collected_quote", pool.FeesCollectedQuote,
+		"initial_assets_ratio", pool.InitialAssetsRatio.String(),
+		"display_name", pool.DisplayName,
 	)
 }
 
@@ -219,7 +225,10 @@ func UpdatePoolBalance(
 }
 
 func UpdatePoolBalanceCmd(
-	ctx context.Context, tx redis.Cmdable, poolID string, amountShares, amountBase, amountQuote, feesCollectedBase, feesCollectedQuote uint64,
+	ctx context.Context,
+	tx redis.Cmdable,
+	poolID string,
+	amountShares, amountBase, amountQuote, feesCollectedBase, feesCollectedQuote uint64,
 ) *redisv9.IntCmd {
 	return tx.HSet(
 		ctx, PoolKey(poolID),

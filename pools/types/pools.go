@@ -30,6 +30,8 @@ type Pool struct {
 	FeeFactor          decimal.Decimal `json:"fee_factor" redis:"fee_factor"`
 	CreatedAt          int64           `json:"created_at" redis:"created_at"`
 	MaturityAt         int64           `json:"maturity_at" redis:"maturity_at"`
+	InitialAssetsRatio decimal.Decimal `json:"initial_assets_ratio" redis:"initial_assets_ratio"`
+	DisplayName        string          `json:"display_name" redis:"display_name"`
 }
 
 func (p *Pool) MarshalBinary() ([]byte, error) {
