@@ -1,12 +1,14 @@
 package migration
 
 import (
-	gs "cloud.google.com/go/spanner"
-	"cloud.google.com/go/spanner/admin/database/apiv1/databasepb"
 	"context"
 	"fmt"
 	"io/fs"
 	"log"
+	"strings"
+
+	gs "cloud.google.com/go/spanner"
+	"cloud.google.com/go/spanner/admin/database/apiv1/databasepb"
 
 	"github.com/dora-network/dora-service-utils/spanner"
 )
@@ -51,22 +53,36 @@ func Migrate(ctx context.Context, migrationsFS fs.FS, cfg spanner.Config, client
 			return err
 		}
 
-		req := databasepb.UpdateDatabaseDdlRequest{
-			Database:   cfg.URL(),
-			Statements: stmts,
-		}
-		op, err := client.UpdateDatabaseDdl(ctx, &req)
-		if err != nil {
-			return err
-		}
+		for i, stmt := range stmts {
+			if IsDDL(stmt) {
+				req := databasepb.UpdateDatabaseDdlRequest{
+					Database:   cfg.URL(),
+					Statements: []string{stmt},
+				}
+				op, err := client.UpdateDatabaseDdl(ctx, &req)
+				if err != nil {
+					return err
+				}
 
-		err = op.Wait(ctx)
-		if err != nil && !op.Done() {
-			return fmt.Errorf("failed to apply migration %d: %w", version, err)
-		}
+				err = op.Wait(ctx)
+				if err != nil && !op.Done() {
+					return fmt.Errorf("failed to apply migration %d, statement: %d: %w", version, i+1, err)
+				}
 
-		if err != nil && op.Done() {
-			return fmt.Errorf("migrations applied but with errors %d: %w", version, err)
+				if err != nil && op.Done() {
+					return fmt.Errorf("migration %d, statement %d applied but with errors: %w", version, i+1, err)
+				}
+			} else {
+				// execute the DML statement
+				_, err := client.ReadWriteTransaction(ctx, func(ctx context.Context, tx *gs.ReadWriteTransaction) error {
+					_, err := tx.Update(ctx, gs.NewStatement(stmt))
+					return err
+				})
+				if err != nil {
+					return fmt.Errorf("failed to execute data update for migration %d, statement %d, error: %w",
+						version, i+1, err)
+				}
+			}
 		}
 
 		if err = SetCurrentVersion(ctx, client, SchemaVersionTable, version); err != nil {
@@ -75,6 +91,31 @@ func Migrate(ctx context.Context, migrationsFS fs.FS, cfg spanner.Config, client
 
 		return nil
 	})
+}
+
+func IsDDL(stmt string) bool {
+	sql := strings.ToLower(strings.TrimSpace(stmt))
+	if strings.HasPrefix(sql, "create") {
+		return true
+	}
+
+	if strings.HasPrefix(sql, "alter") {
+		return true
+	}
+
+	if strings.HasPrefix(sql, "drop") {
+		return true
+	}
+
+	if strings.HasPrefix(sql, "grant") {
+		return true
+	}
+
+	if strings.HasPrefix(sql, "revoke") {
+		return true
+	}
+
+	return false
 }
 
 func EnsureMigrationTable(ctx context.Context, config spanner.Config, client spanner.Client, tableName string) error {
@@ -128,7 +169,7 @@ func SetCurrentVersion(ctx context.Context, client spanner.Client, tableName str
 		stmt := gs.Statement{
 			SQL: fmt.Sprintf(`INSERT INTO %s (version) VALUES
                                 ($1)`, tableName),
-			Params: map[string]interface{}{"p1": version},
+			Params: map[string]any{"p1": version},
 		}
 		_, err := txn.Update(ctx, stmt)
 		if err != nil {
@@ -136,7 +177,6 @@ func SetCurrentVersion(ctx context.Context, client spanner.Client, tableName str
 		}
 		return err
 	})
-
 	if err != nil {
 		return err
 	}

@@ -10,3 +10,7 @@ create table addresses (
 )
 
 -- +end
+-- +start
+insert into addresses (id, address1, address2, address3, city, postcode)
+values (100, '100 Some Street', 'Some place', 'Somewhere', 'London', 'N1 2AB')
+-- +end

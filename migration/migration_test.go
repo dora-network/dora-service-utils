@@ -1,20 +1,21 @@
 package migration_test
 
 import (
-	gs "cloud.google.com/go/spanner"
-	"cloud.google.com/go/spanner/admin/instance/apiv1/instancepb"
 	"context"
 	"embed"
 	"fmt"
+	"log"
+	"os"
+	"testing"
+	"time"
+
+	gs "cloud.google.com/go/spanner"
+	"cloud.google.com/go/spanner/admin/instance/apiv1/instancepb"
 	"github.com/dora-network/dora-service-utils/migration"
 	"github.com/dora-network/dora-service-utils/spanner"
 	"github.com/dora-network/dora-service-utils/testing/emulators"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"log"
-	"os"
-	"testing"
-	"time"
 )
 
 //go:embed test_migrations/*.sql
@@ -80,7 +81,7 @@ func Test_Migrate(t *testing.T) {
 	iter := client.Single().Query(
 		ctx, gs.Statement{
 			SQL:    "select * from information_schema.tables where  table_schema = 'public' and table_type = 'BASE TABLE';",
-			Params: map[string]interface{}{"p1": migration.SchemaVersionTable},
+			Params: map[string]any{"p1": migration.SchemaVersionTable},
 		},
 	)
 
@@ -139,7 +140,7 @@ func TestEnsureMigrationTable(t *testing.T) {
 	iter := client.Single().Query(
 		ctx, gs.Statement{
 			SQL:    "select * from information_schema.tables where table_name = $1;",
-			Params: map[string]interface{}{"p1": migration.SchemaVersionTable},
+			Params: map[string]any{"p1": migration.SchemaVersionTable},
 		},
 	)
 	defer iter.Stop()
@@ -204,7 +205,7 @@ func TestGetCurrentVersion(t *testing.T) {
 								(19),
                                 ($1)`, migration.SchemaVersionTable,
 				),
-				Params: map[string]interface{}{"p1": want},
+				Params: map[string]any{"p1": want},
 			}
 			rowCount, err := txn.Update(ctx, stmt)
 			if err != nil {
