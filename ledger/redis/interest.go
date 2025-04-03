@@ -3,16 +3,27 @@ package redis
 import (
 	"context"
 	"fmt"
-	"github.com/cenkalti/backoff/v4"
-	"github.com/dora-network/dora-service-utils/ledger/types"
-	"github.com/dora-network/dora-service-utils/redis"
-	redisv9 "github.com/redis/go-redis/v9"
 	"strconv"
 	"time"
 
-	gtypes "github.com/dora-network/bond-api-golang/graph/types"
-	"github.com/dora-network/bond-api-golang/match/helpers"
+	"github.com/cenkalti/backoff/v4"
+	"github.com/dora-network/dora-service-utils/helpers"
+	"github.com/dora-network/dora-service-utils/ledger/types"
+	"github.com/dora-network/dora-service-utils/redis"
+	redisv9 "github.com/redis/go-redis/v9"
 )
+
+// copied from graphtypes, but added user and time fields
+// TODO: Do we still use this format for txs?
+type TxLendingInterestAccrual struct {
+	User string
+	Time int64
+
+	FromUnixTime int    `json:"fromUnixTime" firestore:"fromUnixTime" graphql:"fromUnixTime"`
+	ToUnixTime   int    `json:"toUnixTime" firestore:"toUnixTime" graphql:"toUnixTime"`
+	Earned       string `json:"earned" firestore:"earned" graphql:"earned"`
+	Owed         string `json:"owed" firestore:"owed" graphql:"owed"`
+}
 
 func UserInterestKey(userID string) string {
 	return fmt.Sprintf("interest:users:%s", userID)
@@ -173,7 +184,7 @@ func setUserInterestTx(ctx context.Context, tx redis.Cmdable, userID string, int
 	return nil
 }
 
-func AccrueLendingInterest(ctx context.Context, rdb redis.Client, timeout time.Duration, userID string, assetData helpers.AssetData, flatRate float64) (*gtypes.Transaction, error) {
+func AccrueLendingInterest(ctx context.Context, rdb redis.Client, timeout time.Duration, userID string, assetData helpers.AssetData, flatRate float64) (*TxLendingInterestAccrual, error) {
 	// this has to be calculated within one transaction, we don't want positions changing between reads etc.
 	// as this could lead to inconsistencies
 	watch := []string{
@@ -183,7 +194,7 @@ func AccrueLendingInterest(ctx context.Context, rdb redis.Client, timeout time.D
 		ModulePositionKey(),
 	}
 
-	var accrualTransaction *gtypes.Transaction
+	var accrualTransaction *TxLendingInterestAccrual
 
 	txFunc := func(tx *redisv9.Tx) error {
 		transaction, err := accrueLendingInterestTx(ctx, tx, userID, assetData, flatRate)
@@ -203,9 +214,9 @@ func AccrueLendingInterest(ctx context.Context, rdb redis.Client, timeout time.D
 	return accrualTransaction, nil
 }
 
-func AccrueAllLendingInterest(ctx context.Context, rdb redis.Client, timeout time.Duration, assetData helpers.AssetData, flatRate float64, watch []string, users ...string) ([]*gtypes.Transaction, error) {
+func AccrueAllLendingInterest(ctx context.Context, rdb redis.Client, timeout time.Duration, assetData helpers.AssetData, flatRate float64, watch []string, users ...string) ([]TxLendingInterestAccrual, error) {
 	watch = append(watch, UserInterestKey(MODULE), ModulePositionKey())
-	var accrualTransactions []*gtypes.Transaction
+	var accrualTransactions []TxLendingInterestAccrual
 
 	txFunc := func(tx *redisv9.Tx) error {
 		for _, userID := range users {
@@ -214,7 +225,7 @@ func AccrueAllLendingInterest(ctx context.Context, rdb redis.Client, timeout tim
 				return err
 			}
 
-			accrualTransactions = append(accrualTransactions, transaction)
+			accrualTransactions = append(accrualTransactions, *transaction)
 		}
 
 		return nil
@@ -228,13 +239,13 @@ func AccrueAllLendingInterest(ctx context.Context, rdb redis.Client, timeout tim
 	return accrualTransactions, nil
 }
 
-func accrueLendingInterestTx(ctx context.Context, tx redis.Cmdable, userID string, assetData helpers.AssetData, flatRate float64) (*gtypes.Transaction, error) {
+func accrueLendingInterestTx(ctx context.Context, tx redis.Cmdable, userID string, assetData helpers.AssetData, flatRate float64) (*TxLendingInterestAccrual, error) {
 	now := time.Now()
 
 	// first get the module positions
 	var (
 		moduleInterest     types.Interest
-		accrualTransaction *gtypes.Transaction
+		accrualTransaction TxLendingInterestAccrual
 	)
 	interest, err := getInterestTx(ctx, tx, MODULE)
 	if err != nil {
@@ -308,14 +319,14 @@ func accrueLendingInterestTx(ctx context.Context, tx redis.Cmdable, userID strin
 		return nil, err
 	}
 
-	accrualTransaction = gtypes.NewTransaction("", "", userID, int(now.Unix()), "", "").WithTxLendingInterestAccrual(
-		&gtypes.TxLendingInterestAccrual{
-			FromUnixTime: int(userInterest.LastUpdated.Unix()),
-			ToUnixTime:   int(now.Unix()),
-			Earned:       "0",
-			Owed:         strconv.FormatFloat(float64(userInterest.Owed), 'f', -1, 64),
-		},
-	)
+	accrualTransaction = TxLendingInterestAccrual{
+		User:         userID,
+		Time:         now.Unix(),
+		FromUnixTime: int(userInterest.LastUpdated.Unix()),
+		ToUnixTime:   int(now.Unix()),
+		Earned:       "0",
+		Owed:         strconv.FormatFloat(float64(userInterest.Owed), 'f', -1, 64),
+	}
 
-	return accrualTransaction, nil
+	return &accrualTransaction, nil
 }
