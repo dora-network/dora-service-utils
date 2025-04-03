@@ -3,15 +3,16 @@ package redis
 import (
 	"context"
 	"fmt"
-	"github.com/cenkalti/backoff/v4"
-	"github.com/dora-network/dora-service-utils/ledger/types"
-	"github.com/dora-network/dora-service-utils/redis"
-	redisv9 "github.com/redis/go-redis/v9"
 	"strconv"
 	"time"
 
+	"github.com/cenkalti/backoff/v4"
+	"github.com/dora-network/dora-service-utils/helpers"
+	"github.com/dora-network/dora-service-utils/ledger/types"
+	"github.com/dora-network/dora-service-utils/redis"
+	redisv9 "github.com/redis/go-redis/v9"
+
 	gtypes "github.com/dora-network/bond-api-golang/graph/types"
-	"github.com/dora-network/bond-api-golang/match/helpers"
 )
 
 func UserInterestKey(userID string) string {
