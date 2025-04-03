@@ -192,7 +192,7 @@ func (p *Pool) SubAmount(amount types.Amount) error {
 }
 
 // AddLiquidity to a pool, based on the assets given. Pool is mutated.
-func (p *Pool) AddLiquidity(baseIn types.Amount, desiredRatio *big.Float) (
+func (p *Pool) AddLiquidity(baseIn types.Amount) (
 	quoteIn types.Amount,
 	sharesOut types.Amount,
 	err error,
@@ -214,7 +214,8 @@ func (p *Pool) AddLiquidity(baseIn types.Amount, desiredRatio *big.Float) (
 	poolSharesF := new(big.Float).SetInt64(int64(p.AmountShares))
 	if math.IsFloatZero(poolBaseF) {
 		// Calculate quote assets in
-		quoteInAmtF := math.MulF(baseInF, desiredRatio)
+		ratio, _ := p.InitialAssetsRatio.Float64()
+		quoteInAmtF := math.MulFloat64ByBigFloat(ratio, baseInF)
 		quoteIn = types.NewAmount(p.QuoteAsset, math.Int(quoteInAmtF).Uint64())
 		// Calculate shares out
 		sharesOutAmt := math.Int(math.AddF(baseInF, quoteInAmtF))
