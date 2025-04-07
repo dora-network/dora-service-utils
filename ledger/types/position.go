@@ -9,20 +9,20 @@ import (
 // Position contains a snapshot of all of a user's assets and debts.
 type Position struct {
 	// UserID identifies the owner of the position
-	UserID string `json:"user_id" redis:"user_id"`
+	UserID string `json:"user_id" redis:"user_id" spanner:"user_id"`
 
 	// Assets owned (including bonds and currencies). Negative values indicate borrows.
-	Owned *Balances `json:"owned" redis:"owned"`
+	Owned *Balances `json:"owned" redis:"owned" spanner:"owned"`
 	// Assets locked as potential inputs to user open orders. Subset of positive Owned amounts.
-	Locked *Balances `json:"locked" redis:"locked"`
+	Locked *Balances `json:"locked" redis:"locked" spanner:"locked"`
 	// Assets supplied to module but not yet withdrawn.
-	Supplied *Balances `json:"supplied" redis:"supplied"`
+	Supplied *Balances `json:"supplied" redis:"supplied" spanner:"supplied"`
 	// Effects of simple stablecoin equivalence on user balance.
 	// Positive values indicate assets gained, and negative values indicate assets lost.
 	// Assets are lost and gained 1:1, so the sum of positive and negative amounts after decimals will always be 0.
-	SSEQ *Balances `json:"sseq" redis:"sseq"`
+	SSEQ *Balances `json:"sseq" redis:"sseq" spanner:"sseq"`
 	// Assets which have been withheld from a user's Owned balance for technical reasons.
-	Inactive *Balances `json:"inactive" redis:"inactive"`
+	Inactive *Balances `json:"inactive" redis:"inactive" spanner:"inactive"`
 	// InterestSources contains supplemental information about Owned "Interest" balances related to coupon payments.
 	// We recycle the Balances struct here, containing map[string]int64, but rather than representing a set of
 	// asset balances like map[AssetID]Amount, each entry in this map represents the amount of AssetID="Interest"
@@ -32,16 +32,16 @@ type Position struct {
 	// makes the key pass asset ID validation rules, even though it is not any asset's AssetID.
 	// Also note that a negative value (for example, -789) is valid here and would refer to the user owing
 	// interest due to having bought a bond mid-coupon-period.
-	InterestSources *Balances `json:"interest_sources" redis:"interest_sources"`
+	InterestSources *Balances `json:"interest_sources" redis:"interest_sources" spanner:"interest_sources"`
 
 	// Native stablecoin asset which the user originally deposited and will prefer for withdrawals
-	NativeAsset string `json:"native_asset" redis:"native_asset"`
+	NativeAsset string `json:"native_asset" redis:"native_asset" spanner:"native_asset"`
 
 	// Unix time when position was last updated. Should only be set when position is modified by a transaction.
-	LastUpdated int64 `json:"last_updated" redis:"last_updated"`
+	LastUpdated int64 `json:"last_updated" redis:"last_updated" spanner:"last_updated"`
 	// Sequence number of the position. A user's first position on the platform has sequence number 1,
 	// and each time their position is modified by a transaction, it increments. Ensures completeness or records.
-	Sequence uint64 `json:"sequence" redis:"sequence"`
+	Sequence uint64 `json:"sequence" redis:"sequence" spanner:"sequence"`
 
 	// Internal usage only - supports isModified by remembering the entire position's original string representation
 	original         string

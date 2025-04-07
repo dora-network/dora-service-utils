@@ -4,7 +4,7 @@ import "github.com/goccy/go-json"
 
 // Balances contains zero or more (AssetID string, Amount int64) key-value pairs.
 type Balances struct {
-	Bals map[string]int64 `json:"bals" redis:"bals"`
+	Bals map[string]int64 `json:"bals" redis:"bals" spanner:"bals"`
 }
 
 func (b *Balances) MarshalBinary() ([]byte, error) {
