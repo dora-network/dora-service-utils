@@ -28,6 +28,7 @@ var poolKeys = []string{
 	"fees_collected_quote",
 	"initial_assets_ratio",
 	"display_name",
+	"sequence",
 }
 
 func PoolKey(poolID string) string {
@@ -152,6 +153,7 @@ func UpdatePool(ctx context.Context, rdb redis.Client, pool *types.Pool, timeout
 			"fees_collected_quote", pool.FeesCollectedQuote,
 			"initial_assets_ratio", pool.InitialAssetsRatio.String(),
 			"display_name", pool.DisplayName,
+			"sequence", pool.Sequence,
 		).Err()
 	}
 
@@ -190,13 +192,14 @@ func UpdatePoolCmd(
 		"fees_collected_quote", pool.FeesCollectedQuote,
 		"initial_assets_ratio", pool.InitialAssetsRatio.String(),
 		"display_name", pool.DisplayName,
+		"sequence", pool.Sequence,
 	)
 }
 
 func UpdatePoolBalance(
 	ctx context.Context,
 	rdb redis.Client,
-	poolID string, amountShares, amountBase, amountQuote, feesCollectedBase, feesCollectedQuote uint64,
+	poolID string, amountShares, amountBase, amountQuote, feesCollectedBase, feesCollectedQuote, sequence uint64,
 	timeout time.Duration,
 ) error {
 	txFunc := func(tx *redisv9.Tx) error {
@@ -212,6 +215,7 @@ func UpdatePoolBalance(
 			"amount_quote", amountQuote,
 			"fees_collected_base", feesCollectedBase,
 			"fees_collected_quote", feesCollectedQuote,
+			"sequence", sequence,
 		).Err()
 	}
 
@@ -228,7 +232,7 @@ func UpdatePoolBalanceCmd(
 	ctx context.Context,
 	tx redis.Cmdable,
 	poolID string,
-	amountShares, amountBase, amountQuote, feesCollectedBase, feesCollectedQuote uint64,
+	amountShares, amountBase, amountQuote, feesCollectedBase, feesCollectedQuote, sequence uint64,
 ) *redisv9.IntCmd {
 	return tx.HSet(
 		ctx, PoolKey(poolID),
@@ -242,6 +246,7 @@ func UpdatePoolBalanceCmd(
 		"amount_quote", amountQuote,
 		"fees_collected_base", feesCollectedBase,
 		"fees_collected_quote", feesCollectedQuote,
+		"sequence", sequence,
 	)
 }
 

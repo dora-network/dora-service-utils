@@ -32,6 +32,7 @@ type Pool struct {
 	MaturityAt         int64           `json:"maturity_at" redis:"maturity_at"`
 	InitialAssetsRatio decimal.Decimal `json:"initial_assets_ratio" redis:"initial_assets_ratio"`
 	DisplayName        string          `json:"display_name" redis:"display_name"`
+	Sequence           uint64          `json:"sequence" redis:"sequence"`
 }
 
 func (p *Pool) MarshalBinary() ([]byte, error) {
@@ -58,9 +59,11 @@ func (p *Pool) AddAccumulatedFees(bal *types.Balance) error {
 	switch bal.Asset {
 	case p.BaseAsset:
 		p.FeesCollectedBase += bal.Amount
+		p.Sequence++
 		return nil
 	case p.QuoteAsset:
 		p.FeesCollectedQuote += bal.Amount
+		p.Sequence++
 		return nil
 	default:
 		return errors.New(errors.InvalidInputError, "did not match pool assets")
@@ -168,6 +171,7 @@ func (p *Pool) AddAmount(amount types.Amount) error {
 	} else {
 		return errors.Data("AddAsset: asset %s not found in pool %s", amount.AssetID, p.PoolID)
 	}
+	p.Sequence++
 	return nil
 }
 
@@ -188,6 +192,7 @@ func (p *Pool) SubAmount(amount types.Amount) error {
 	} else {
 		return errors.Data("SubAmount: asset %s not found in pool %s", amount.AssetID, p.PoolID)
 	}
+	p.Sequence++
 	return nil
 }
 
@@ -240,6 +245,7 @@ func (p *Pool) AddLiquidity(baseIn types.Amount) (
 	if p.AmountQuote, err = math.CheckedAddU64(p.AmountQuote, quoteIn.Amount); err != nil {
 		return types.Amount{}, types.Amount{}, err
 	}
+	p.Sequence++
 	return quoteIn, sharesOut, nil
 }
 
@@ -281,6 +287,7 @@ func (p *Pool) RemoveLiquidity(sharesIn types.Amount) ([]types.Amount, error) {
 	if p.AmountQuote, err = math.CheckedSubU64(p.AmountQuote, quoteOut.Amount); err != nil {
 		return nil, err
 	}
+	p.Sequence++
 
 	return []types.Amount{baseOut, quoteOut}, nil
 }

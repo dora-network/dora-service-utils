@@ -78,6 +78,7 @@ func TestAddLiquidityFreshPool(t *testing.T) {
 		AmountQuote:        0,
 		AmountShares:       0,
 		InitialAssetsRatio: decimal.MustParse("0.8"),
+		Sequence:           3,
 	}
 
 	addBond := ltypes.NewAmount(consts.BondID, 1000)
@@ -88,6 +89,7 @@ func TestAddLiquidityFreshPool(t *testing.T) {
 	require.Equal(t, uint64(1000), p.AmountBase)
 	require.Equal(t, uint64(800), p.AmountQuote)
 	require.Equal(t, uint64(1800), p.AmountShares)
+	require.Equal(t, uint64(4), p.Sequence)
 
 }
 
@@ -101,6 +103,7 @@ func TestRemoveLiquidity(t *testing.T) {
 		QuoteAsset:    consts.StableID,
 		AmountQuote:   10_000,
 		AmountShares:  10_010,
+		Sequence:      3,
 	}
 
 	sharesToRemove := ltypes.NewAmount(poolID, 3003)
@@ -115,4 +118,5 @@ func TestRemoveLiquidity(t *testing.T) {
 
 	require.Equal(t, uint64(7), p.AmountBase)
 	require.Equal(t, uint64(7000), p.AmountQuote)
+	require.Equal(t, uint64(4), p.Sequence)
 }
