@@ -49,6 +49,7 @@ func TestPools(t *testing.T) {
 		MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
 		InitialAssetsRatio: decimal.MustNew(1, 2),
 		DisplayName:        "base-quote-display",
+		Sequence:           1,
 	}
 
 	want1 := types.Pool{
@@ -66,6 +67,7 @@ func TestPools(t *testing.T) {
 		MaturityAt:         time.Date(2034, 8, 12, 20, 0, 0, 0, time.UTC).UnixMilli(),
 		InitialAssetsRatio: decimal.MustNew(1, 2),
 		DisplayName:        "base-quote-display",
+		Sequence:           1,
 	}
 
 	t.Run(
@@ -87,6 +89,7 @@ func TestPools(t *testing.T) {
 				"fees_collected_quote",
 				"initial_assets_ratio",
 				"display_name",
+				"sequence",
 			}
 			var got types.Pool
 			require.NoError(
@@ -144,6 +147,7 @@ func TestPools(t *testing.T) {
 				FeesCollectedQuote: 155,
 				InitialAssetsRatio: decimal.MustNew(1, 2),
 				DisplayName:        "base-quote-display",
+				Sequence:           1,
 			}
 
 			require.NoError(
@@ -184,6 +188,7 @@ func TestPools(t *testing.T) {
 				FeesCollectedQuote: 155,
 				InitialAssetsRatio: decimal.MustNew(1, 2),
 				DisplayName:        "base-quote-display",
+				Sequence:           1,
 			}
 
 			require.NoError(
@@ -207,7 +212,7 @@ func TestPools(t *testing.T) {
 
 			require.NoError(
 				t,
-				redis.UpdatePoolBalance(ctx, rdb, "base-quote", 10000002, 10000001, 10000001, 0, 0, time.Second),
+				redis.UpdatePoolBalance(ctx, rdb, "base-quote", 10000002, 10000001, 10000001, 0, 0, 1, time.Second),
 			)
 			got, err := redis.GetPool(
 				ctx,
