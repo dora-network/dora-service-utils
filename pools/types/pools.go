@@ -525,7 +525,7 @@ func (p *Pool) simulateYieldPoolSwap(balanceIn *types.Balance) (*types.Balance, 
 	return balanceOut, balanceFee, nil
 }
 
-func (p *Pool) SimulateSwapPrice(isSell bool, balIn *types.Balance) (float64, error) {
+func (p *Pool) SimulateSwapPrice(baseAssetID string, balIn *types.Balance) (float64, error) {
 	var (
 		err    error
 		balOut *types.Balance
@@ -537,7 +537,7 @@ func (p *Pool) SimulateSwapPrice(isSell bool, balIn *types.Balance) (float64, er
 	}
 
 	return math.ExecutedPrice(
-		isSell,
+		balIn.Asset == baseAssetID,
 		balIn.Amount,
 		balOut.Amount,
 	), nil
