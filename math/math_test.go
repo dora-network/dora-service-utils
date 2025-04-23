@@ -395,10 +395,48 @@ func TestExchangeRate_ValidForBigInt(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := math.ExchangeRate(tt.args.amountIn, tt.args.amountOut, tt.args.exponentIn, tt.args.exponentOut)
-			require.NoError(t, err)
-			require.Equal(t, got.String(), tt.want.String(), "Want: %s got: %s", tt.want.String(), got.String())
-		})
+		t.Run(
+			tt.name, func(t *testing.T) {
+				got, err := math.ExchangeRate(
+					tt.args.amountIn,
+					tt.args.amountOut,
+					tt.args.exponentIn,
+					tt.args.exponentOut,
+				)
+				require.NoError(t, err)
+				require.Equal(t, got.String(), tt.want.String(), "Want: %s got: %s", tt.want.String(), got.String())
+			},
+		)
+	}
+}
+
+func TestExecutedPrice(t *testing.T) {
+	tcs := []struct {
+		title         string
+		balanceInBase bool
+		balanceIn     uint64
+		balanceOut    uint64
+	}{
+		{
+			"balance in = base",
+			true,
+			1000,
+			890,
+		},
+		{
+			"balance in = quote",
+			false,
+			890,
+			1000,
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(
+			tc.title, func(t *testing.T) {
+				result := math.ExecutedPrice(tc.balanceInBase, tc.balanceIn, tc.balanceOut)
+				require.Equal(t, 0.89, result)
+			},
+		)
 	}
 }
