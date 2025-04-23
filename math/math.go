@@ -347,9 +347,9 @@ func ExecutedPrice(balanceInBase bool, balanceIn, balanceOut uint64) float64 {
 	if balanceIn == 0 || balanceOut == 0 {
 		return 1 // Edge cases return default price
 	}
-	// base_price = base / quote
+	// base_price = quote / base
 	if balanceInBase {
-		return float64(balanceIn) / float64(balanceOut)
+		return float64(balanceOut) / float64(balanceIn)
 	}
-	return float64(balanceOut) / float64(balanceIn)
+	return float64(balanceIn) / float64(balanceOut)
 }
