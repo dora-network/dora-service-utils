@@ -1,13 +1,15 @@
 package emulators
 
 import (
+	"context"
+	"fmt"
+
 	"cloud.google.com/go/spanner"
 	database "cloud.google.com/go/spanner/admin/database/apiv1"
 	"cloud.google.com/go/spanner/admin/database/apiv1/databasepb"
 	instance "cloud.google.com/go/spanner/admin/instance/apiv1"
 	"cloud.google.com/go/spanner/admin/instance/apiv1/instancepb"
-	"context"
-	"fmt"
+
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
 )
@@ -49,7 +51,6 @@ func (s *SpannerEmulator) Start() (*dockertest.Resource, error) {
 		// do not auto restart the container we created for the test
 		config.RestartPolicy = docker.RestartPolicy{Name: "no"}
 	})
-
 	if err != nil {
 		return nil, err
 	}

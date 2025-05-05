@@ -3,11 +3,11 @@ package redis
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/cenkalti/backoff/v4"
 	"github.com/dora-network/dora-service-utils/orderbook"
 	"github.com/redis/go-redis/v9"
-	"strings"
 )
 
 // SequenceNumberKey returns the key for the sequence number of a user.

@@ -3,8 +3,9 @@ package redis
 import (
 	"context"
 	"errors"
-	"github.com/dora-network/dora-service-utils/prices/types"
 	"time"
+
+	"github.com/dora-network/dora-service-utils/prices/types"
 
 	"github.com/cenkalti/backoff/v4"
 	redisv9 "github.com/redis/go-redis/v9"

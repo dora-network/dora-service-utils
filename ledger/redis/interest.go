@@ -92,7 +92,6 @@ func getInterestTx(ctx context.Context, tx redis.Cmdable, keys ...string) ([]typ
 		}
 		return nil
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -288,7 +287,6 @@ func accrueLendingInterestTx(ctx context.Context, tx redis.Cmdable, userID strin
 
 	var userInterest types.Interest
 	interest, err = getInterestTx(ctx, tx, userID)
-
 	if err != nil {
 		return nil, err
 	}

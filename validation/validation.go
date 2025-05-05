@@ -1,9 +1,10 @@
 package validation
 
 import (
+	"strings"
+
 	"github.com/dora-network/dora-service-utils/errors"
 	"github.com/govalues/decimal"
-	"strings"
 )
 
 func ValidateDecimalIsInt(value interface{}) error {

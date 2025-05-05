@@ -2,10 +2,11 @@ package kafka
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestConsumerGroup(t *testing.T) {

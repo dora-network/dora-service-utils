@@ -2,12 +2,13 @@ package redis
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/dora-network/dora-service-utils/ledger/types"
 	"github.com/dora-network/dora-service-utils/testing/integration"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func TestUserInterest_Redis(t *testing.T) {

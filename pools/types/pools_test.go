@@ -1,12 +1,13 @@
 package types_test
 
 import (
+	"testing"
+
 	ltypes "github.com/dora-network/dora-service-utils/ledger/types"
 	"github.com/dora-network/dora-service-utils/pools/types"
 	"github.com/dora-network/dora-service-utils/testing/consts"
 	"github.com/govalues/decimal"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestPool_Misc(t *testing.T) {
@@ -90,7 +91,6 @@ func TestAddLiquidityFreshPool(t *testing.T) {
 	require.Equal(t, uint64(800), p.AmountQuote)
 	require.Equal(t, uint64(1800), p.AmountShares)
 	require.Equal(t, uint64(4), p.Sequence)
-
 }
 
 func TestRemoveLiquidity(t *testing.T) {

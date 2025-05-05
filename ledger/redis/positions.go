@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/cenkalti/backoff/v4"
 	"github.com/dora-network/dora-service-utils/ledger/types"
 	"github.com/dora-network/dora-service-utils/redis"
 	redisv9 "github.com/redis/go-redis/v9"
-	"time"
 )
 
 func UserPositionKey(userID string) string {

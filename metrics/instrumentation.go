@@ -1,17 +1,20 @@
 package metrics
 
 import (
-	"github.com/prometheus/client_golang/prometheus"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 // InstrumentationType is the type of instrumentation the metric is capturing
 // Use this type to define your own instrumentation types e.g.:
 // const (
-//     InstrumentationTypeHttpRequests InstrumentationType = iota
-//     InstrumentationTypeDatabaseQueries
-//     InstrumentationTypeCacheHits
-//     InstrumentationTypeCacheMisses
+//
+//	InstrumentationTypeHttpRequests InstrumentationType = iota
+//	InstrumentationTypeDatabaseQueries
+//	InstrumentationTypeCacheHits
+//	InstrumentationTypeCacheMisses
+//
 // )
 type InstrumentationType uint64
 

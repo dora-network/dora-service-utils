@@ -2,14 +2,15 @@ package redis_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/dora-network/dora-service-utils/prices/redis"
 	"github.com/dora-network/dora-service-utils/prices/types"
 	"github.com/dora-network/dora-service-utils/ptr"
 	"github.com/dora-network/dora-service-utils/testing/consts"
 	"github.com/dora-network/dora-service-utils/testing/integration"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func TestPrices(t *testing.T) {

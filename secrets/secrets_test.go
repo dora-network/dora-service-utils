@@ -3,13 +3,14 @@ package secrets_test
 import (
 	"context"
 	"fmt"
-	"github.com/dora-network/dora-service-utils/secrets"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"os"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/dora-network/dora-service-utils/secrets"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSecrets(t *testing.T) {

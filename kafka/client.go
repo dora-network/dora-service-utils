@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+
 	"github.com/twmb/franz-go/pkg/kgo"
 	"github.com/twmb/franz-go/pkg/sasl/plain"
 )

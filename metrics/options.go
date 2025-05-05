@@ -1,15 +1,18 @@
 package metrics
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog"
-	"net/http"
-	"time"
 )
 
-type Option func(*Server)
-type InstrumentationOption func(instrumentation *Instrumentation)
+type (
+	Option                func(*Server)
+	InstrumentationOption func(instrumentation *Instrumentation)
+)
 
 func WithLogger(logger zerolog.Logger) Option {
 	return func(s *Server) {

@@ -3,6 +3,9 @@ package cache_test
 import (
 	"context"
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/cenkalti/backoff/v4"
 	"github.com/dora-network/dora-service-utils/cache"
 	"github.com/dora-network/dora-service-utils/kafka"
@@ -10,8 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"testing"
-	"time"
 )
 
 func TestCache(t *testing.T) {

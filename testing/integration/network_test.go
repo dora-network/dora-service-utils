@@ -2,6 +2,9 @@ package integration_test
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
@@ -9,13 +12,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"testing"
-	"time"
 )
 
-var (
-	timeout = time.Minute
-)
+var timeout = time.Minute
 
 func TestDoraNetwork(t *testing.T) {
 	dn, err := integration.NewDoraNetwork(t)
@@ -74,7 +73,7 @@ func TestDoraNetwork_CreateKafkaResource(t *testing.T) {
 				t.Logf("Error fetching records: %v", err)
 			}
 		}
-		//assert.Len(t, fetches.Errors(), 0)
+		// assert.Len(t, fetches.Errors(), 0)
 		iter := fetches.RecordIter()
 		for !iter.Done() {
 			count++

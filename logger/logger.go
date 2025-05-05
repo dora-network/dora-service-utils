@@ -1,16 +1,15 @@
 package logger
 
 import (
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/diode"
 	"log"
 	"os"
 	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/diode"
 )
 
-var (
-	logFile *os.File
-)
+var logFile *os.File
 
 // New creates a new zerolog logger with the given log level and log file path.
 func New(logLevel, logFilePath string, writeToConsole bool) (zerolog.Logger, error) {
@@ -27,7 +26,7 @@ func New(logLevel, logFilePath string, writeToConsole bool) (zerolog.Logger, err
 		return zerolog.New(multi).Level(lvl).With().Timestamp().Logger(), nil
 	}
 
-	logFile, err = os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	logFile, err = os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o666)
 	if err != nil {
 		return zerolog.Nop(), err
 	}
@@ -77,7 +76,7 @@ func NewThreadSafeLogger(logLevel, logFilePath string, writeToConsole bool) (zer
 		return zerolog.New(multi).Level(lvl).With().Timestamp().Logger(), nil
 	}
 
-	logFile, err = os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	logFile, err = os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o666)
 	if err != nil {
 		return zerolog.Nop(), err
 	}

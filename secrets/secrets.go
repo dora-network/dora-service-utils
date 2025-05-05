@@ -1,11 +1,12 @@
 package secrets
 
 import (
-	sm "cloud.google.com/go/secretmanager/apiv1"
-	smpb "cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
 	"context"
 	"fmt"
 	"os"
+
+	sm "cloud.google.com/go/secretmanager/apiv1"
+	smpb "cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
 )
 
 const (

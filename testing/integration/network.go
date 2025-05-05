@@ -1,21 +1,23 @@
 package integration
 
 import (
+	"context"
+	"fmt"
+	"os"
+	"testing"
+
 	gspanner "cloud.google.com/go/spanner"
 	database "cloud.google.com/go/spanner/admin/database/apiv1"
 	"cloud.google.com/go/spanner/admin/database/apiv1/databasepb"
 	instance "cloud.google.com/go/spanner/admin/instance/apiv1"
 	"cloud.google.com/go/spanner/admin/instance/apiv1/instancepb"
-	"context"
-	"fmt"
+
 	"github.com/dora-network/dora-service-utils/spanner"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
 	redisv9 "github.com/redis/go-redis/v9"
 	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"os"
-	"testing"
 )
 
 type DoraNetwork struct {

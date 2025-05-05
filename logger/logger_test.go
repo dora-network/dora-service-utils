@@ -1,12 +1,13 @@
 package logger_test
 
 import (
-	"github.com/dora-network/dora-service-utils/logger"
-	"github.com/stretchr/testify/require"
 	"os"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/dora-network/dora-service-utils/logger"
+	"github.com/stretchr/testify/require"
 )
 
 func TestLogger(t *testing.T) {

@@ -1,10 +1,11 @@
 package decimal_test
 
 import (
+	"testing"
+
 	mdecimal "github.com/dora-network/dora-service-utils/math/decimal"
 	"github.com/govalues/decimal"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestDecimalComparisons(t *testing.T) {

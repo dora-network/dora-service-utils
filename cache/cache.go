@@ -3,10 +3,11 @@ package cache
 import (
 	"context"
 	"errors"
+	"sync"
+
 	"github.com/dora-network/dora-service-utils/kafka"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"github.com/twmb/franz-go/pkg/sasl/plain"
-	"sync"
 )
 
 // Cache is a generic in-memory cache that can be used to store data fetched from Kafka

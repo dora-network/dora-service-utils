@@ -2,11 +2,12 @@ package cache
 
 import (
 	"context"
+	"os"
+	"time"
+
 	"github.com/dora-network/dora-service-utils/kafka"
 	"github.com/rs/zerolog"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"os"
-	"time"
 )
 
 type options[K comparable, V any] struct {

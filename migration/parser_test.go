@@ -2,9 +2,10 @@ package migration_test
 
 import (
 	"embed"
+	"testing"
+
 	"github.com/dora-network/dora-service-utils/migration"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 //go:embed test_parser/*.sql
