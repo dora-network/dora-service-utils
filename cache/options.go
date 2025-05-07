@@ -162,6 +162,7 @@ func processRecordsFunc[K comparable, V any](ctx context.Context, _ time.Duratio
 					return partition.Err
 				}
 				for _, record := range partition.Records {
+
 					logger.Info().
 						Str("topic", topic.Topic).
 						Int32("partition", partition.Partition).

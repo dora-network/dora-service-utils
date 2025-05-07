@@ -1,4 +1,5 @@
 .idea
 .env
 secrets/service-account.json
-
+*.pdf
+.vscode
