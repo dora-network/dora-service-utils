@@ -14,7 +14,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/googleapis/gax-go/v2 v2.14.1
 	github.com/govalues/decimal v0.1.36
-	github.com/maxbrunsfeld/counterfeiter/v6 v6.9.0
+	github.com/maxbrunsfeld/counterfeiter/v6 v6.11.2
 	github.com/ory/dockertest/v3 v3.11.0
 	github.com/prometheus/client_golang v1.21.1
 	github.com/redis/go-redis/v9 v9.7.1
@@ -116,3 +116,5 @@ require (
 )
 
 replace github.com/gogo/protobuf v1.3.3 => github.com/gogo/protobuf v1.3.2
+
+tool github.com/maxbrunsfeld/counterfeiter/v6
