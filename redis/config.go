@@ -21,6 +21,17 @@ func (c ClientType) String() string {
 	}
 }
 
+func ClientTypeFromString(clientType string) ClientType {
+	switch clientType {
+	case "cluster":
+		return ClientTypeCluster
+	case "failover":
+		return ClientTypeFailover
+	default:
+		return ClientTypeRegular
+	}
+}
+
 type Config struct {
 	Address         []string   `mapstructure:"address"  json:"address,omitempty"`
 	Username        string     `mapstructure:"username" json:"username,omitempty"`
