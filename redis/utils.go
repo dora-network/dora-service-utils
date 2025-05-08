@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"time"
 
 	"github.com/cenkalti/backoff/v4"
 	"github.com/dora-network/dora-service-utils/orderbook"
@@ -56,7 +57,13 @@ func Key(elems ...string) string {
 }
 
 // TryTransaction retries the given transaction function until it succeeds or the backoff strategy gives up.
-func TryTransaction(ctx context.Context, rdb Client, f func(tx *redis.Tx) error, backoffStrategy backoff.BackOff, keys ...string) error {
+func TryTransaction(
+	ctx context.Context,
+	rdb Client,
+	f func(tx *redis.Tx) error,
+	backoffStrategy backoff.BackOff,
+	keys ...string,
+) error {
 	retryFn := func() error {
 		return rdb.Watch(ctx, f, keys...)
 	}
@@ -69,23 +76,46 @@ func NewClient(config Config) (Client, error) {
 		return nil, errors.New("redis address must be provided")
 	}
 
-	if config.UseCluster {
-		return redis.NewClusterClient(&redis.ClusterOptions{
-			Addrs:            config.Address,
-			Protocol:         config.Protocol,
-			Username:         config.Username,
-			Password:         config.Password,
-			DisableIndentity: config.DisableIdentity,
-		}), nil
+	switch config.ClientType {
+	case ClientTypeRegular:
+		return redis.NewClient(
+			&redis.Options{
+				Addr:             config.Address[0],
+				Username:         config.Username,
+				Password:         config.Password,
+				DB:               config.DB,
+				DisableIndentity: config.DisableIdentity,
+			},
+		), nil
+	case ClientTypeCluster:
+		return redis.NewClusterClient(
+			&redis.ClusterOptions{
+				Addrs:            config.Address,
+				Protocol:         config.Protocol,
+				Username:         config.Username,
+				Password:         config.Password,
+				DisableIndentity: config.DisableIdentity,
+			},
+		), nil
+	case ClientTypeFailover:
+		return redis.NewFailoverClient(
+			&redis.FailoverOptions{
+				MasterName:       config.MasterName,
+				SentinelAddrs:    config.Address,
+				Username:         config.Username,
+				Password:         config.Password,
+				DB:               config.DB,
+				DisableIndentity: config.DisableIdentity,
+				DialTimeout:      5 * time.Second,
+				ReadTimeout:      3 * time.Second,
+				WriteTimeout:     3 * time.Second,
+				PoolSize:         10,
+				MinIdleConns:     2,
+			},
+		), nil
+	default:
+		return nil, errors.New("unknown redis client type")
 	}
-
-	return redis.NewClient(&redis.Options{
-		Addr:             config.Address[0],
-		Username:         config.Username,
-		Password:         config.Password,
-		DB:               config.DB,
-		DisableIndentity: config.DisableIdentity,
-	}), nil
 }
 
 type KeyFunc func(string) string
