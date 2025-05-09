@@ -1,42 +1,53 @@
-package logger_test
+package logger
 
 import (
+	"fmt"
+	"io"
 	"os"
+	"strings"
 	"sync"
 	"testing"
 	"time"
-
-	"github.com/dora-network/dora-service-utils/logger"
-	"github.com/stretchr/testify/require"
 )
 
 func TestLogger(t *testing.T) {
-	l1, err := logger.New("debug", "test.log", false)
-	require.NoError(t, err)
-	l2, err := logger.NewThreadSafeLogger("debug", "test.log", false)
-	require.NoError(t, err)
-	wg := sync.WaitGroup{}
-	wg.Add(2)
-	go func() {
-		l1.Info().Msg("test1")
-		wg.Done()
-	}()
+	t.Setenv("DORA_SERVICE_NAME", "testservice")
+	dir := t.TempDir()
+	t.Setenv("DORA_LOG_DIR", dir)
 
-	go func() {
-		l2.Info().Msg("test2")
-		// Need to give it some time to write to the file
-		time.Sleep(20 * time.Millisecond)
-		wg.Done()
-	}()
-
+	log := Global()
+	wg := new(sync.WaitGroup)
+	wg.Add(50)
+	for i := 0; i < 50; i++ {
+		go func() {
+			defer wg.Done()
+			log.Info().Msgf("test%d", i)
+		}()
+	}
 	wg.Wait()
 
-	require.NoError(t, logger.Close())
+	file, err := Logfile()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if file == nil {
+		t.Fatal("logfile is nil")
+	}
 
-	contents, err := os.ReadFile("test.log")
-	require.NoError(t, err)
-
-	require.Contains(t, string(contents), "test1")
-	require.Contains(t, string(contents), "test2")
-	require.NoError(t, os.Remove("test.log"))
+	time.Sleep(100 * time.Millisecond) // wait for the log file to be written
+	file.Seek(0, 0)
+	b, err := io.ReadAll(file)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(b) == 0 {
+		t.Fatal("logfile is empty")
+	}
+	s := string(b)
+	for i := 0; i < 50; i++ {
+		if !strings.Contains(s, fmt.Sprintf("test%d", i)) {
+			t.Fatalf("logfile does not contain test%d", i)
+		}
+	}
+	os.Remove(file.Name())
 }
