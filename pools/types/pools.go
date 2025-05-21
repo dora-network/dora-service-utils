@@ -15,6 +15,10 @@ import (
 	"github.com/govalues/decimal"
 )
 
+const (
+	swapSimluateFraction float64 = 0.01
+)
+
 // Pool represents a liquidity pool in the DORA network.
 // This struct is for serialization purposes only.
 type Pool struct {
@@ -324,6 +328,36 @@ func (p *Pool) Balances(assetA string) (balanceA, balanceB *types.Balance, err e
 	err = errors.ErrAssetNotFoundInPool
 
 	return
+}
+
+func (p *Pool) T() (float64, error) {
+	if p.IsProductPool {
+		return 0, errors.Data("product pool does not have t")
+	}
+	return calculateT(time.Now().Unix(), p.MaturityAt, p.Duration()), nil
+}
+
+func (p *Pool) Price() (float64, error) {
+	balanceInBase := types.Balance{
+		Asset:  p.BaseAsset,
+		Amount: uint64(float64(p.AmountBase) * swapSimluateFraction),
+	}
+	balanceOutQuote, _, err := p.SimulateSwap(&balanceInBase)
+	if err != nil {
+		return 0, err
+	}
+	priceBuy := float64(balanceInBase.Amount) / float64(balanceOutQuote.Amount)
+
+	balanceInQuote := types.Balance{
+		Asset:  p.QuoteAsset,
+		Amount: uint64(float64(p.AmountQuote) * swapSimluateFraction),
+	}
+	balanceOutBase, _, err := p.SimulateSwap(&balanceInQuote)
+	if err != nil {
+		return 0, err
+	}
+	priceSell := float64(balanceOutBase.Amount) / float64(balanceInQuote.Amount)
+	return (priceBuy + priceSell) / 2, nil
 }
 
 func (p *Pool) SimulateSwap(balanceIn *types.Balance) (balanceOut, balanceFee *types.Balance, err error) {
