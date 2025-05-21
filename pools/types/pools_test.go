@@ -125,24 +125,29 @@ func TestRemoveLiquidity(t *testing.T) {
 func TestPoolPrice(t *testing.T) {
 	poolID := consts.BondID + "-" + consts.StableID
 	p := types.Pool{
-		PoolID:        poolID,
+		PoolID:      poolID,
+		BaseAsset:   consts.BondID,
+		AmountBase:  10_000,
+		QuoteAsset:  consts.StableID,
+		AmountQuote: 10_000,
+		CreatedAt:   time.Now().Add(-24 * time.Hour).Unix(),
+		MaturityAt:  time.Now().Add(24 * time.Hour).Unix(),
+		// FeeFactor: 0 = no fee for product pool
+		FeeFactor:     decimal.Zero,
 		IsProductPool: true,
-		BaseAsset:     consts.BondID,
-		AmountBase:    10_000,
-		QuoteAsset:    consts.StableID,
-		AmountQuote:   10_000,
-		CreatedAt:     time.Now().Add(-24 * time.Hour).Unix(),
-		MaturityAt:    time.Now().Add(24 * time.Hour).Unix(),
 	}
 
 	price, err := p.Price()
 	require.NoError(t, err)
 	require.Equal(t, float64(1.000050505050505), price)
 
+	// FeeFactor: 1 = no fee for product pool
 	p.IsProductPool = false
+	p.FeeFactor = decimal.One
+
 	price, err = p.Price()
 	require.NoError(t, err)
-	require.Equal(t, float64(0.505000500050005), price)
+	require.Equal(t, float64(1.000050505050505), price)
 
 	tParam, err := p.T()
 	require.NoError(t, err)
