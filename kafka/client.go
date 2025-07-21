@@ -89,6 +89,7 @@ type NewClientFunc func(config Config, produceTopic, consumerGroup string, consu
 func NewClient(config Config, produceTopic, consumerGroup string, consumeTopics ...string) (Client, error) {
 	opts := make([]kgo.Opt, 0)
 	opts = append(opts, kgo.SeedBrokers(config.Brokers...))
+	opts = append(opts, kgo.AllowAutoTopicCreation())
 
 	if produceTopic != "" {
 		opts = append(opts, kgo.DefaultProduceTopic(produceTopic))
